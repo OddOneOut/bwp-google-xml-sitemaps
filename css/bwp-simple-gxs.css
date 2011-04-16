@@ -1,0 +1,12 @@
+* html .bwp-gxs-log { 
+	height: expression( this.scrollHeight > 200 ? "200px" : "auto" );
+}
+.bwp-gxs-log {
+	font-size: 0.95em;
+	background-color: #ffffff;
+	padding: 5px 10px; padding-top: 0px;
+	width: 90%;
+	border: 1px solid #cccccc;
+	max-height: 200px;
+	overflow: auto;
+}
