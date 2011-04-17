@@ -55,11 +55,13 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	var $sitemap_alias = array(), $use_permalink = true, $query_var_non_perma = '';
 	var $ping_per_day = 100, $timeout = 3;
 	var $xslt = '', $xslt_index = '';
+	// @since 1.0.1
+	var $build_data = array('time', 'mem', 'query');
 
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.0.0')
+	function __construct($version = '1.0.1')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
@@ -191,6 +193,8 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			$this->xslt_index = (empty($this->xslt)) ? '' : str_replace('.xsl', 'index.xsl', $this->xslt);
 		}
 		
+		// Some stats
+		$this->build_stats['mem'] = memory_get_usage();
 	}
 
 	function enqueue_media()
@@ -213,6 +217,9 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 
 	function insert_rewrite_rules()
 	{
+		global $wp_rewrite;
+		// More compatible with blogs that are set up with sitemap.xml - @since 1.0.1
+		add_rewrite_rule('sitemap.xml$', 'index.php?gxs_module=sitemapindex', 'top');
 		add_rewrite_rule('sitemapindex.xml$', 'index.php?gxs_module=sitemapindex', 'top');
 		add_rewrite_rule('pages.xml$', 'index.php?gxs_module=page', 'top');
 		add_rewrite_rule('posts.xml$', 'index.php?gxs_module=post', 'top');
@@ -221,7 +228,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	}
 
 	function add_hooks()
-	{		
+	{
 		add_filter('query_vars', array($this, 'insert_query_vars'));
 		add_action('init', array($this, 'insert_rewrite_rules'));
 		add_action('parse_request', array($this, 'request_sitemap'));
@@ -643,6 +650,37 @@ if (!empty($page))
 	}
 
 	/** 
+	 * Redirect to correct domain
+	 *
+	 * This plugin generates sitemaps dynamically and exits before WordPress does any canonical redirection.
+	 * This function makes sure non-www domain is redirected and vice versa.
+	 * @since 1.0.1
+	 */
+	function canonical_redirect($xml_slug)
+	{
+		$requested_url  = is_ssl() ? 'https://' : 'http://';
+		$requested_url .= $_SERVER['HTTP_HOST'];
+		$requested_url .= $_SERVER['REQUEST_URI'];
+		$original = @parse_url($requested_url);
+		if (false === $original)
+			return;
+		// www.example.com vs example.com
+		$user_home = @parse_url(home_url());
+		if (!empty($user_home['host']))
+			$host = $user_home['host'];
+		if (strtolower($original['host']) == strtolower($host) ||
+		(strtolower($original['host']) != 'www.' . strtolower($host) && 'www.' . strtolower($original['host']) != strtolower($host)))
+			$host = $original['host'];
+		else
+		{
+			$xml_slug = ('post' == $xml_slug) ? $xml_slug = 'posts' : $xml_slug;
+			$xml_slug = ('page' == $xml_slug) ? $xml_slug = 'pages' : $xml_slug;
+			wp_redirect(sprintf($this->options['input_sitemap_struct'], $xml_slug), 301);
+			exit;
+		}
+	}
+
+	/** 
 	 * A convenient function to add wanted modules or sub modules
 	 *
 	 * When you filter the 'bwp_gxs_modules' hook it is recommended that you use this function.
@@ -814,6 +852,9 @@ if (!empty($page))
 		$true_sub_module = $sub_module;
 		$pre_module = $module;
 		$pre_module .= (!empty($sub_module)) ? '_' . $sub_module : '';
+		// @since 1.0.1 - Redirect to correct domain, with or without www
+		$this->canonical_redirect($pre_module);
+		// Begin building module key
 		if (!get_option('permalink_structure') && ('post' == $module || 'page' == $module) && empty($sub_module)) $module = '';
 		$module = ('pages' == $module) ? 'page' : $module;
 		$module = ('posts' == $module) ? 'post' : $module;
@@ -850,6 +891,10 @@ if (!empty($page))
 			wp_redirect(get_option('home'));
 			exit;
 		}
+
+		// @since 1.0.1 - Start counting correct build time and queries
+		timer_start();
+		$this->build_stats['query'] = get_num_queries();
 
 		// If cache is enabled, we check the cache first
 		if ('yes' == $this->options['enable_cache'])
@@ -1142,8 +1187,8 @@ if (!empty($page))
 	function sitemap_stats($output = array(), $type = '')
 	{
 		$time = timer_stop(0, 3);
-		$sql = get_num_queries();
-		$memory = size_format(memory_get_usage(), 2);
+		$sql = get_num_queries() - $this->build_stats['query'];
+		$memory = size_format(memory_get_usage() - $this->build_stats['mem'], 2);
 		if (empty($type))
 			$this->output .= "\n" . sprintf($this->templates['stats'], $time, $memory, $sql, sizeof($output));
 		else

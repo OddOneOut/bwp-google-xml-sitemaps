@@ -44,7 +44,7 @@ class BWP_GXS_MODULE {
 			$this->set_current_time();
 
 		$data['location'] = '';
-		$data['lastmod'] = (!empty($pre_data['lastmod'])) ? strtotime($pre_data['lastmod'] - $bwp_gxs->oldest_time) : $this->now - $bwp_gxs->oldest_time;
+		$data['lastmod'] = (!empty($pre_data['lastmod'])) ? strtotime($pre_data['lastmod']) - $bwp_gxs->oldest_time : $this->now - $bwp_gxs->oldest_time;
 		$data['lastmod'] = $this->format_lastmod($data['lastmod']);
 		if (isset($pre_data['freq'])) $data['freq'] = $pre_data['freq'];
 		if (isset($pre_data['priority'])) $data['priority'] = $pre_data['priority'];

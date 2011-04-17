@@ -4,7 +4,7 @@ Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/
 Tags: xml sitemaps, google xml sitemaps, sitemapindex, sitemap, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
 Tested up to: 3.1.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex and Multi-site.
 
@@ -49,6 +49,14 @@ If you encounter the 'Content Encoding Error' error page when trying to view a s
 
 == Frequently Asked Questions ==
 
+**Q: I choose not to display certain sitemaps but the sitemapindex still displays them?**
+
+What you see is actually a cached version of the sitemapindex. You can wait for it to be refreshed automatically or simply choose to 'Flush the Cache'.
+
+**Q: Is there anyway to rename sitemapindex.xml to sitemap.xml?**
+
+You don't have to. A visit to `http://example.com/sitemap.xml` will show you the same sitemapindex. This is done to make BWP GXS more compatible with blogs that have lots of real `robots.txt`. Please note that you must remove any real `sitemap.xml` file in your website's root for this feature to work.
+
 **Q: I got the error 'Content Encoding Error', what should I do?**
 
 If you are enabling this plugin's debug mode and/or WP_DEBUG, this error is very normal because the module you use might print errors on pages, thus corrupting your xml sitemaps. To view the actual errors without being greeted with the 'Content Encoding Error', please follow these steps:
@@ -73,6 +81,12 @@ If you are enabling this plugin's debug mode and/or WP_DEBUG, this error is very
 3. The Configuration page
 
 == Changelog ==
+
+= 1.0.1 =
+* Now you can browser to `http://example.com/sitemap.xml` to view your sitemapindex. You can submit it too if you want. **Important**: Make sure you don't have any real sitemap.xml file in your website's root. Also, you will have to flush all rewrite rules, by either deactivating and then reactivating this plugin, or simply go to [Permalink Settings](http://example.com/wp-admin/options-permalink.php) and click on Save Changes.
+* Build stats (build time, number of queries, memory usage) should be more accurate now.
+* Add a canonical redirection for sitemap URL to avoid problems with XSLT style sheet's absolute URL.
+* Fixed a minor error in the base module class.
 
 = 1.0.0 =
 * Initial Release.
