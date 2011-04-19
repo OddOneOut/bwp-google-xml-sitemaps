@@ -12,7 +12,7 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE {
 		$this->build_data();
 	}
 
-	function build_data()
+	function generate_data()
 	{
 		global $wpdb, $bwp_gxs, $post;
 

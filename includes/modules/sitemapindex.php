@@ -28,6 +28,9 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE {
 	{
 		global $wpdb, $bwp_gxs;
 
+		// A better limit for sites that have posts with same last modified date - @since 1.0.2
+		$limit = sizeof(get_post_types(array('public' => true))) + 1000;
+
 		$latest_post_query = '
 			SELECT *
 				FROM
@@ -39,10 +42,10 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE {
 				) AS f
 				INNER JOIN ' . $wpdb->posts . ' AS s ON s.post_type = f.post_type
 				AND s.post_modified = f.mpmd
-			LIMIT ' . (int) sizeof(get_post_types(array('public' => true)));
+			LIMIT ' . (int) $limit;
 
 		$latest_posts = $wpdb->get_results($latest_post_query);
-		
+
 		// Build a temporary array holding post type and their latest modified date, sorted by post_modified
 		foreach ($latest_posts as $a_post)
 		{
@@ -77,6 +80,10 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE {
 				else if (isset($item[1]['archive']))
 					$data['lastmod'] = $prime_lastmod;
 			}
+			// Just in case something went wrong - @since 1.0.2
+			if (empty($data['lastmod']))
+				$data['lastmod'] = $prime_lastmod;
+			// Pass data back to the plugin
 			$this->data[] = $data;
 		}
 	}

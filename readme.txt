@@ -4,7 +4,7 @@ Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/
 Tags: xml sitemaps, google xml sitemaps, sitemapindex, sitemap, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
 Tested up to: 3.1.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex and Multi-site.
 
@@ -35,7 +35,10 @@ If you encounter the 'Content Encoding Error' error page when trying to view a s
 
 **Languages**
 
-* This plugin is currently available only in English. Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using-poedit/) it!
+* English (default)
+* Malaysian (ms_MY) - Thanks to [d4rkcry3r](http://d4rkcry3r.com)!
+
+Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using-poedit/) it!
 
 == Installation ==
 
@@ -81,6 +84,11 @@ If you are enabling this plugin's debug mode and/or WP_DEBUG, this error is very
 3. The Configuration page
 
 == Changelog ==
+
+= 1.0.2 =
+* Fixed a bug that could produce wrong or empty last modified dates in sitemapindex.
+* Corrected a typo in page.php module.
+* Added Malaysian translation, thanks to d4rkcry3r!
 
 = 1.0.1 =
 * Now you can browser to `http://example.com/sitemap.xml` to view your sitemapindex. You can submit it too if you want. **Important**: Make sure you don't have any real sitemap.xml file in your website's root. Also, you will have to flush all rewrite rules, by either deactivating and then reactivating this plugin, or simply go to [Permalink Settings](http://example.com/wp-admin/options-permalink.php) and click on Save Changes.

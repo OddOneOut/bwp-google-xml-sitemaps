@@ -1,0 +1,487 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BWP Google XML Sitemaps(Malay Translation)\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-04-15 03:56+0700\n"
+"PO-Revision-Date: 2011-04-19 10:00+0700\n"
+"Last-Translator: \n"
+"Language-Team:  <darkcry3r@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: Malay\n"
+"X-Poedit-Country: MALAYSIA\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/class-bwp-framework.php:172
+#, php-format
+msgid "%s requires WordPress <strong>%s</strong> or higher and PHP <strong>%s</strong> or higher. The plugin will not function until you update your software. Please deactivate this plugin."
+msgstr "%s memerlukan WordPress <strong>%s</strong> atau yang terbaharu dan PHP <strong>%s</strong> atau yang terbaharu . Plugin ini tidak akan berfungsi sehingga anda menaiktaraf perisian. Sila nyahaktifkan plugin ini."
+
+#: includes/class-bwp-framework.php:181
+msgid "log"
+msgstr "log"
+
+#: includes/class-bwp-framework.php:186
+msgid "You can buy me some coffees if you appreciate my work, thank you!"
+msgstr "Anda boleh menderma jika anda hargai kerja saya, terima kasih!"
+
+#: includes/class-bwp-framework.php:211
+#, php-format
+msgid "You are using version %s!"
+msgstr "Anda menggunakan versi %s!"
+
+#: includes/class-bwp-framework.php:343
+msgid "Settings"
+msgstr "Tetapan"
+
+#: includes/class-bwp-gxs-cache.php:34
+#, php-format
+msgid "Cache directory (\"%s\") does not exist or is not writable."
+msgstr "Direktori cache (\"%s\") tidak wujud atau tidak boleh dibaca."
+
+#: includes/class-bwp-gxs-cache.php:56
+#, php-format
+msgid "Cache file for module <em>%s</em> is not found and will be built right away."
+msgstr "Fail cache untuk modul <em>%s</em> tidak dijumpai dan akan dibina segera."
+
+#: includes/class-bwp-gxs-cache.php:106
+#: includes/class-bwp-simple-gxs.php:859
+#, php-format
+msgid "Successfully served a cached version of <em>%s.xml</em>."
+msgstr "Berjaya melayan versi cache untuk <em>%s.xml</em>."
+
+#: includes/class-bwp-simple-gxs.php:119
+#: includes/class-bwp-simple-gxs.php:259
+msgid "Sitemap Statistics"
+msgstr "Statistik Pelan Tapak"
+
+#: includes/class-bwp-simple-gxs.php:120
+#: includes/class-bwp-simple-gxs.php:260
+msgid "Sitemap Generator"
+msgstr "Penghasilan Pelan Tapak"
+
+#: includes/class-bwp-simple-gxs.php:139
+#, php-format
+msgid "This sitemap was originally generated in %s second(s) (Memory usage: %s) - %s queries - %s URL(s) listed"
+msgstr "Peta tapak ini asalnya telah dihasilkan selama %s saat (Penggunaan memori: %s) - %s maklumat - %s URL(s) telah disenaraikan"
+
+#: includes/class-bwp-simple-gxs.php:257
+msgid "BWP Google XML Sitemaps"
+msgstr "Pelan Tapak Google XML BWP "
+
+#: includes/class-bwp-simple-gxs.php:259
+msgid "BWP Google XML Sitemaps Statistics"
+msgstr "Statistik Pelan Tapak Google XML BWP "
+
+#: includes/class-bwp-simple-gxs.php:260
+msgid "BWP Google XML Sitemaps Generator"
+msgstr "Penghasilan Pelan Tapak Google XML BWP"
+
+#: includes/class-bwp-simple-gxs.php:271
+msgid "You do not have sufficient permissions to access this page."
+msgstr "Anda tidak mempunyai cukup kebenaran untuk mengakses muka ini."
+
+#: includes/class-bwp-simple-gxs.php:289
+msgid "What are Sitemaps?"
+msgstr "Apa itu Pelan tapak?"
+
+#: includes/class-bwp-simple-gxs.php:290
+msgid "Your sitemaps"
+msgstr "Pelan tapak anda"
+
+#: includes/class-bwp-simple-gxs.php:291
+msgid "Submit your sitemaps"
+msgstr "Serah pelan tapak anda"
+
+#: includes/class-bwp-simple-gxs.php:292
+msgid "Pinging search engines"
+msgstr "Penghantaran ke enjin carian"
+
+#: includes/class-bwp-simple-gxs.php:293
+msgid "Enable pinging functionality?"
+msgstr "Benarkan keberkesanan penghantaran? "
+
+#: includes/class-bwp-simple-gxs.php:294
+msgid "Enable pinging individual SE"
+msgstr "Benarkan penghantaran SE individu"
+
+#: includes/class-bwp-simple-gxs.php:295
+msgid "Sitemap Generator's Log"
+msgstr "Log Penghasilan Pelan Tapak"
+
+#: includes/class-bwp-simple-gxs.php:296
+msgid "Enable logging?"
+msgstr "Benarkan log?"
+
+#: includes/class-bwp-simple-gxs.php:297
+msgid "Enable debugging?"
+msgstr "Benarkan debugging?"
+
+#: includes/class-bwp-simple-gxs.php:307
+msgid "In its simplest form, a Sitemap is an XML file that lists URLs for a site along with additional metadata about each URL (when it was last updated, how often it usually changes, and how important it is, relative to other URLs in the site) so that search engines can more intelligently crawl the site &mdash; http://www.sitemaps.org/"
+msgstr "Dalam erti kata mudah, sebuah pelan tapak adalah fail XML yang mengandungi senarai URL untuk halaman bersama-sama dengan metadata tambahan tentang setiap URL (saat terakhir dikemaskinikan, seberapa kerap perubahan biasanya, dan betapa pentingnya, berkait rapat dengan URL lain di tapak ) jadi enjin carian akan lebih berkesan mencari tapak tersebut - http://www.sitemaps.org/"
+
+#: includes/class-bwp-simple-gxs.php:308
+msgid "<em>Basic information about all your sitemaps.</em>"
+msgstr "<em>Maklumat asas tentang keseluruhan pelan tapak anda.</em>"
+
+#: includes/class-bwp-simple-gxs.php:309
+msgid "<em>More detailed information about how your sitemaps are generated including <span style=\"color: #999999;\">notices</span>, <span style=\"color: #FF0000;\">errors</span> and <span style=\"color: #009900;\">success messages</span>.</em>"
+msgstr "<em>Maklumat lebih lanjut tentang bagaimana pelan tapak anda telah dihasilkan termasuk <span style=\"color: #999999;\">notices</span>, <span style=\"color: #FF0000;\">ralat</span> dan juga <span style=\"color: #009900;\">mesej berjaya</span>.</em>"
+
+#: includes/class-bwp-simple-gxs.php:310
+#, php-format
+msgid "<em>Submit your sitemapindex to major search engines like <a href=\"%s\" target=\"_blank\">Google</a>, <a href=\"%s\" target=\"_blank\">Yahoo</a>, <a href=\"%s\" target=\"_blank\">Bing</a> or <a href=\"%s\" target=\"_blank\">Ask</a>.</em>"
+msgstr "<em>Hantar indeks pelan tapak anda kepada enjin carian biasa seperti <a href=\"%s\" target=\"_blank\">Google</a>, <a href=\"%s\" target=\"_blank\">Yahoo</a>, <a href=\"%s\" target=\"_blank\">Bing</a> atau <a href=\"%s\" target=\"_blank\">Ask</a>.</em>"
+
+#: includes/class-bwp-simple-gxs.php:311
+msgid "<em>Now when you post something new to your blog, you can <em>ping</em> those search engines to tell them your blog just got updated. Pinging could be less effective than you think it is but you should enable such feature anyway.</em>"
+msgstr "<em>Sekarang apabila anda menghantar sesuatu yang baru pada blog anda, anda boleh <em>menguji</em> enjin carian untuk memberitahu mereka bahawa blog anda baru dikemaskinikan. Penghantaran mungkin kurang efektif dari yang anda fikir tetapi anda harus juga benarkan fungsi ini.</em>"
+
+#: includes/class-bwp-simple-gxs.php:316
+msgid "Selected SE below will be pinged when you publish new posts."
+msgstr "SE yang dipilih dibawah akan dihantar apabila anda menerbitkan pos baharu."
+
+#: includes/class-bwp-simple-gxs.php:317
+msgid "No additional load is needed so enabling this is recommended."
+msgstr "Tiada beban tambahan diperlukan jadi membenarkan ini adalah digalakkan."
+
+#: includes/class-bwp-simple-gxs.php:318
+msgid "Minor errors will be printed on screen. Also, when debug is on, no caching is used, useful when you develop new modules."
+msgstr "Ralat kecil akan dicetak pada skrin. Juga, apabila debug diaktifkan, tiada caching akan digunakan, berguna apabila anda mengembangkan modul baharu."
+
+#: includes/class-bwp-simple-gxs.php:319
+msgid "Google"
+msgstr "Google"
+
+#: includes/class-bwp-simple-gxs.php:320
+#, php-format
+msgid "Yahoo &mdash; <a href=\"%s\" target=\"_blank\">important</a>"
+msgstr "Yahoo &mdash; <a href=\"%s\" target=\"_blank\">penting</a>"
+
+#: includes/class-bwp-simple-gxs.php:321
+msgid "Bing"
+msgstr "Bing"
+
+#: includes/class-bwp-simple-gxs.php:322
+msgid "Ask.com"
+msgstr "Ask.com"
+
+#: includes/class-bwp-simple-gxs.php:325
+#, php-format
+msgid "After you activate this plugin, all sitemaps should be available right away. The next step is to submit the sitemapindex to major search engines. You only need the <strong>sitemapindex</strong> and nothing else, those search engines will automatically recognize other included sitemaps. You can read a small <a href=\"%s\">How-to</a> if you are interested."
+msgstr "Apabila anda aktifkan plugin ini, semua pelan tapak sepatutnya sudah berada. Langkah seterusnya ialah dengan menghantar indeks pelan tapak kepada enjin carian. Anda cuma perlu <strong>indeks pelan tapak</strong> dan selain itu, enjin carian secara automatik mengenalpasti pelan tapak yang lain. Anda boleh merujuk <a href=\"%s\">Langkah-langkah</a> jika anda berminat."
+
+#: includes/class-bwp-simple-gxs.php:349
+msgid "Output no more than"
+msgstr "Output tidak lebih dari"
+
+#: includes/class-bwp-simple-gxs.php:350
+msgid "Default change frequency"
+msgstr "Ubah frekuensi lalai"
+
+#: includes/class-bwp-simple-gxs.php:351
+msgid "Default priority"
+msgstr "Keutamaan lalai"
+
+#: includes/class-bwp-simple-gxs.php:352
+msgid "Minimum priority"
+msgstr "Keutamaan minimum"
+
+#: includes/class-bwp-simple-gxs.php:353
+msgid "Add sitemapindex to WordPress's virtual robots.txt?"
+msgstr "Tambah indeks pelan tapak kepada WordPress's robots.txt?"
+
+#: includes/class-bwp-simple-gxs.php:354
+msgid "In sitemapindex, include"
+msgstr "Di dalam indeks pelan tapak, termasuk"
+
+#: includes/class-bwp-simple-gxs.php:355
+msgid "Style your sitemaps with an XSLT stylesheet?"
+msgstr "Ubah pelan tapak anda dengan gaya lembar XSLT?"
+
+#: includes/class-bwp-simple-gxs.php:356
+msgid "Custom XSLT stylesheet URL"
+msgstr "URL gaya lembar XSLT yang diubah"
+
+#: includes/class-bwp-simple-gxs.php:357
+msgid "Show build stats in sitemaps?"
+msgstr "Papar status bina dalam pelan tapak?"
+
+#: includes/class-bwp-simple-gxs.php:358
+msgid "Enable credit?"
+msgstr "Paparkan penghargaan?"
+
+#: includes/class-bwp-simple-gxs.php:359
+msgid "Enable Gzip?"
+msgstr "Benarkan Gzip?"
+
+#: includes/class-bwp-simple-gxs.php:360
+msgid "Module Options"
+msgstr "Tetapan modul"
+
+#: includes/class-bwp-simple-gxs.php:361
+msgid "Alternate module directory"
+msgstr "Direktori pengganti modul"
+
+#: includes/class-bwp-simple-gxs.php:362
+msgid "Get no more than"
+msgstr "Dapat tidak lebih daripada"
+
+#: includes/class-bwp-simple-gxs.php:363
+msgid "Caching Options"
+msgstr "Tetapan Caching"
+
+#: includes/class-bwp-simple-gxs.php:364
+msgid "Enable caching?"
+msgstr "Benarkan caching?"
+
+#: includes/class-bwp-simple-gxs.php:365
+msgid "Enable auto cache re-generation?"
+msgstr "Benarkan auto cache di-generasi?"
+
+#: includes/class-bwp-simple-gxs.php:366
+msgid "Cached sitemaps will last for"
+msgstr "Pelan tapak yang di-cache-kan akan bertahan selama"
+
+#: includes/class-bwp-simple-gxs.php:367
+msgid "Cached sitemaps are stored in (auto detected)"
+msgstr "Pelan tapak yang di-cache-kan akan disimpan di dalam (auto carian)"
+
+#: includes/class-bwp-simple-gxs.php:371
+msgid "<em>Cache your sitemaps for better performance.</em>"
+msgstr "<em>Cache pelan tapak anda untuk prestasi yang memberangsangkan.</em>"
+
+#: includes/class-bwp-simple-gxs.php:372
+#, php-format
+msgid "<em>This plugin uses modules to build sitemap data so it is recommended that you extend this plugin using modules rather than hooks. Some of the settings below only affect modules extending the base module class. Read more about using modules <a href=\"%s#using-modules\">here</a>.</em>"
+msgstr "<em>Plugin ini menggunakan modul untuk membina data pelan tapak jadi digalakkan untuk anda mengembangkan plugin ini menggunakan modul-modul berbanding dikait. Salah satu daripada tetapan dibawah hanya mempengaruhi dalam memperluas kelas modul asas.Lebih lanjut tentang penggunaan modul <a href=\"%s#using-modules\">disini</a>.</em>"
+
+#: includes/class-bwp-simple-gxs.php:382
+#: includes/class-bwp-simple-gxs.php:388
+msgid "second(s)"
+msgstr "saat"
+
+#: includes/class-bwp-simple-gxs.php:383
+#: includes/class-bwp-simple-gxs.php:389
+msgid "minute(s)"
+msgstr "minit"
+
+#: includes/class-bwp-simple-gxs.php:384
+#: includes/class-bwp-simple-gxs.php:390
+msgid "hour(s)"
+msgstr "jam"
+
+#: includes/class-bwp-simple-gxs.php:385
+#: includes/class-bwp-simple-gxs.php:391
+msgid "day(s)"
+msgstr "hari"
+
+#: includes/class-bwp-simple-gxs.php:398
+#: includes/class-bwp-simple-gxs.php:399
+#: includes/class-bwp-simple-gxs.php:400
+msgid "read more"
+msgstr "lebih lanjut"
+
+#: includes/class-bwp-simple-gxs.php:403
+msgid "your sitemaps are generated and then cached to reduce unnecessary work."
+msgstr "pelan tapak anda telah dihasilkan dan kemudian di-cache-kan untuk mengurangkan kerja yang diperlukan."
+
+#: includes/class-bwp-simple-gxs.php:404
+msgid "when a cached sitemap expires, this plugin will try to generate the cache again. If you disable this, remember to manually flush the cache once in a while."
+msgstr "apabila cache pelan tapak luput, plugin ini akan cuba untuk menghasilkan cache lagi. Jika anda tidak membenarkan ini, waspada untuk membuang cache secara manual sekali sekala."
+
+#: includes/class-bwp-simple-gxs.php:404
+msgid "Flush the cache"
+msgstr "Buang cache"
+
+#: includes/class-bwp-simple-gxs.php:405
+msgid "tell you useful information such as build time, memory usage, SQL queries, etc."
+msgstr "beritahu anda maklumat seperti masa bina, pengunaan memori, maklumat SQL dan lain-lain."
+
+#: includes/class-bwp-simple-gxs.php:406
+#, php-format
+msgid "make your sitemaps ~ 70% smaller."
+msgstr "membuat pelan tapak anda 70% lebih kecil."
+
+#: includes/class-bwp-simple-gxs.php:407
+msgid "static pages' sitemap."
+msgstr "pelan tapak muka statik."
+
+#: includes/class-bwp-simple-gxs.php:408
+msgid "taxonomy archives' sitemaps, including custom taxonomies."
+msgstr "menamakan arkib pelan tapak, termasuk yang diubahsuai."
+
+#: includes/class-bwp-simple-gxs.php:409
+msgid "tag archives' sitemaps."
+msgstr "Lekat arkib pelan tapak."
+
+#: includes/class-bwp-simple-gxs.php:410
+msgid "date archives' sitemaps."
+msgstr "tarikh arkib pelan tapak."
+
+#: includes/class-bwp-simple-gxs.php:411
+msgid "some copyrighted info is also added to your sitemaps. Thanks!"
+msgstr "sedikit maklumat hakcipta juga akan ditambah pada pelan tapak anda. Terima kasih! "
+
+#: includes/class-bwp-simple-gxs.php:412
+msgid "This will load the default stylesheet provided by this plugin. You can set a custom stylesheet below or filter the <code>bwp_gxs_xslt</code> hook."
+msgstr "Ini akan menambah gaya lembar lalai yang dibekalkan dengan plugin ini. Anda boleh menetapkan gaya lembar yang diubahsuai di bawah atau dengan menapis <code>bwp_gxs_xslt</code>."
+
+#: includes/class-bwp-simple-gxs.php:413
+#, php-format
+msgid "If you're on a Multi-site installation with Sub-domain enabled, each site will have its own robots.txt, sites in sub-directory will not. Please read the <a href=\"%s#toc-robots\" target=\"_blank\">documentation</a> for more info."
+msgstr "Jika anda di dalam Multi-tapak pemasangan dengan Sub-domain digunakan, setiap tapak akan ada setiap robot.txt sendiri, manakala tapak di dalam sub- direktori adalah sebaliknya. Sila rujuk <a href=\"%s#toc-robots\" target=\"_blank\">dokumentasi</a> untuk maklumat terperinci."
+
+#: includes/class-bwp-simple-gxs.php:416
+msgid "item(s) in one sitemap. Actually, 5000 would be more ideal. You can not go over 50,000, though."
+msgstr "item di dalam satu pelan tapak. Akan tetapi, 5000 adalah lebih sesuai. Anda tidak boleh melebihi 50,000, walaubagaimanapun."
+
+#: includes/class-bwp-simple-gxs.php:417
+msgid "Input a full path to the directory where you put your own modules (e.g. <code>/home/mysite/public_html/gxs-modules/</code>), you can also override a built-in module by having a module with the same filename in this directory. A filter is also available if you would like to use PHP instead."
+msgstr "Masuk ruang penuh untuk direktori dimana anda meletak modul anda sendiri (contoh <code>/home/mysite/public_html/gxs-modules/</code>), anda juga boleh melebih-naik modul yang terbina dengan mendapat nama modul fail yang sama di dalam direktori. Penapis juga tersedia jika anda mahu menggunakan PHP."
+
+#: includes/class-bwp-simple-gxs.php:418
+msgid "The cache directory must be writable (i.e. CHMOD to 755 or 777)."
+msgstr "Cache direktori harus boleh ditulis (i.e. CHMOD to 755 or 777)."
+
+#: includes/class-bwp-simple-gxs.php:419
+msgid "item(s) in one SQL query. This helps you avoid running too heavy queries."
+msgstr "item-item di dalam satu maklumat SQL. Ini membantu anda untuk menghindar dari menggunakan maklumat terlalu banyak."
+
+#: includes/class-bwp-simple-gxs.php:422
+msgid "expected to be an absolute URL, e.g. <code>http://example.com/my-stylesheet.xsl</code>. You must also have a style sheet for the sitemapindex that can be accessed through the above URL, e.g. <code>my-stylesheet.xsl</code> and <code>my-stylesheetindex.xsl</code>). Please leave blank if you do not wish to use."
+msgstr "jangkaan untuk menjadi URL tetap, contohnya <code>http://example.com/my-stylesheet.xsl</code>. Anda juga harus mempunyai gaya lembar untuk indeks pelan tapak yang mana boleh di akses melalui URL di atas, contohnya <code>my-stylesheet.xsl</code> dan <code>my-stylesheetindex.xsl</code>). Sila tinggalkan kosong sekiranya anda tidak berhasrat untuk menggunakannya."
+
+#: includes/class-bwp-simple-gxs.php:449
+#: includes/class-bwp-simple-gxs.php:451
+msgid "Notice"
+msgstr "Notis"
+
+#: includes/class-bwp-simple-gxs.php:449
+#, php-format
+msgid "<strong>%d</strong> cached sitemaps have been flushed successfully!"
+msgstr "<strong>%d</strong> pelan tapak yang di-cache-kan telah di buang!"
+
+#: includes/class-bwp-simple-gxs.php:451
+msgid "Could not delete any cached sitemaps. Please manually check the cache directory."
+msgstr "Tidak boleh buang mana-mana pelan tapak yang telah di-cache-kan. Sila rujuk cache direktori secara manual."
+
+#: includes/class-bwp-simple-gxs.php:503
+msgid "Warning"
+msgstr "Amaran"
+
+#: includes/class-bwp-simple-gxs.php:503
+msgid "Cache directory does not exist or is not writable. Please read more about directory permission <a href='http://www.zzee.com/solutions/unix-permissions.shtml'>here</a> (Unix)."
+msgstr "Direktori cache tidak wujud atau tidak boleh dibaca. Sila rujuk direktori berkenaan kebenaran <a href='http://www.zzee.com/solutions/unix-permissions.shtml'>disini</a> (Unix)."
+
+#: includes/class-bwp-simple-gxs.php:557
+msgid "(Debug is on)"
+msgstr "(Debug dibuka)"
+
+#: includes/class-bwp-simple-gxs.php:570
+msgid "<strong>BWP Google XML Sitemaps Error:</strong> "
+msgstr "<strong>Google XML Pelan tapak BWP Ralat:</strong>"
+
+#: includes/class-bwp-simple-gxs.php:570
+msgid "BWP Google XML Sitemaps Error"
+msgstr "Google XML Pelan tapak BWP Ralat"
+
+#: includes/class-bwp-simple-gxs.php:593
+#, php-format
+msgid "Nothing here... yet! Try submitting your <a href=\"%s\">sitemapindex</a> first!"
+msgstr "Tiada disini...lagi! Cuba hantar <a href=\"%s\">indeks pelan tapak</a> anda dahulu!"
+
+#: includes/class-bwp-simple-gxs.php:593
+msgid "No log yet!"
+msgstr "Tiada log lagi!"
+
+#: includes/class-bwp-simple-gxs.php:603
+#, php-format
+msgid "%s"
+msgstr "%s"
+
+#: includes/class-bwp-simple-gxs.php:603
+#, php-format
+msgid "<a href=\"%s\" target=\"_blank\">%s</a> has been successfully built on <strong>%s</strong>."
+msgstr "<a href=\"%s\" target=\"_blank\">%s</a> telah berjaya dibina <strong>%s</strong>."
+
+#: includes/class-bwp-simple-gxs.php:613
+#: includes/class-bwp-simple-gxs.php:616
+msgid "M j, Y : H:i:s"
+msgstr "M j, Y : H:i:s"
+
+#: includes/class-bwp-simple-gxs.php:836
+#, php-format
+msgid "Requested module (<em>%s</em>) not found or not allowed."
+msgstr "Modul yang diminta (<em>%s</em>) tidak dijumpai atau tidak dibenarkan."
+
+#: includes/class-bwp-simple-gxs.php:886
+#: includes/class-bwp-simple-gxs.php:906
+#, php-format
+msgid "Loaded a custom sub-module file: <strong>%s</strong>."
+msgstr "Lain-lain fail sub-modul telah dibekalkan: <strong>%s</strong>."
+
+#: includes/class-bwp-simple-gxs.php:895
+#, php-format
+msgid "Mapped sub-module file: <strong>%s</strong> is not available in both default and custom module directory. The plugin will now try loading the requested sub-module instead."
+msgstr "Fail sub-module yang dikategorikan: <strong>%s</strong> tidak terdapat di dalam kedua-dua lalai dan lain-lain direktori modul. Plugin sekarang akan cuba untuk menggunakan sub-modul."
+
+#: includes/class-bwp-simple-gxs.php:914
+#, php-format
+msgid "Sub-module file: <strong>%s</strong> is not available in both default and custom module directory. The plugin will now try loading the parent module instead."
+msgstr "Fail sub-modul: <strong>%s</strong> tidak terdapat di dalam kedua-dua lalai dan juga lain-lain direktori modul. Plugin akan cuba menggunakan modul utama."
+
+#: includes/class-bwp-simple-gxs.php:927
+#, php-format
+msgid "Loaded a custom module file: <strong>%s</strong>."
+msgstr "Menggunakan lain-lain fail modul: <strong>%s</strong>."
+
+#: includes/class-bwp-simple-gxs.php:933
+#, php-format
+msgid "Could not load module file: <strong>%s</strong> in both default and custom module directory. Please recheck if that module file exists."
+msgstr "Tidak boleh menggunakan fail modul: <strong>%s</strong> di kedua-dua lalai dan juga lain-lain direktori modul. Sila semak semula jika fail modul itu wujud."
+
+#: includes/class-bwp-simple-gxs.php:951
+#, php-format
+msgid "There is no class named <strong>%s</strong> in the module file <strong>%s</strong>."
+msgstr "Tiada kelas dinamakan <strong>%s</strong> di dalam fail modul <strong>%s</strong>."
+
+#: includes/class-bwp-simple-gxs.php:960
+#, php-format
+msgid "Loaded a custom sitemapindex module file: <strong>%s</strong>."
+msgstr "Menggunakan lain-lain fail modul indeks pelan tapak: <strong>%s</strong>."
+
+#: includes/class-bwp-simple-gxs.php:980
+#, php-format
+msgid "Successfully generated <em>%s.xml</em> using module <em>%s</em>."
+msgstr "Berjaya menghasilkan <em>%s.xml</em> menggunakan modul <em>%s</em>."
+
+#: includes/class-bwp-simple-gxs.php:1090
+#, php-format
+msgid "Pinged %s successfully!"
+msgstr "Penghantaran berjaya %s !"
+
+#: includes/class-bwp-simple-gxs.php:1096
+#, php-format
+msgid "Ping limit for today to %s has been reached, sorry!"
+msgstr "Had menghantar untuk hari ini kepada %s telah dicapai, maaf!"
+
+#: includes/class-bwp-simple-gxs.php:1124
+#, php-format
+msgid "<em>%s.xml</em> does not have any item. The plugin has fired a 404 header to the search engine that requests it. You should check the module that generates that sitemap (<em>%s.php</em>)."
+msgstr "<em>%s.xml</em> tiada apa-apa item. Plugin telah membuang permulaan 404 kepada enjian carian yang memintanya. Anda seharusnya meninjau modul yang menghasilkan pelan tapak itu (<em>%s.php</em>)."
+
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:74
+msgid "Plugin Configurations"
+msgstr "Tetapan Plugin"
+
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:391
+msgid "Save Changes"
+msgstr "Simpan Perubahan"
+

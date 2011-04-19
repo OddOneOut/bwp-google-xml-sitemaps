@@ -61,7 +61,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.0.1')
+	function __construct($version = '1.0.2')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
