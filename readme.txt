@@ -4,7 +4,7 @@ Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/
 Tags: xml sitemaps, google xml sitemaps, sitemapindex, sitemap, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
 Tested up to: 3.1.1
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex and Multi-site.
 
@@ -52,6 +52,10 @@ Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using
 
 == Frequently Asked Questions ==
 
+**Q: When I visit `http://example.com/sitemapindex.xml`, WordPress returns a 404 page. What should I do?**
+
+This might be caused by unflushed rewrite rules, which should have been flushed when you activate this plugin. You can try flushing them manually by visiting Settings -> Permalinks and then clicking Save Changes.
+
 **Q: I choose not to display certain sitemaps but the sitemapindex still displays them?**
 
 What you see is actually a cached version of the sitemapindex. You can wait for it to be refreshed automatically or simply choose to 'Flush the Cache'.
@@ -84,6 +88,11 @@ If you are enabling this plugin's debug mode and/or WP_DEBUG, this error is very
 3. The Configuration page
 
 == Changelog ==
+
+= 1.0.3 =
+* Fixed incorrect regex for rewrite rules.
+* Added a check to make sure all necessary rewrite rules are added. No need to manually flush rewrite rules anymore.
+* `bwp_gxs_add_rewrite_rules` action now becomes `bwp_gxs_rewrite_rules` filter (the hook used to add your own sitemaps).
 
 = 1.0.2 =
 * Fixed a bug that could produce wrong or empty last modified dates in sitemapindex.

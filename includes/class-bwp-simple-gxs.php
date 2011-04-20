@@ -61,7 +61,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.0.2')
+	function __construct($version = '1.0.3')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
@@ -215,22 +215,38 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		return $vars;
 	}
 
-	function insert_rewrite_rules()
+	function check_rewrite_rules()
 	{
 		global $wp_rewrite;
+		// Check rewrite rules - @since 1.0.3
+		$rules = get_option('rewrite_rules');
+		if (!empty($rules) && is_array($rules) && !isset($rules['sitemapindex\.xml$']))
+		{
+			add_filter('rewrite_rules_array', array($this, 'insert_rewrite_rules'));
+			$wp_rewrite->flush_rules();
+		}
+	}
+
+	function insert_rewrite_rules($rules)
+	{
 		// More compatible with blogs that are set up with sitemap.xml - @since 1.0.1
-		add_rewrite_rule('sitemap.xml$', 'index.php?gxs_module=sitemapindex', 'top');
-		add_rewrite_rule('sitemapindex.xml$', 'index.php?gxs_module=sitemapindex', 'top');
-		add_rewrite_rule('pages.xml$', 'index.php?gxs_module=page', 'top');
-		add_rewrite_rule('posts.xml$', 'index.php?gxs_module=post', 'top');
-		add_rewrite_rule('([a-z0-9]+)_([a-z0-9_-]+).xml$', 'index.php?gxs_module=$matches[1]&gxs_sub_module=$matches[2]', 'top');
-		do_action('bwp_gxs_add_rewrite_rules');
+		$rewrite_rules = array(
+			'sitemap\.xml$' => 'index.php?gxs_module=sitemapindex',
+			'sitemapindex\.xml$' => 'index.php?gxs_module=sitemapindex',
+			'pages\.xml$' => 'index.php?gxs_module=page',
+			'posts\.xml$' => 'index.php?gxs_module=post',
+			'([a-z0-9]+)_([a-z0-9_-]+)\.xml$' => 'index.php?gxs_module=$matches[1]&gxs_sub_module=$matches[2]'
+		);
+		// @since 1.0.3
+		$custom_rules = apply_filters('bwp_gxs_rewrite_rules', array());
+		$rules = array_merge($custom_rules, $rewrite_rules, $rules);
+		return $rules;
 	}
 
 	function add_hooks()
 	{
+		add_action('init', array($this, 'check_rewrite_rules'));
 		add_filter('query_vars', array($this, 'insert_query_vars'));
-		add_action('init', array($this, 'insert_rewrite_rules'));
 		add_action('parse_request', array($this, 'request_sitemap'));
 		if ('yes' == $this->options['enable_ping'])
 		{
@@ -248,8 +264,8 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	function install()
 	{
 		global $wp_rewrite;
-		$this->insert_rewrite_rules();
-	   	$wp_rewrite->flush_rules(false);
+		add_filter('rewrite_rules_array', array($this, 'insert_rewrite_rules'));
+		$wp_rewrite->flush_rules();
 	}
 	
 	function uninstall()
@@ -257,7 +273,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		global $wp_rewrite;
 		$this->logs = array('log' => array(), 'sitemap' => array());
 		$this->commit_logs();
-	   	$wp_rewrite->flush_rules(false);
+		$wp_rewrite->flush_rules();
 	}
 
 	/**
@@ -698,7 +714,7 @@ if (!empty($page))
 			$this->allowed_modules[$module] = array();
 		if (!isset($this->allowed_modules[$module]) || !is_array($this->allowed_modules[$module]))
 			$this->allowed_modules[$module] = array($sub_module);
-		else
+		else if (!in_array($sub_module, $this->allowed_modules[$module]))
 			$this->allowed_modules[$module][] = $sub_module;
 	}
 
