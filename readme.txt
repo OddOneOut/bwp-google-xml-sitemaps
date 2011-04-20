@@ -4,7 +4,7 @@ Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/
 Tags: xml sitemaps, google xml sitemaps, sitemapindex, sitemap, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
 Tested up to: 3.1.1
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex and Multi-site.
 
@@ -89,10 +89,17 @@ If you are enabling this plugin's debug mode and/or WP_DEBUG, this error is very
 
 == Changelog ==
 
+= 1.0.4 =
+* Hot fix for WordPress in other languages, such as French, Russian. Prior to this version this plugin tries to use posts' and taxonomies' labels to build sitemaps' URLs in plural forms (e.g. taxonomy_categories). Unfortunately this breaks sitemaps when labels contain UTF8 characters with marks (such as catégories). All sitemaps now have singular forms. Hope that we will have a better solution in the future.
+
+**This change will make all logs' contents change as well. To remove redundant logs, please deactivate this plugin and then reactivate it.**
+
 = 1.0.3 =
 * Fixed incorrect regex for rewrite rules.
 * Added a check to make sure all necessary rewrite rules are added. No need to manually flush rewrite rules anymore.
 * `bwp_gxs_add_rewrite_rules` action now becomes `bwp_gxs_rewrite_rules` filter (the hook used to add your own sitemaps).
+
+**For people using a cache plugin, please visit the [FAQ section](http://betterwp.net/wordpress-plugins/google-xml-sitemaps/faq/) for a possible compatibility fix.**
 
 = 1.0.2 =
 * Fixed a bug that could produce wrong or empty last modified dates in sitemapindex.

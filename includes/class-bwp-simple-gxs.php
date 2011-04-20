@@ -61,7 +61,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.0.3')
+	function __construct($version = '1.0.4')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
@@ -220,7 +220,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		global $wp_rewrite;
 		// Check rewrite rules - @since 1.0.3
 		$rules = get_option('rewrite_rules');
-		if (!empty($rules) && is_array($rules) && !isset($rules['sitemapindex\.xml$']))
+		if (!empty($rules) && is_array($rules) && (!isset($rules['sitemapindex\.xml$']) || !isset($rules['post\.xml$'])))
 		{
 			add_filter('rewrite_rules_array', array($this, 'insert_rewrite_rules'));
 			$wp_rewrite->flush_rules();
@@ -233,8 +233,8 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		$rewrite_rules = array(
 			'sitemap\.xml$' => 'index.php?gxs_module=sitemapindex',
 			'sitemapindex\.xml$' => 'index.php?gxs_module=sitemapindex',
-			'pages\.xml$' => 'index.php?gxs_module=page',
-			'posts\.xml$' => 'index.php?gxs_module=post',
+			'page\.xml$' => 'index.php?gxs_module=page',
+			'post\.xml$' => 'index.php?gxs_module=post',
 			'([a-z0-9]+)_([a-z0-9_-]+)\.xml$' => 'index.php?gxs_module=$matches[1]&gxs_sub_module=$matches[2]'
 		);
 		// @since 1.0.3
@@ -648,7 +648,8 @@ if (!empty($page))
 	
 	function format_label($label)
 	{
-		return str_replace(' ', '_', strtolower($label));
+		// Make this safe for UTF-8 charactesr - @since 1.0.4
+		return str_replace(' ', '_', strtolower($label, 'UTF-8'));
 	}
 
 	function do_robots($output, $public)
@@ -791,7 +792,9 @@ if (!empty($page))
 			{
 				if (isset($this->post_types[$sub_module])) // Module is a post type
 				{
-					$label = $this->format_label($this->post_types[$sub_module]->label);
+					// @since 1.0.4 - do not use label anymore, ugh
+					// $label = $this->format_label($this->post_types[$sub_module]->label);
+					$label = $this->format_label($this->post_types[$sub_module]->name);
 					if ('post' == $sub_module || 'page' == $sub_module || 'attachment' == $sub_module)
 						$data = array($label, array('post' => $this->post_types[$sub_module]->name));
 					else
@@ -800,7 +803,8 @@ if (!empty($page))
 				}
 				else if ('yes' == $this->options['enable_sitemap_taxonomy'] && isset($this->taxonomies[$sub_module])) // Module is a taxonomy
 				{
-					$label = $this->format_label($this->taxonomies[$sub_module]->label);
+					// $label = $this->format_label($this->taxonomies[$sub_module]->label);
+					$label = $this->format_label($this->taxonomies[$sub_module]->name);
 					$this->requested_modules[] = array($module_name . '_' . $label, array('taxonomy' => $sub_module));
 				}
 				/*else if ('term' == $module_name) // Module is a term {} */
@@ -871,13 +875,13 @@ if (!empty($page))
 		// @since 1.0.1 - Redirect to correct domain, with or without www
 		$this->canonical_redirect($pre_module);
 		// Begin building module key
-		if (!get_option('permalink_structure') && ('post' == $module || 'page' == $module) && empty($sub_module)) $module = '';
+		/*if (!get_option('permalink_structure') && ('post' == $module || 'page' == $module) && empty($sub_module)) $module = '';
 		$module = ('pages' == $module) ? 'page' : $module;
-		$module = ('posts' == $module) ? 'post' : $module;
+		$module = ('posts' == $module) ? 'post' : $module;*/
 		// Allowed modules
 		$allowed_modules = $this->allowed_modules();
 		$this->build_requested_modules($allowed_modules);
-		$this->convert_label($sub_module, $module);
+		// $this->convert_label($sub_module, $module);
 		if ('sitemapindex' != $module && isset($allowed_modules[$module]))
 		{
 			if (!empty($sub_module))
@@ -890,8 +894,8 @@ if (!empty($page))
 			else
 				$module_key = $module;
 			$module_name = str_replace($sub_module, $true_sub_module, $module_key);
-			$module_name = ('page' == $module && empty($sub_module)) ? 'pages' : $module_name;
-			$module_name = ('post' == $module && empty($sub_module)) ? 'posts' : $module_name;
+			/*$module_name = ('page' == $module && empty($sub_module)) ? 'pages' : $module_name;
+			$module_name = ('post' == $module && empty($sub_module)) ? 'posts' : $module_name;*/
 		}
 		else if ('sitemapindex' == $module)
 		{
