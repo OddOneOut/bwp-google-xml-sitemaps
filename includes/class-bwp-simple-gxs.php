@@ -17,7 +17,7 @@
  */
 
 if (!class_exists('BWP_FRAMEWORK'))
-	require_once('class-bwp-framework.php');
+	require_once(dirname(__FILE__) . '/class-bwp-framework.php');
 
 class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 
@@ -61,7 +61,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.0.4')
+	function __construct($version = '1.0.5')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
@@ -563,6 +563,11 @@ if (!empty($page))
 		return $this->options;
 	}
 
+	function get_current_time()
+	{
+		return current_time('timestamp');
+	}
+
 	function format_header_time($time)
 	{
 		return gmdate('D, d M Y H:i:s \G\M\T', (int) $time);
@@ -580,7 +585,7 @@ if (!empty($page))
 
 	function do_log($message, $error = true, $sitemap = false)
 	{
-		$time = time();
+		$time = $this->get_current_time();
 		$debug = ('yes' == $this->options['enable_debug']) ? __('(Debug is on)', 'bwp-simple-gxs') : '';
 		if (!$sitemap && 'yes' == $this->options['enable_log'] && !empty($message))
 			$this->logs['log'][] = array('log' => $message . ' ' . $debug, 'time' => $time, 'error' => $error);
@@ -648,8 +653,7 @@ if (!empty($page))
 	
 	function format_label($label)
 	{
-		// Make this safe for UTF-8 charactesr - @since 1.0.4
-		return str_replace(' ', '_', strtolower($label, 'UTF-8'));
+		return str_replace(' ', '_', strtolower($label));
 	}
 
 	function do_robots($output, $public)
@@ -905,7 +909,7 @@ if (!empty($page))
 			
 		if (empty($module_key))
 		{
-			$this->elog(sprintf(__('Requested module (<em>%s</em>) not found or not allowed.', 'bwp-simple-gxs'), $pre_module), true);
+			$this->elog(sprintf(__('Requested module (<em>%s</em>) not found or not allowed.', 'bwp-simple-gxs'), $pre_module), true, 404);
 			$this->commit_logs();
 			// If debugging is not enabled, redirect to homepage
 			wp_redirect(get_option('home'));
@@ -919,7 +923,7 @@ if (!empty($page))
 		// If cache is enabled, we check the cache first
 		if ('yes' == $this->options['enable_cache'])
 		{
-			require_once('class-bwp-gxs-cache.php');
+			require_once(dirname(__FILE__) . '/class-bwp-gxs-cache.php');
 			$bwp_gxs_cache = new BWP_GXS_CACHE(array('module' => $module_key, 'module_name' => $module_name));
 			// If cache is ok, output the cached sitemap, only if debug is off
 			if ('yes' != $this->options['enable_debug'] && true == $bwp_gxs_cache->has_cache)
@@ -942,7 +946,7 @@ if (!empty($page))
 		$custom_module_dir = (!empty($this->options['input_alt_module_dir']) && $this->options_default['input_alt_module_dir'] != $this->options['input_alt_module_dir']) ? trailingslashit($this->options['input_alt_module_dir']) : false;
 		$custom_module_dir = trailingslashit(apply_filters('bwp_gxs_module_dir', $custom_module_dir));
 		// Begin loading modules
-		require_once('class-bwp-gxs-module.php');
+		require_once(dirname(__FILE__) . '/class-bwp-gxs-module.php');
 		if ('sitemapindex' != $module && isset($allowed_modules[$module]))
 		{
 			$sub_loaded = $mapped_sub_loaded = false;
@@ -1036,7 +1040,7 @@ if (!empty($page))
 				$this->nlog(sprintf(__('Loaded a custom sitemapindex module file: <strong>%s</strong>.', 'bwp-simple-gxs'), $module_file));
 			}
 			else
-				include_once('modules/sitemapindex.php');
+				include_once(dirname(__FILE__) . '/modules/sitemapindex.php');
 			if (class_exists('BWP_GXS_MODULE_INDEX'))
 			{
 				$the_module = new BWP_GXS_MODULE_INDEX($this->requested_modules);

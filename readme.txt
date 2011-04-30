@@ -1,10 +1,10 @@
 === Better WordPress Google XML Sitemaps (with sitemapindex and Multi-site support) ===
 Contributors: OddOneOut
-Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/
+Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#contributions
 Tags: xml sitemaps, google xml sitemaps, sitemapindex, sitemap, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
-Tested up to: 3.1.1
-Stable tag: 1.0.4
+Tested up to: 3.1.2
+Stable tag: 1.0.5
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex and Multi-site.
 
@@ -38,7 +38,11 @@ If you encounter the 'Content Encoding Error' error page when trying to view a s
 * English (default)
 * Malaysian (ms_MY) - Thanks to [d4rkcry3r](http://d4rkcry3r.com)!
 
-Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using-poedit/) it!
+Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using-poedit/) this plugin!
+
+**Get in touch**
+
+I'm available at [BetterWP.net](http://betterwp.net) and you can also follow me on [Twitter](http://twitter.com/0dd0ne0ut).
 
 == Installation ==
 
@@ -88,6 +92,13 @@ If you are enabling this plugin's debug mode and/or WP_DEBUG, this error is very
 3. The Configuration page
 
 == Changelog ==
+
+= 1.0.5 =
+* Unregistered modules (such as redundant modules from 1.0.3) will now have a 404 HTTP status to prevent search engines from requesting them again.
+* Time for each log will now make use of your current timezone setting in Settings -> General.
+* And other minor fixes.
+
+**Thanks everyone for using this plugin!**
 
 = 1.0.4 =
 * Hot fix for WordPress in other languages, such as French, Russian. Prior to this version this plugin tries to use posts' and taxonomies' labels to build sitemaps' URLs in plural forms (e.g. taxonomy_categories). Unfortunately this breaks sitemaps when labels contain UTF8 characters with marks (such as catégories). All sitemaps now have singular forms. Hope that we will have a better solution in the future.

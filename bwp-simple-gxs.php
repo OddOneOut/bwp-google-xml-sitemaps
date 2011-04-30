@@ -3,7 +3,7 @@
 Plugin Name: BWP Google XML Sitemaps
 Plugin URI: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/
 Description: A more lightweight Google XML Sitemap WordPress plugin that generates a <a href="http://en.wikipedia.org/wiki/Sitemap_index">Sitemap index</a> rather than a single sitemap. Despite its simplicity, it is still very powerful and has plenty of options to choose.
-Version: 1.0.4
+Version: 1.0.5
 Text Domain: bwp-simple-gxs
 Domain Path: /languages/
 Author: Khang Minh
@@ -12,7 +12,7 @@ License: GPLv3
 */
 
 // Frontend
-require_once('includes/class-bwp-simple-gxs.php');
+require_once(dirname(__FILE__) . '/includes/class-bwp-simple-gxs.php');
 $bwp_gxs = new BWP_SIMPLE_GXS();
 
 // Backend

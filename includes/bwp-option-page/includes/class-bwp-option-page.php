@@ -20,7 +20,7 @@ class BWP_OPTION_PAGE {
 	 * Tabs to build
 	 */
 	var $form_tabs;
-	
+
 	/**
 	 * Current tab
 	 */
