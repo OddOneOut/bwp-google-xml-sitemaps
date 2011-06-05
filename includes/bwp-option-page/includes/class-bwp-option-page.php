@@ -47,12 +47,18 @@ class BWP_OPTION_PAGE {
 	var $form_options = array(), $site_options = array();
 
 	/**
+	 * Other things
+	 */
+	var $domain;
+
+	/**
 	 * Constructor
 	 */
-	function __construct($form_name = 'bwp_option_page', $site_options = array())
+	function __construct($form_name = 'bwp_option_page', $site_options = array(), $domain = '')
 	{
 		$this->form_name			= $form_name;
 		$this->site_options			= $site_options;
+		$this->domain				= $domain;
 	}
 
 	/**
@@ -154,6 +160,7 @@ class BWP_OPTION_PAGE {
 		$checked			= 'checked="checked" ';
 		$selected			= 'selected="selected" ';
 		$value				= (isset($this->form_options[$name])) ? $this->form_options[$name] : '';
+		$value				= (!empty($this->domain) && ('textarea' == $type || 'input' == $type)) ? __($value, $this->domain) : $value;
 		$value				= ('textarea' == $type) ? esc_html($value) : esc_attr($value);
 		$array_replace 		= array();
 		$array_search 		= array('size', 'name', 'value', 'cols', 'rows', 'label', 'disabled', 'pre', 'post');
@@ -333,7 +340,7 @@ class BWP_OPTION_PAGE {
 	 */
 	function generate_html_form()
 	{
-		$return_str = '<div class="wrap">' . "\n";
+		$return_str = '<div class="wrap" style="padding-bottom: 20px;">' . "\n";
 		if (sizeof($this->form_tabs) >= 2)
 			$return_str .= apply_filters('bwp-admin-form-icon', '<div class="icon32" id="icon-options-general"><br></div>'  . "\n");
 		else

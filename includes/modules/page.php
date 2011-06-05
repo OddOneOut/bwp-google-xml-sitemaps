@@ -8,7 +8,10 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE {
 
 	function __construct()
 	{
+		global $bwp_gxs;
+
 		$this->set_current_time();
+		$this->part = $bwp_gxs->module_data['module_part'];
 		$this->build_data();
 	}
 
@@ -16,9 +19,11 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE {
 	{
 		global $wpdb, $bwp_gxs, $post;
 
+		$sql_where = apply_filters('bwp_gxs_' . $bwp_gxs->module_data['module_key'] . '_where', '');
+
 		$latest_post_query = '
 			SELECT * FROM ' . $wpdb->posts . "
-				WHERE post_status = 'publish' AND post_type = 'page'" . '
+				WHERE post_status = 'publish' AND post_type = 'page' $sql_where" . '
 			ORDER BY post_modified DESC';
 
 		$latest_posts = $this->get_results($latest_post_query);
@@ -27,23 +32,21 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE {
 			return false;
 
 		$data = array();
-		foreach ($latest_posts as $item)
+		for ($i = 0; $i < sizeof($latest_posts); $i++)
 		{
-			$post = $item;
+			$post = $latest_posts[$i];
 			$data = $this->init_data($data);
-			// Benefit from WP Caching
 			wp_cache_add($post->ID, $post, 'posts');
 			$data['location'] = get_permalink();
 			$data['lastmod'] = $this->format_lastmod(strtotime($post->post_modified));
 			$data['freq'] = $this->cal_frequency($post);
 			$data['priority'] = $this->cal_priority($post, $data['freq']);
 			$this->data[] = $data;
-			unset($item);
 		}
 
-		// Some memory saver ;)
+		// Probably save some memory ;)
 		unset($latest_posts);
-		
+
 		// Always return true if we can get here, otherwise you're stuck at the SQL cycling limit
 		return true;
 	}

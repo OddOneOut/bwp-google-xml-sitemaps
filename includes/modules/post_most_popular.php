@@ -3,7 +3,7 @@
  * Copyright (c) 2011 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  * 
- * This is a sample custom module
+ * This is a sample custom module. Some if about the module developer here would be nice!
  */
 
 class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE {
@@ -13,6 +13,8 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE {
 		// Give your properties value here
 		// $this->set_current_time() should always be called, it will allow you to use $this->now (the current Unix Timestamp).
 		$this->set_current_time();
+		$this->perma_struct = get_option('permalink_structure');
+		$this->post_type = get_post_type_object($this->requested);
 		// Always call this to start building data
 		// If you want to make use of SQL cycling (a method to reduce heavy queries), don't use build_data() like other modules.
 		// Just call it here and use function generate_data() to build actual data, just like below. Use SQL cycling when
@@ -32,11 +34,11 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE {
 	{
 		global $wpdb, $bwp_gxs, $post;
 
-		// A query for posts with most comments
 		$latest_post_query = '
 			SELECT * FROM ' . $wpdb->posts . "
 				WHERE post_status = 'publish' AND post_type = 'post' AND comment_count > 2" . '
 			ORDER BY comment_count, post_modified DESC';
+
 		// Use $this->get_results instead of $wpdb->get_results, remember to escape your query
 		// using $wpdb->prepare or $wpdb->escape, @see http://codex.wordpress.org/Function_Reference/wpdb_Class
 		$latest_posts = $this->get_results($latest_post_query);
@@ -46,24 +48,23 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE {
 		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
 			return false;
 
+		// Always init your $data
 		$data = array();
-		foreach ($latest_posts as $item)
+		for ($i = 0; $i < sizeof($latest_posts); $i++)
 		{
-			$post = $item;
+			$post = $latest_posts[$i];
+			// Init your $data with the previous item's data. This makes sure no item is mal-formed.
 			$data = $this->init_data($data);
-			// Make use of WP's cache
-			wp_cache_add($post->ID, $post, 'posts');
 			$data['location'] = get_permalink();
 			$data['lastmod'] = $this->format_lastmod(strtotime($post->post_modified));
 			$data['freq'] = $this->cal_frequency($post);
 			$data['priority'] = $this->cal_priority($post, $data['freq']);
 			$this->data[] = $data;
-			unset($item);
 		}
-		
-		// Some memory saver ;)
+
+		// Probably save some memory ;)
 		unset($latest_posts);
-		
+
 		// Always return true if we can get here, otherwise you're stuck at the SQL cycling limit
 		return true;
 	}

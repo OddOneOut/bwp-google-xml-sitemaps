@@ -4,7 +4,7 @@
 	<xsl:template match="/">
 		<html xmlns="http://www.w3.org/1999/xhtml">
 			<head>
-				<title>XML Sitemapindex</title>
+				<title>XML Sitemap Index</title>
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				<style type="text/css">
 					body {
@@ -49,7 +49,7 @@
 				</style>
 			</head>
 			<body>
-				<h1>XML Sitemapindex</h1>
+				<h1>XML Sitemap Index</h1>
 				<div id="header">
 					<p>
 						This sitemapindex was created using <a href="http://betterwp.net/wordpress-plugins/google-xml-sitemaps/" title="Better WordPress Google XML Sitemaps">Better WordPress Google XML Sitemaps</a>, a WordPress plugin that has support for sitemapindex and Multi-site blogs, you can also build custom sitemaps if you want.

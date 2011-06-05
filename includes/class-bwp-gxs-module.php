@@ -21,11 +21,12 @@ class BWP_GXS_MODULE {
 	 */
 	var $freq_to_pri = array('always' => 1.0, 'hourly' => 0.8, 'daily' => 0.7, 'weekly' => 0.6, 'monthly' => 0.4, 'yearly' => 0.3, 'never' => 0.2);
 	
-	var $comment_count = 0, $now, $url_sofar = 0, $circle = 0;
+	var $comment_count = 0, $now, $offset = 0, $url_sofar = 0, $circle = 0;
+	var $perma_struct = '', $post_type = NULL;
 
 	function __contruct()
 	{
-		/*$this->comment_count = wp_count_comments();*/
+		/* Intetionally left blank */
 	}
 
 	function set_current_time()
@@ -37,15 +38,16 @@ class BWP_GXS_MODULE {
 	{
 		global $bwp_gxs;
 
-		if (empty($pre_data) || sizeof($pre_data) == 0)
-			return array();
-
 		if (empty($this->now))
 			$this->set_current_time();
 
 		$data['location'] = '';
 		$data['lastmod'] = (!empty($pre_data['lastmod'])) ? strtotime($pre_data['lastmod']) - $bwp_gxs->oldest_time : $this->now - $bwp_gxs->oldest_time;
 		$data['lastmod'] = $this->format_lastmod($data['lastmod']);
+
+		if (empty($pre_data) || sizeof($pre_data) == 0)
+			return $data;
+
 		if (isset($pre_data['freq'])) $data['freq'] = $pre_data['freq'];
 		if (isset($pre_data['priority'])) $data['priority'] = $pre_data['priority'];
 
@@ -59,7 +61,12 @@ class BWP_GXS_MODULE {
 		if (!$bwp_gxs->use_permalink)
 			return get_option('home') . '/?' . $bwp_gxs->query_var_non_perma . '=' . $slug;
 		else
-			return get_option('home') . '/' . $slug . '.xml';
+		{
+			$permalink = get_option('permalink_structure');
+			// If user is using index.php in their permalink structure, we will have to include it also
+			$indexphp = (strpos($permalink, 'index.php') === false) ? '' : '/index.php';
+			return get_option('home') . $indexphp . '/' . $slug . '.xml';
+		}
 	}
 
 	/**
@@ -67,18 +74,20 @@ class BWP_GXS_MODULE {
 	 *
 	 * @copyright (c) 2006 - 2009 www.phpbb-seo.com
 	 */
-	function cal_frequency($item = '')
+	function cal_frequency($item = '', $lastmod = '')
 	{
 		global $bwp_gxs;
 
 		if (empty($this->now))
 			$this->now = $this->set_current_time();
 
-		if (!is_object($item))
-			$freq = $bwp_gxs->options['select_default_freq'];
+		$lastmod = (is_object($item)) ? $item->post_modified : $lastmod;
+
+		if (empty($lastmod))
+			$freq = $bwp_gxs->options['select_default_freq'];			
 		else
 		{
-			$time = $this->now - (int) strtotime($item->post_modified);
+			$time = $this->now - strtotime($lastmod);
 			$freq = $time > 30000000 ? 'yearly' : ($time > 2592000 ? 'monthly' : ($time > 604800 ? 'weekly' : ($time > 86400 ? 'daily' : ($time > 43200 ? 'hourly' : 'always'))));
 		}
 		return apply_filters('bwp_gxs_freq', $freq, $item);
@@ -132,8 +141,9 @@ class BWP_GXS_MODULE {
 		if (!isset($result) || !is_array($result))
 			return false;
 
-		foreach ($result as $post)
+		for ($i = 0; $i < sizeof($result); $i++)
 		{
+			$post = $result[$i];
 			if ($post_type == $post->post_type)
 				return $post;
 		}
@@ -147,11 +157,140 @@ class BWP_GXS_MODULE {
 			return false;
 		// Obtain a list of columns
 		$lastmod = array();
-		foreach ($this->data as $key => $row)
-			$lastmod[$key] = $row[$column];
-		// Sort the data with volume descending, edition ascending
+		for ($i = 0; $i < sizeof($this->data); $i++)
+			$lastmod[$i] = $this->data[$i][$column];
 		// Add $data as the last parameter, to sort by the common key
 		array_multisort($lastmod, SORT_DESC, $this->data);
+	}
+
+	function get_post_permalink($leavename = false, $sample = false)
+	{
+		global $wp_rewrite, $post;
+
+		if (is_wp_error($post))
+			return $post;
+
+		$post_link = $wp_rewrite->get_extra_permastruct($post->post_type);
+		$slug = $post->post_name;
+		$draft_or_pending = isset($post->post_status) && in_array($post->post_status, array('draft', 'pending', 'auto-draft'));
+		$post_type = get_post_type_object($post->post_type);
+
+		if (!empty($post_link) && (!$draft_or_pending || $sample))
+		{
+			if (!$leavename)
+				$post_link = str_replace("%$post->post_type%", $slug, $post_link);
+			$post_link = home_url(user_trailingslashit($post_link));
+		} 
+		else
+		{
+			if ($post_type->query_var && (isset($post->post_status) && !$draft_or_pending))
+				$post_link = add_query_arg($post_type->query_var, $slug, '');
+			else
+				$post_link = add_query_arg(array('post_type' => $post->post_type, 'p' => $post->ID), '');
+			$post_link = home_url($post_link);
+		}
+
+		return apply_filters('post_type_link', $post_link, $post, $leavename, $sample);
+	}
+
+	function get_permalink($leavename = false)
+	{
+		global $post;
+
+		$rewritecode = array(
+			'%year%',
+			'%monthnum%',
+			'%day%',
+			'%hour%',
+			'%minute%',
+			'%second%',
+			$leavename? '' : '%postname%',
+			'%post_id%',
+			'%category%',
+			'%author%',
+			$leavename? '' : '%pagename%',
+		);
+
+		if (!isset($post) || !is_object($post))
+			return '';
+
+		$custom_post_types = get_post_types(array('_builtin' => false));
+		if (!isset($this->post_type))
+			$this->post_type = get_post_type_object($post->post_type);
+
+		if ('post' != $post->post_type && !in_array($post->post_type, $custom_post_types))
+			return '';
+		if (in_array($post->post_type, $custom_post_types))
+		{
+			if ($this->post_type->hierarchical)
+			{
+				wp_cache_add($post->ID, $post, 'posts');
+				return get_post_permalink($post->ID, $leavename);
+			}
+			else
+				return $this->get_post_permalink();
+		}
+		// In case module author doesn't initialize this variable
+		$permalink = (empty($this->perma_struct)) ? get_option('permalink_structure') : $this->perma_struct;
+		$permalink = apply_filters('pre_post_link', $permalink, $post, $leavename);
+		if ('' != $permalink && !in_array($post->post_status, array('draft', 'pending', 'auto-draft')))
+		{
+			$unixtime = strtotime($post->post_date);
+			$category = '';
+			if (strpos($permalink, '%category%') !== false) 
+			{
+				// If this post belongs to a category with a parent, we have to rely on WordPress to build our permalinks
+				// This can cause white page for sites that have a lot of posts, don't blame this plugin, blame WordPress ;)
+				if (empty($post->slug) || !empty($post->parent))
+				{
+					$cats = get_the_category($post->ID);
+					if ($cats)
+					{
+						usort($cats, '_usort_terms_by_ID'); // order by ID
+						$category = $cats[0]->slug;
+						if ($parent = $cats[0]->parent)
+							$category = get_category_parents($parent, false, '/', true) . $category;
+					}
+				}
+				else
+					$category = (strpos($permalink, '%category%') !== false) ? $post->slug : '';
+
+				if (empty($category))
+				{
+					$default_category = get_category( get_option( 'default_category' ) );
+					$category = is_wp_error($default_category) ? '' : $default_category->slug;
+				}
+			}
+
+			$author = '';
+			if (strpos($permalink, '%author%') !== false)
+			{
+				$authordata = get_userdata($post->post_author);
+				$author = $authordata->user_nicename;
+			}
+
+			$date = explode(' ', date('Y m d H i s', $unixtime));
+			$rewritereplace =
+			array(
+				$date[0],
+				$date[1],
+				$date[2],
+				$date[3],
+				$date[4],
+				$date[5],
+				$post->post_name,
+				$post->ID,
+				$category,
+				$author,
+				$post->post_name
+			);
+			$permalink = home_url(str_replace($rewritecode, $rewritereplace, $permalink));
+			$permalink = user_trailingslashit($permalink, 'single');
+		}
+		else // if they're not using the fancy permalink option
+			$permalink = home_url('?p=' . $post->ID);
+
+		return apply_filters('post_link', $permalink, $post, $leavename);	
 	}
 
 	/**
@@ -163,12 +302,11 @@ class BWP_GXS_MODULE {
 	{
 		global $bwp_gxs, $wpdb;
 
-		$start 		= (!empty($this->url_sofar)) ? (int) $this->url_sofar + $this->circle : (int) $this->url_sofar;
+		$start 		= (!empty($this->url_sofar)) ? $this->offset + (int) $this->url_sofar : $this->offset;
 		$end 		= (int) $bwp_gxs->options['input_sql_limit'];
 		$query_str  = trim($query_str);
 		$query_str .= ' LIMIT ' . $start . ',' . $end;
-		$this->circle += 1;
-		
+
 		return $wpdb->get_results($query_str);
 	}
 
@@ -200,15 +338,20 @@ class BWP_GXS_MODULE {
 		return false;
 	}
 
-	function build_data()
+	function build_data($sort_column = '')
 	{
 		global $bwp_gxs;
 
-		while (false != $this->generate_data() && $this->url_sofar < $bwp_gxs->options['input_item_limit'])
+		// Use part limit or global item limit - @since 1.1.0
+		$limit = (empty($this->part)) ? $bwp_gxs->options['input_item_limit'] : $bwp_gxs->options['input_split_limit_post'];
+		$this->offset = (empty($this->part)) ? 0 : ($this->part - 1) * $bwp_gxs->options['input_split_limit_post'];
+
+		while ($this->url_sofar < $limit && false != $this->generate_data())
 			$this->url_sofar = sizeof($this->data);
 
-		// Sort the data by lastmod
-		//$this->sort_data_by();
+		// Sort the data by preference
+		if (!empty($sort_column))
+			$this->sort_data_by($sort_column);
 	}
 }
 ?>

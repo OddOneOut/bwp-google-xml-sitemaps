@@ -106,7 +106,6 @@ class BWP_GXS_CACHE {
 					$bwp_gxs->slog(sprintf(__('Successfully served a cached version of <em>%s.xml</em>.', 'bwp-simple-gxs'), $this->module_name), true);
 					$bwp_gxs->commit_logs();
 					header('HTTP/1.1 304 Not Modified');
-					ob_end_clean();
 					exit();
 				}
 			}

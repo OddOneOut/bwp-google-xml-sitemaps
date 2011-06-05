@@ -10,55 +10,80 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE {
 	function __construct()
 	{
 		$this->set_current_time();
-		$this->build_data();
+		$this->build_data('lastmod');
 	}
 
-	function build_data()
+	function generate_data()
 	{
 		global $wpdb, $bwp_gxs;
 
 		$requested = $bwp_gxs->module_data['sub_module'];
-		$the_taxonomy = $bwp_gxs->taxonomies[$requested];
-		$object_types = $the_taxonomy->object_type;
-		$post_type_in = array();
-		foreach ($object_types as $post_type)
-			$post_type_in[] = "wpost.post_type = '$post_type'";
-		$post_type_in = implode(' OR ', $post_type_in);
 
 		$latest_post_query = '
-			SELECT * FROM ' . $wpdb->term_relationships . ' wprel
-				INNER JOIN ' . $wpdb->posts . ' wpost
-					ON wprel.object_id = wpost.ID
+			SELECT MAX(wposts.post_modified) as post_modified, wposts.comment_count, wptax.term_id FROM ' . $wpdb->term_relationships . ' wprel
+				INNER JOIN ' . $wpdb->posts . ' wposts
+					ON wprel.object_id = wposts.ID' . "
+					AND wposts.post_status = 'publish'" . '
 				INNER JOIN ' . $wpdb->term_taxonomy . ' wptax
-					ON wprel.term_taxonomy_id = wptax.term_taxonomy_id' . "
-				WHERE wpost.post_status = 'publish' AND wptax.taxonomy = %s" . '
-					AND (' . $post_type_in . ')
-			ORDER BY wpost.post_modified DESC
-			LIMIT 5000'; // 5000, a rough assumption ;)
-		$latest_posts = $wpdb->get_results($wpdb->prepare($latest_post_query, $requested));
-		
-		$terms = get_terms($requested, array('hierarchical' => false));
+					ON wprel.term_taxonomy_id = wptax.term_taxonomy_id
+					AND wptax.taxonomy = %s
+			GROUP BY wptax.term_id
+			ORDER BY wptax.term_id DESC';
+		$latest_posts = $this->get_results($wpdb->prepare($latest_post_query, $requested));
+
+		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
+			return false;
+
+		$term_query = '
+			SELECT t.*, tt.* 
+				FROM ' . $wpdb->terms  . ' AS t 
+					INNER JOIN ' . $wpdb->term_taxonomy . ' AS tt 
+						ON t.term_id = tt.term_id 
+					WHERE tt.taxonomy = %s AND tt.count > 0 
+						ORDER BY t.term_id DESC';
+		$terms = $this->get_results($wpdb->prepare($term_query, $requested));
+		// Can be something like array('cat1', 'cat2', 'cat3')
+		$exclude_terms = (array) apply_filters('bwp_gxs_term_exclude', array(''), $requested);
+		// Build an array with term_id as key
+		$term2post = array();
+		for ($i = 0; $i < sizeof($latest_posts); $i++)
+		{
+			$post = $latest_posts[$i];
+			if (!empty($post->term_id) && !isset($term2post[$post->term_id]))
+				$term2post[$post->term_id] = $post;
+			unset($post);
+		}
 
 		$data = array();
-		foreach ($terms as $term)
+		for ($i = 0; $i < sizeof($terms); $i++)
 		{
-			$count = 1;
+			$term = $terms[$i];
+			if (in_array($term->slug, $exclude_terms))
+				continue;
 			$data = $this->init_data($data);
-			while (isset($latest_posts[$count - 1]) && $term->term_id != $latest_posts[$count - 1]->term_id)
-				$count++;
 			$data['location'] = get_term_link($term, $requested);
-			if (isset($latest_posts[$count - 1]))
+			if (isset($term2post[$term->term_id]))
 			{
-				$post = $latest_posts[$count - 1];
+				$post = $term2post[$term->term_id];
 				$data['lastmod'] = $this->format_lastmod(strtotime($post->post_modified));
 				$data['freq'] = $this->cal_frequency($post);
 				$data['priority'] = $this->cal_priority($post, $data['freq']);
 			}
+			else
+			{
+				$data['freq'] = $this->cal_frequency('', $data['lastmod']);
+				$data['priority'] = $this->cal_priority('', $data['freq']);
+			}
 			$this->data[] = $data;
+			unset($post);
+			unset($term);
 		}
-		
-		// Sort the data by lastmod
-		$this->sort_data_by();
+
+		unset($latest_posts);
+		unset($term2post);
+		unset($terms);
+
+		return true;
 	}
 }
 ?>

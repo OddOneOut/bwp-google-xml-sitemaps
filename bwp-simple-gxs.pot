@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: BWP Google XML Sitemaps\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-19 09:59+0700\n"
-"PO-Revision-Date: 2011-04-19 09:59+0700\n"
+"POT-Creation-Date: 2011-06-05 02:15+0700\n"
+"PO-Revision-Date: 2011-06-05 02:15+0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,20 +19,68 @@ msgstr ""
 msgid "%s requires WordPress <strong>%s</strong> or higher and PHP <strong>%s</strong> or higher. The plugin will not function until you update your software. Please deactivate this plugin."
 msgstr ""
 
-#: includes/class-bwp-framework.php:181
-msgid "log"
+#: includes/class-bwp-framework.php:183
+msgid "Development Log"
 msgstr ""
 
-#: includes/class-bwp-framework.php:186
-msgid "You can buy me some coffees if you appreciate my work, thank you!"
+#: includes/class-bwp-framework.php:183
+msgid "Frequently Asked Questions"
 msgstr ""
 
-#: includes/class-bwp-framework.php:211
+#: includes/class-bwp-framework.php:183
+msgid "FAQ"
+msgstr ""
+
+#: includes/class-bwp-framework.php:183
+msgid "Got a problem? Send me a feedback!"
+msgstr ""
+
+#: includes/class-bwp-framework.php:183
+msgid "Contact"
+msgstr ""
+
+#: includes/class-bwp-framework.php:190
+msgid "You can buy me some special coffees if you appreciate my work, thank you!"
+msgstr ""
+
+#: includes/class-bwp-framework.php:204
+msgid "Donate to "
+msgstr ""
+
+#: includes/class-bwp-framework.php:206
+msgid "One cup $5.00"
+msgstr ""
+
+#: includes/class-bwp-framework.php:207
+msgid "Two cups $10.00"
+msgstr ""
+
+#: includes/class-bwp-framework.php:208
+msgid "Five cups! $25.00"
+msgstr ""
+
+#: includes/class-bwp-framework.php:209
+msgid "One LL-cup!!! $50.00"
+msgstr ""
+
+#: includes/class-bwp-framework.php:210
+msgid "... or any amount!"
+msgstr ""
+
+#: includes/class-bwp-framework.php:225
+msgid "Latest updates from BetterWP.net!"
+msgstr ""
+
+#: includes/class-bwp-framework.php:226
+msgid "Follow me on Twitter!"
+msgstr ""
+
+#: includes/class-bwp-framework.php:235
 #, php-format
 msgid "You are using version %s!"
 msgstr ""
 
-#: includes/class-bwp-framework.php:343
+#: includes/class-bwp-framework.php:372
 msgid "Settings"
 msgstr ""
 
@@ -47,18 +95,18 @@ msgid "Cache file for module <em>%s</em> is not found and will be built right aw
 msgstr ""
 
 #: includes/class-bwp-gxs-cache.php:106
-#: includes/class-bwp-simple-gxs.php:915
+#: includes/class-bwp-simple-gxs.php:1077
 #, php-format
 msgid "Successfully served a cached version of <em>%s.xml</em>."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:121
-#: includes/class-bwp-simple-gxs.php:270
+#: includes/class-bwp-simple-gxs.php:125
+#: includes/class-bwp-simple-gxs.php:302
 msgid "Sitemap Statistics"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:122
-#: includes/class-bwp-simple-gxs.php:271
+#: includes/class-bwp-simple-gxs.php:126
+#: includes/class-bwp-simple-gxs.php:303
 msgid "Sitemap Generator"
 msgstr ""
 
@@ -67,418 +115,469 @@ msgstr ""
 msgid "This sitemap was originally generated in %s second(s) (Memory usage: %s) - %s queries - %s URL(s) listed"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:268
+#: includes/class-bwp-simple-gxs.php:300
 msgid "BWP Google XML Sitemaps"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:270
+#: includes/class-bwp-simple-gxs.php:302
 msgid "BWP Google XML Sitemaps Statistics"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:271
+#: includes/class-bwp-simple-gxs.php:303
 msgid "BWP Google XML Sitemaps Generator"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:282
+#: includes/class-bwp-simple-gxs.php:314
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:300
+#: includes/class-bwp-simple-gxs.php:335
+#: includes/class-bwp-simple-gxs.php:571
+#: includes/class-bwp-simple-gxs.php:573
+msgid "Notice"
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:335
+msgid "All logs have been cleared successfully!"
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:342
 msgid "What are Sitemaps?"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:301
+#: includes/class-bwp-simple-gxs.php:343
 msgid "Your sitemaps"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:302
+#: includes/class-bwp-simple-gxs.php:344
 msgid "Submit your sitemaps"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:303
+#: includes/class-bwp-simple-gxs.php:345
 msgid "Pinging search engines"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:304
+#: includes/class-bwp-simple-gxs.php:346
 msgid "Enable pinging functionality?"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:305
+#: includes/class-bwp-simple-gxs.php:347
 msgid "Enable pinging individual SE"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:306
+#: includes/class-bwp-simple-gxs.php:348
 msgid "Sitemap Generator's Log"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:307
+#: includes/class-bwp-simple-gxs.php:349
 msgid "Enable logging?"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:308
+#: includes/class-bwp-simple-gxs.php:350
 msgid "Enable debugging?"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:318
+#: includes/class-bwp-simple-gxs.php:360
 msgid "In its simplest form, a Sitemap is an XML file that lists URLs for a site along with additional metadata about each URL (when it was last updated, how often it usually changes, and how important it is, relative to other URLs in the site) so that search engines can more intelligently crawl the site &mdash; <em>http://www.sitemaps.org/</em>"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:319
+#: includes/class-bwp-simple-gxs.php:360
+msgid "This plugin helps you generate both Sitemap Index files as well as normal Sitemap files. A Sitemap Index, as its name suggests, is one kind of sitemaps that allows you to group multiple sitemap files inside it."
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:361
 msgid "<em>Basic information about all your sitemaps.</em>"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:320
+#: includes/class-bwp-simple-gxs.php:362
 msgid "<em>More detailed information about how your sitemaps are generated including <span style=\"color: #999999;\">notices</span>, <span style=\"color: #FF0000;\">errors</span> and <span style=\"color: #009900;\">success messages</span>.</em>"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:321
+#: includes/class-bwp-simple-gxs.php:363
 #, php-format
 msgid "<em>Submit your sitemapindex to major search engines like <a href=\"%s\" target=\"_blank\">Google</a>, <a href=\"%s\" target=\"_blank\">Yahoo</a>, <a href=\"%s\" target=\"_blank\">Bing</a> or <a href=\"%s\" target=\"_blank\">Ask</a>.</em>"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:322
+#: includes/class-bwp-simple-gxs.php:364
 msgid "<em>Now when you post something new to your blog, you can <em>ping</em> those search engines to tell them your blog just got updated. Pinging could be less effective than you think it is but you should enable such feature anyway.</em>"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:327
+#: includes/class-bwp-simple-gxs.php:369
 msgid "Selected SE below will be pinged when you publish new posts."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:328
+#: includes/class-bwp-simple-gxs.php:370
 msgid "No additional load is needed so enabling this is recommended."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:329
+#: includes/class-bwp-simple-gxs.php:371
 msgid "Minor errors will be printed on screen. Also, when debug is on, no caching is used, useful when you develop new modules."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:330
+#: includes/class-bwp-simple-gxs.php:372
 msgid "Google"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:331
+#: includes/class-bwp-simple-gxs.php:373
 #, php-format
 msgid "Yahoo &mdash; <a href=\"%s\" target=\"_blank\">important</a>"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:332
+#: includes/class-bwp-simple-gxs.php:374
 msgid "Bing"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:333
+#: includes/class-bwp-simple-gxs.php:375
 msgid "Ask.com"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:336
+#: includes/class-bwp-simple-gxs.php:378
 #, php-format
 msgid "After you activate this plugin, all sitemaps should be available right away. The next step is to submit the sitemapindex to major search engines. You only need the <strong>sitemapindex</strong> and nothing else, those search engines will automatically recognize other included sitemaps. You can read a small <a href=\"%s\">How-to</a> if you are interested."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:360
+#: includes/class-bwp-simple-gxs.php:406
 msgid "Output no more than"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:361
+#: includes/class-bwp-simple-gxs.php:407
 msgid "Default change frequency"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:362
+#: includes/class-bwp-simple-gxs.php:408
 msgid "Default priority"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:363
+#: includes/class-bwp-simple-gxs.php:409
 msgid "Minimum priority"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:364
-msgid "Add sitemapindex to WordPress's virtual robots.txt?"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:365
-msgid "In sitemapindex, include"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:366
+#: includes/class-bwp-simple-gxs.php:410
 msgid "Style your sitemaps with an XSLT stylesheet?"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:367
+#: includes/class-bwp-simple-gxs.php:411
 msgid "Custom XSLT stylesheet URL"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:368
+#: includes/class-bwp-simple-gxs.php:412
 msgid "Show build stats in sitemaps?"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:369
+#: includes/class-bwp-simple-gxs.php:413
 msgid "Enable credit?"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:370
+#: includes/class-bwp-simple-gxs.php:414
 msgid "Enable Gzip?"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:371
+#: includes/class-bwp-simple-gxs.php:415
+msgid "Sitemap Index Options"
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:416
+msgid "Automatically split post-based sitemaps into smaller sitemaps?"
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:417
+msgid "Add sitemapindex to individual blog's virtual robots.txt?"
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:418
+msgid "Add sitemapindex from all blogs within network to primary blog's virtual robots.txt?"
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:419
+msgid "In sitemapindex, include"
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:420
+msgid "Exclude following post types:"
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:421
+msgid "Exclude following taxonomies:"
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:422
 msgid "Module Options"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:372
+#: includes/class-bwp-simple-gxs.php:423
 msgid "Alternate module directory"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:373
+#: includes/class-bwp-simple-gxs.php:424
 msgid "Get no more than"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:374
+#: includes/class-bwp-simple-gxs.php:425
 msgid "Caching Options"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:375
+#: includes/class-bwp-simple-gxs.php:426
 msgid "Enable caching?"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:376
+#: includes/class-bwp-simple-gxs.php:427
 msgid "Enable auto cache re-generation?"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:377
+#: includes/class-bwp-simple-gxs.php:428
 msgid "Cached sitemaps will last for"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:378
+#: includes/class-bwp-simple-gxs.php:429
 msgid "Cached sitemaps are stored in (auto detected)"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:382
+#: includes/class-bwp-simple-gxs.php:433
 msgid "<em>Cache your sitemaps for better performance.</em>"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:383
+#: includes/class-bwp-simple-gxs.php:434
 #, php-format
 msgid "<em>This plugin uses modules to build sitemap data so it is recommended that you extend this plugin using modules rather than hooks. Some of the settings below only affect modules extending the base module class. Read more about using modules <a href=\"%s#using-modules\">here</a>.</em>"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:393
-#: includes/class-bwp-simple-gxs.php:399
+#: includes/class-bwp-simple-gxs.php:435
+msgid "<em>Here you can change some settings that affect the default Sitemap Index file.</em>"
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:447
+#: includes/class-bwp-simple-gxs.php:453
 msgid "second(s)"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:394
-#: includes/class-bwp-simple-gxs.php:400
+#: includes/class-bwp-simple-gxs.php:448
+#: includes/class-bwp-simple-gxs.php:454
 msgid "minute(s)"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:395
-#: includes/class-bwp-simple-gxs.php:401
+#: includes/class-bwp-simple-gxs.php:449
+#: includes/class-bwp-simple-gxs.php:455
 msgid "hour(s)"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:396
-#: includes/class-bwp-simple-gxs.php:402
+#: includes/class-bwp-simple-gxs.php:450
+#: includes/class-bwp-simple-gxs.php:456
 msgid "day(s)"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:409
-#: includes/class-bwp-simple-gxs.php:410
-#: includes/class-bwp-simple-gxs.php:411
+#: includes/class-bwp-simple-gxs.php:463
+#: includes/class-bwp-simple-gxs.php:464
+#: includes/class-bwp-simple-gxs.php:465
 msgid "read more"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:414
+#: includes/class-bwp-simple-gxs.php:468
 msgid "your sitemaps are generated and then cached to reduce unnecessary work."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:415
+#: includes/class-bwp-simple-gxs.php:469
 msgid "when a cached sitemap expires, this plugin will try to generate the cache again. If you disable this, remember to manually flush the cache once in a while."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:415
+#: includes/class-bwp-simple-gxs.php:469
 msgid "Flush the cache"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:416
+#: includes/class-bwp-simple-gxs.php:470
 msgid "tell you useful information such as build time, memory usage, SQL queries, etc."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:417
+#: includes/class-bwp-simple-gxs.php:471
 #, php-format
 msgid "make your sitemaps ~ 70% smaller."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:418
-msgid "static pages' sitemap."
+#: includes/class-bwp-simple-gxs.php:472
+#, php-format
+msgid "If you have like 50 blogs, 50 <code>Sitemap: http://example.com/sitemapindex.xml</code> entries will be added to your primary blog's robots.txt, i.e. <code>%s</code>."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:419
+#: includes/class-bwp-simple-gxs.php:473
 msgid "taxonomy archives' sitemaps, including custom taxonomies."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:420
-msgid "tag archives' sitemaps."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:421
+#: includes/class-bwp-simple-gxs.php:475
 msgid "date archives' sitemaps."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:422
+#: includes/class-bwp-simple-gxs.php:476
+msgid "external pages' sitemap. This allows you to add links to pages that do not belong to WordPress to the sitemap."
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:477
 msgid "some copyrighted info is also added to your sitemaps. Thanks!"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:423
-msgid "This will load the default stylesheet provided by this plugin. You can set a custom stylesheet below or filter the <code>bwp_gxs_xslt</code> hook."
+#: includes/class-bwp-simple-gxs.php:478
+msgid "This will load the default style sheet provided by this plugin. You can set a custom style sheet below or filter the <code>bwp_gxs_xslt</code> hook."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:424
+#: includes/class-bwp-simple-gxs.php:479
 #, php-format
 msgid "If you're on a Multi-site installation with Sub-domain enabled, each site will have its own robots.txt, sites in sub-directory will not. Please read the <a href=\"%s#toc-robots\" target=\"_blank\">documentation</a> for more info."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:427
-msgid "item(s) in one sitemap. Actually, 5000 would be more ideal. You can not go over 50,000, though."
+#: includes/class-bwp-simple-gxs.php:480
+msgid "e.g. post1.xml, post2.xml, etc. And each sitemap will contain"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:428
+#: includes/class-bwp-simple-gxs.php:483
+msgid "item(s) in one sitemap. You can not go over 50,000."
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:484
+msgid "item(s). Again , you can not go over 50,000."
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:485
 msgid "Input a full path to the directory where you put your own modules (e.g. <code>/home/mysite/public_html/gxs-modules/</code>), you can also override a built-in module by having a module with the same filename in this directory. A filter is also available if you would like to use PHP instead."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:429
+#: includes/class-bwp-simple-gxs.php:486
 msgid "The cache directory must be writable (i.e. CHMOD to 755 or 777)."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:430
+#: includes/class-bwp-simple-gxs.php:487
 msgid "item(s) in one SQL query. This helps you avoid running too heavy queries."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:433
+#: includes/class-bwp-simple-gxs.php:490
 msgid "expected to be an absolute URL, e.g. <code>http://example.com/my-stylesheet.xsl</code>. You must also have a style sheet for the sitemapindex that can be accessed through the above URL, e.g. <code>my-stylesheet.xsl</code> and <code>my-stylesheetindex.xsl</code>). Please leave blank if you do not wish to use."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:460
-#: includes/class-bwp-simple-gxs.php:462
-msgid "Notice"
+#: includes/class-bwp-simple-gxs.php:497
+#, php-format
+msgid "<em><strong>Note:</strong> If you encounter white page problem, please refer to the <a target=\"_blank\" href=\"%s\">FAQ section</a> to know how to change this limit appropriately to make this plugin work. Also note that, for post-based sitemaps, this option will be overridden by the limit you set in the Sitemap Index Options below.</em>"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:460
+#: includes/class-bwp-simple-gxs.php:571
 #, php-format
 msgid "<strong>%d</strong> cached sitemaps have been flushed successfully!"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:462
+#: includes/class-bwp-simple-gxs.php:573
 msgid "Could not delete any cached sitemaps. Please manually check the cache directory."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:514
+#: includes/class-bwp-simple-gxs.php:634
 msgid "Warning"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:514
+#: includes/class-bwp-simple-gxs.php:634
 msgid "Cache directory does not exist or is not writable. Please read more about directory permission <a href='http://www.zzee.com/solutions/unix-permissions.shtml'>here</a> (Unix)."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:568
+#: includes/class-bwp-simple-gxs.php:645
+msgid "Clear All Logs"
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:699
 msgid "(Debug is on)"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:581
+#: includes/class-bwp-simple-gxs.php:712
 msgid "<strong>BWP Google XML Sitemaps Error:</strong> "
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:581
+#: includes/class-bwp-simple-gxs.php:712
 msgid "BWP Google XML Sitemaps Error"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:604
+#: includes/class-bwp-simple-gxs.php:735
 #, php-format
 msgid "Nothing here... yet! Try submitting your <a href=\"%s\">sitemapindex</a> first!"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:604
+#: includes/class-bwp-simple-gxs.php:735
 msgid "No log yet!"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:614
+#: includes/class-bwp-simple-gxs.php:745
 #, php-format
 msgid "%s"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:614
+#: includes/class-bwp-simple-gxs.php:745
 #, php-format
 msgid "<a href=\"%s\" target=\"_blank\">%s</a> has been successfully built on <strong>%s</strong>."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:624
-#: includes/class-bwp-simple-gxs.php:627
+#: includes/class-bwp-simple-gxs.php:755
+#: includes/class-bwp-simple-gxs.php:758
 msgid "M j, Y : H:i:s"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:888
+#: includes/class-bwp-simple-gxs.php:1046
 #, php-format
 msgid "Requested module (<em>%s</em>) not found or not allowed."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:942
-#: includes/class-bwp-simple-gxs.php:962
+#: includes/class-bwp-simple-gxs.php:1104
+#: includes/class-bwp-simple-gxs.php:1124
 #, php-format
 msgid "Loaded a custom sub-module file: <strong>%s</strong>."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:951
+#: includes/class-bwp-simple-gxs.php:1113
 #, php-format
 msgid "Mapped sub-module file: <strong>%s</strong> is not available in both default and custom module directory. The plugin will now try loading the requested sub-module instead."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:970
+#: includes/class-bwp-simple-gxs.php:1132
 #, php-format
 msgid "Sub-module file: <strong>%s</strong> is not available in both default and custom module directory. The plugin will now try loading the parent module instead."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:983
+#: includes/class-bwp-simple-gxs.php:1145
 #, php-format
 msgid "Loaded a custom module file: <strong>%s</strong>."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:989
+#: includes/class-bwp-simple-gxs.php:1151
 #, php-format
 msgid "Could not load module file: <strong>%s</strong> in both default and custom module directory. Please recheck if that module file exists."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:1007
+#: includes/class-bwp-simple-gxs.php:1169
 #, php-format
 msgid "There is no class named <strong>%s</strong> in the module file <strong>%s</strong>."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:1016
+#: includes/class-bwp-simple-gxs.php:1178
 #, php-format
 msgid "Loaded a custom sitemapindex module file: <strong>%s</strong>."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:1036
+#: includes/class-bwp-simple-gxs.php:1198
 #, php-format
 msgid "Successfully generated <em>%s.xml</em> using module <em>%s</em>."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:1146
+#: includes/class-bwp-simple-gxs.php:1308
 #, php-format
 msgid "Pinged %s successfully!"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:1152
+#: includes/class-bwp-simple-gxs.php:1314
 #, php-format
 msgid "Ping limit for today to %s has been reached, sorry!"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:1180
+#: includes/class-bwp-simple-gxs.php:1342
 #, php-format
 msgid "<em>%s.xml</em> does not have any item. The plugin has fired a 404 header to the search engine that requests it. You should check the module that generates that sitemap (<em>%s.php</em>)."
 msgstr ""
 
-#: includes/bwp-option-page/includes/class-bwp-option-page.php:74
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:80
 msgid "Plugin Configurations"
 msgstr ""
 
-#: includes/bwp-option-page/includes/class-bwp-option-page.php:391
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:398
 msgid "Save Changes"
 msgstr ""
 
