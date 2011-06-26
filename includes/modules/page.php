@@ -19,12 +19,12 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE {
 	{
 		global $wpdb, $bwp_gxs, $post;
 
-		$sql_where = apply_filters('bwp_gxs_' . $bwp_gxs->module_data['module_key'] . '_where', '');
+		$sql_where = apply_filters('bwp_gxs_post_where', '', 'page');
 
 		$latest_post_query = '
-			SELECT * FROM ' . $wpdb->posts . "
-				WHERE post_status = 'publish' AND post_type = 'page' $sql_where" . '
-			ORDER BY post_modified DESC';
+			SELECT * FROM ' . $wpdb->posts . " wposts
+				WHERE wposts.post_status = 'publish' AND wposts.post_type = 'page' $sql_where" . '
+			ORDER BY wposts.post_modified DESC';
 
 		$latest_posts = $this->get_results($latest_post_query);
 

@@ -4,7 +4,7 @@ Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#contribu
 Tags: xml sitemaps, google xml sitemaps, sitemapindex, sitemap, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
 Tested up to: 3.1.3
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex and Multi-site.
 
@@ -97,7 +97,17 @@ Note that, however, some error messages will never show up. In such case, you mi
 
 **Q3: I got a HTTP parse error when I submit sitemap to Google Webmaster Tools, what should I do?**
 
-Please see the answer to the first question.
+Please see the answer to the first question, if it didn't work, and you are using a cache plugin such as W3 Total Cache, it is possible that such plugin wrongly assigns HTTP status headers to the sitemaps. For example, in W3 Total Cache 0.9.2.2 or possibly older, you can find in your `.htaccess` file this line of code:
+<pre>
+    RewriteCond %{REQUEST_URI} !(robots\.txt|sitemap(_index|[0-9]+)?\.xml(\.gz)?)
+    # if you can't find the above line, try searching for:
+    RewriteCond %{REQUEST_URI} !(robots\.txt|sitemap\.xml(\.gz)?)
+</pre>
+Please change it to:
+<pre>
+    RewriteCond %{REQUEST_URI} !(robots\.txt|(sitemapindex|[a-z0-9_-]+)\.xml)
+</pre>
+And BWP GXS's sitemaps will have correct HTTP status headers.
 
 **Q4: When I visit `http://example.com/sitemapindex.xml` , WordPress returns a 404 page. What should I do?**
 
@@ -133,6 +143,13 @@ That's the default behaviour of this plugin and I plan to improve it in future v
 4. The Configuration Page
 
 == Changelog ==
+
+= 1.1.1 =
+* Added an option for users to choose whether to use GMT for Last Modified time or not.
+* Improved the taxonomy module a bit.
+* Fixed a minor bug in the page module.
+* Fixed a bug that affects rewrite rules of custom post types and taxonomies in some cases. A big thanks to crowinck!
+* Other minor bug fixes and improvements.
 
 = 1.1.0 =
 

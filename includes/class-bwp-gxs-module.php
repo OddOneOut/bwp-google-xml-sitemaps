@@ -126,7 +126,11 @@ class BWP_GXS_MODULE {
 
 	function format_lastmod($lastmod)
 	{
-		return gmdate('Y-m-d\TH:i:s' . '+00:00', (int) $lastmod);
+		global $bwp_gxs;
+		if ('yes' == $bwp_gxs->options['enable_gmt'])
+			return gmdate('Y-m-d\TH:i:s' . '+00:00', (int) $lastmod);
+		else
+			return date('Y-m-d\TH:i:s' . '+00:00', (int) $lastmod);
 	}
 
 	function post_type_uses($post_type, $taxonomy_object)
@@ -161,6 +165,59 @@ class BWP_GXS_MODULE {
 			$lastmod[$i] = $this->data[$i][$column];
 		// Add $data as the last parameter, to sort by the common key
 		array_multisort($lastmod, SORT_DESC, $this->data);
+	}
+
+	/**
+	 * Get term links without using any SQL queries and the cache.
+	 */	
+	function get_term_link($term, $taxonomy = '')
+	{
+		global $wp_rewrite;
+
+		$taxonomy = $term->taxonomy;
+		$termlink = $wp_rewrite->get_extra_permastruct($taxonomy);
+		$slug = $term->slug;
+		$t = get_taxonomy($taxonomy);
+
+		if (empty($termlink))
+		{
+			if ('category' == $taxonomy)
+				$termlink = '?cat=' . $term->term_id;
+			elseif ($t->query_var)
+				$termlink = "?$t->query_var=$slug";
+			else
+				$termlink = "?taxonomy=$taxonomy&term=$slug";
+			$termlink = home_url($termlink);
+		}
+		else
+		{
+			if ($t->rewrite['hierarchical'] && !empty($term->parent))
+			{
+				$hierarchical_slugs = array();
+				$ancestors = get_ancestors($term->term_id, $taxonomy);
+				foreach ((array)$ancestors as $ancestor)
+				{
+					$ancestor_term = get_term($ancestor, $taxonomy);
+					$hierarchical_slugs[] = $ancestor_term->slug;
+				}
+				$hierarchical_slugs = array_reverse($hierarchical_slugs);
+				$hierarchical_slugs[] = $slug;
+				$termlink = str_replace("%$taxonomy%", implode('/', $hierarchical_slugs), $termlink);
+			}
+			else
+			{
+				$termlink = str_replace("%$taxonomy%", $slug, $termlink);
+			}
+			$termlink = home_url( user_trailingslashit($termlink, 'category') );
+		}
+
+		// Back Compat filters.
+		if ('post_tag' == $taxonomy)
+			$termlink = apply_filters('tag_link', $termlink, $term->term_id);
+		elseif ('category' == $taxonomy)
+			$termlink = apply_filters('category_link', $termlink, $term->term_id);
+
+		return apply_filters('term_link', $termlink, $term, $taxonomy);
 	}
 
 	function get_post_permalink($leavename = false, $sample = false)

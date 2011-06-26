@@ -61,7 +61,7 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE {
 			if (in_array($term->slug, $exclude_terms))
 				continue;
 			$data = $this->init_data($data);
-			$data['location'] = get_term_link($term, $requested);
+			$data['location'] = $this->get_term_link($term, $requested);
 			if (isset($term2post[$term->term_id]))
 			{
 				$post = $term2post[$term->term_id];
