@@ -50,7 +50,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	/**
 	 * Other properties
 	 */
-	var $post_types, $taxonomies, $terms, $cache_time, $module_data, $output, $num_log = 25;
+	var $post_types, $taxonomies, $terms, $cache_time, $module_data, $output, $output_num = 0, $num_log = 25;
 	var $templates = array(), $module_map = array();
 	var $sitemap_alias = array(), $use_permalink = true, $query_var_non_perma = '';
 	var $ping_per_day = 100, $timeout = 3;
@@ -61,7 +61,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.1.1')
+	function __construct($version = '1.1.2')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
@@ -125,7 +125,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 
 		$this->add_option_key('BWP_GXS_STATS', 'bwp_gxs_stats', __('Sitemap Statistics', 'bwp-simple-gxs'));
 		$this->add_option_key('BWP_GXS_OPTION_GENERATOR', 'bwp_gxs_generator', __('Sitemap Generator', 'bwp-simple-gxs'));
-		
+
 		define('BWP_GXS_LOG', 'bwp_gxs_log');
 		define('BWP_GXS_PING', 'bwp_gxs_ping_data');
 
@@ -1069,7 +1069,7 @@ if (!empty($page))
 				$file = $bwp_gxs_cache->get_cache_file();
 				// decompress the gz file if the server or script is already gzipping
 				// this is to avoid double compression
-				if ($this->is_gzipped())
+				if (self::is_gzipped())
 					readgzfile($file);
 				else
 					readfile($file);
@@ -1162,7 +1162,7 @@ if (!empty($page))
 					$success = $this->generate_sitemap($the_module->data);
 				else
 					$success = $this->generate_sitemap_index($the_module->data);
-				unset($the_module);
+				unset($the_module->data);
 			}
 			else
 				$this->elog(sprintf(__('There is no class named <strong>%s</strong> in the module file <strong>%s</strong>.', 'bwp-simple-gxs'), 'BWP_GXS_MODULE_' . strtoupper($module_key), $module_file), true);
@@ -1182,15 +1182,18 @@ if (!empty($page))
 			{
 				$the_module = new BWP_GXS_MODULE_INDEX($this->requested_modules);
 				$success = $this->generate_sitemap_index($the_module->data);
-				unset($the_module);
+				unset($the_module->data);
 			}
 		}
 
 		// Output succeeded
 		if (true == $success)
 		{
+			// Output additional stats
+			if ('yes' == $this->options['enable_stats'])
+				$this->sitemap_stats();
+			// Now cache the sitemap if we have to
 			if ('yes' == $this->options['enable_cache'] && true == $bwp_gxs_cache->cache_ok) 
-				// Now cache the sitemap if we have to
 				$bwp_gxs_cache->write_cache();
 			// Output the requested sitemap
 			$this->output_sitemap();
@@ -1205,16 +1208,27 @@ if (!empty($page))
 
 	function send_header($header = array())
 	{
-		// If debug is not on we try to clean all errors before sending new headers - @since 1.1.1
-		if ('yes' != $this->options['enable_debug'] && @ob_get_level())
+		global $bwp_gxs_ob_start, $bwp_gxs_ob_level, $bwp_gxs_gzipped;
+
+		// If debug is not enabled and gzip is not turned on in between, 
+		// we try to clean all errors before sending new headers - @since 1.1.2
+		$clean_ok = ((int) $bwp_gxs_gzipped == (int) self::is_gzipped()) ? true : false;
+		$ob_contents = '';
+		if ($bwp_gxs_ob_start && @ob_get_level())
 		{
-			$ob_level = @ob_get_level();
+			$ob_level = @ob_get_level() - $bwp_gxs_ob_level;
 			while ($ob_level > 0)
 			{
 				$ob_level -= 1;
-				@ob_end_clean();
+				$ob_contents .= ob_get_contents();
+				if ('yes' != $this->options['enable_debug'] && $clean_ok)
+					@ob_end_clean();
 			}
 		}
+
+		// If there are some contents but we can't clean them, show a friendly error
+		if (!empty($ob_contents) && (!$clean_ok || 'yes' == $this->options['enable_debug']))
+			wp_die(__('<strong>BWP Google XML Sitemap Message:</strong> Unexpected output (most of the time PHP errors) is preventing BWP GXS from showing any sitemap contents. Try disabling <code>WP_DEBUG</code> or this plugin\'s debug mode, whichever is on. All unexpected outputs should be shown just above this message. If you don\'t see any, contact me and I might be able to help.', 'bwp-simple-gxs'));
 
 		if (!empty($_SERVER['SERVER_SOFTWARE']) && strstr($_SERVER['SERVER_SOFTWARE'], 'Apache/2'))
 			header ('Cache-Control: no-cache, pre-check=0, post-check=0, max-age=0');
@@ -1249,9 +1263,9 @@ if (!empty($page))
 		return;
 	}
 
-	function is_gzipped()
+	public static function is_gzipped()
 	{
-		if (ini_get('zlib.output_compression') || ini_get('output_handler') == 'ob_gzhandler' || in_array('ob_gzhandler', ob_list_handlers()))
+		if (ini_get('zlib.output_compression') || ini_get('output_handler') == 'ob_gzhandler' || in_array('ob_gzhandler', @ob_list_handlers()))
 			return true;
 	}
 
@@ -1336,7 +1350,7 @@ if (!empty($page))
 	{
 		if ('yes' == $this->options['enable_gzip'])
 		{
-			$this->output = (!$this->is_gzipped()) ? gzencode($this->output, 6) : $this->output;
+			$this->output = (!self::is_gzipped()) ? gzencode($this->output, 6) : $this->output;
 			$this->send_header();
 			echo $this->output;
 		} 
@@ -1359,13 +1373,13 @@ if (!empty($page))
 			return true;
 	}
 
-	function sitemap_stats($output = array(), $type = '')
+	function sitemap_stats($type = '')
 	{
 		$time = timer_stop(0, 3);
 		$sql = get_num_queries() - $this->build_stats['query'];
 		$memory = size_format(memory_get_usage() - $this->build_stats['mem'], 2);
 		if (empty($type))
-			$this->output .= "\n" . sprintf($this->templates['stats'], $time, $memory, $sql, sizeof($output));
+			$this->output .= "\n" . sprintf($this->templates['stats'], $time, $memory, $sql, $this->output_num);
 		else
 			echo "\n" . sprintf($this->templates['stats_cached'], $time, $memory, $sql);
 	}
@@ -1404,25 +1418,22 @@ if (!empty($page))
 		$xml .= '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' . "\n\t" . 'xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9' . "\n\t" . 'http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"' . "\n\t" . 'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 		if ('yes' != $this->options['enable_xslt'] && 'yes' == $this->options['enable_credit'])
 			$xml .= $this->credit();
-		
+
 		if (!$this->check_output($output))
 			return false;
 
-		foreach ($output as $url)
+		foreach ($output as &$url)
 		{
 			$url['location'] = (!empty($url['location'])) ? $url['location'] : '';
 			$url['lastmod'] = (!empty($url['lastmod'])) ? $url['lastmod'] : '';
 			$url['freq'] = (isset($url['freq']) && in_array($url['freq'], $this->frequency)) ? $url['freq'] : $this->options['select_default_freq'];
 			$url['priority'] = (isset($url['priority']) && $url['priority'] <= 1 && $url['priority'] > 0) ? $url['priority'] : $this->options['select_default_pri'];
 			$xml .= $this->generate_url_item(htmlspecialchars($url['location']), $url['priority'], $url['freq'], $url['lastmod']);
-			unset($url);
+			$this->output_num++;
 		}
 
 		$xml .= "\n" . '</urlset>';
 		$this->output = $xml;
-
-		if ('yes' == $this->options['enable_stats'])
-			$this->sitemap_stats($output);
 
 		return true;
 	}
@@ -1438,19 +1449,16 @@ if (!empty($page))
 		if (!$this->check_output($output))
 			return false;
 
-		foreach ($output as $sitemap)
+		foreach ($output as &$sitemap)
 		{
 			$sitemap['location'] = (!empty($sitemap['location'])) ? $sitemap['location'] : '';
 			$sitemap['lastmod'] = (!empty($sitemap['lastmod'])) ? $sitemap['lastmod'] : '';
 			$xml .= $this->generate_sitemap_item(htmlspecialchars($sitemap['location']), $sitemap['lastmod']);
-			unset($sitemap);
+			$this->output_num++;
 		}
 
 		$xml .= "\n" . '</sitemapindex>';
 		$this->output = $xml;
-
-		if ('yes' == $this->options['enable_stats'])
-			$this->sitemap_stats($output);
 
 		return true;
 	}

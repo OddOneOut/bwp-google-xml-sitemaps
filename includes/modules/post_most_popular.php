@@ -14,7 +14,6 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE {
 		// $this->set_current_time() should always be called, it will allow you to use $this->now (the current Unix Timestamp).
 		$this->set_current_time();
 		$this->perma_struct = get_option('permalink_structure');
-		$this->post_type = get_post_type_object($this->requested);
 		// Always call this to start building data
 		// If you want to make use of SQL cycling (a method to reduce heavy queries), don't use build_data() like other modules.
 		// Just call it here and use function generate_data() to build actual data, just like below. Use SQL cycling when

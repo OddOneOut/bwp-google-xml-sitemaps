@@ -45,6 +45,9 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE {
 			LIMIT ' . (int) $limit;
 		$latest_posts = $wpdb->get_results($latest_post_query);
 
+		if (!isset($latest_posts) || !is_array($latest_posts) || 0 == sizeof($latest_posts))
+			return false;
+
 		// Build a temporary array holding post type and their latest modified date, sorted by post_modified
 		foreach ($latest_posts as $a_post)
 			$temp_posts[$a_post->post_type] = $this->format_lastmod(strtotime($a_post->post_modified));

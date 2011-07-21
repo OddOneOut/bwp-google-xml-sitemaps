@@ -3,8 +3,8 @@ Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#contributions
 Tags: xml sitemaps, google xml sitemaps, sitemapindex, sitemap, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
-Tested up to: 3.1.3
-Stable tag: 1.1.1
+Tested up to: 3.2
+Stable tag: 1.1.2
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex and Multi-site.
 
@@ -143,6 +143,11 @@ That's the default behaviour of this plugin and I plan to improve it in future v
 4. The Configuration Page
 
 == Changelog ==
+
+= 1.1.2 =
+* Fixed a possible memory leak.
+* Clear PHP errors in a friendlier way.
+* Other minor bug fixes and improvements.
 
 = 1.1.1 =
 * Added an option for users to choose whether to use GMT for Last Modified time or not.

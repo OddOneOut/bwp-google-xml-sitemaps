@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: BWP Google XML Sitemaps\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-26 14:48+0700\n"
-"PO-Revision-Date: 2011-06-26 14:48+0700\n"
+"POT-Creation-Date: 2011-07-21 22:14+0700\n"
+"PO-Revision-Date: 2011-07-21 22:14+0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -561,22 +561,26 @@ msgstr ""
 msgid "Loaded a custom sitemapindex module file: <strong>%s</strong>."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:1197
+#: includes/class-bwp-simple-gxs.php:1200
 #, php-format
 msgid "Successfully generated <em>%s.xml</em> using module <em>%s</em>."
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:1321
+#: includes/class-bwp-simple-gxs.php:1231
+msgid "<strong>BWP Google XML Sitemap Message:</strong> Unexpected output (most of the time PHP errors) is preventing BWP GXS from showing any sitemap contents. Try disabling <code>WP_DEBUG</code> or this plugin's debug mode, whichever is on. All unexpected outputs should be shown just above this message. If you don't see any, contact me and I might be able to help."
+msgstr ""
+
+#: includes/class-bwp-simple-gxs.php:1335
 #, php-format
 msgid "Pinged %s successfully!"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:1327
+#: includes/class-bwp-simple-gxs.php:1341
 #, php-format
 msgid "Ping limit for today to %s has been reached, sorry!"
 msgstr ""
 
-#: includes/class-bwp-simple-gxs.php:1355
+#: includes/class-bwp-simple-gxs.php:1369
 #, php-format
 msgid "<em>%s.xml</em> does not have any item. The plugin has fired a 404 header to the search engine that requests it. You should check the module that generates that sitemap (<em>%s.php</em>)."
 msgstr ""
