@@ -20,13 +20,14 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE {
 		$requested = $bwp_gxs->module_data['sub_module'];
 
 		$latest_post_query = '
-			SELECT MAX(wposts.post_modified) as post_modified, wposts.comment_count, wptax.term_id FROM ' . $wpdb->term_relationships . ' wprel
+			SELECT MAX(wposts.post_modified) as post_modified, MAX(wposts.comment_count) as comment_count, wptax.term_id FROM ' . $wpdb->term_relationships . ' wprel
 				INNER JOIN ' . $wpdb->posts . ' wposts
-					ON wprel.object_id = wposts.ID' . "
-					AND wposts.post_status = 'publish'" . '
+					ON wprel.object_id = wposts.ID
 				INNER JOIN ' . $wpdb->term_taxonomy . ' wptax
-					ON wprel.term_taxonomy_id = wptax.term_taxonomy_id
+					ON wprel.term_taxonomy_id = wptax.term_taxonomy_id' . "
+				WHERE wposts.post_status = 'publish'" . '
 					AND wptax.taxonomy = %s
+					AND wptax.count > 0
 			GROUP BY wptax.term_id
 			ORDER BY wptax.term_id DESC';
 		$latest_posts = $this->get_results($wpdb->prepare($latest_post_query, $requested));
@@ -42,6 +43,10 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE {
 					WHERE tt.taxonomy = %s AND tt.count > 0 
 						ORDER BY t.term_id DESC';
 		$terms = $this->get_results($wpdb->prepare($term_query, $requested));
+
+		if (!isset($terms) || 0 == sizeof($terms))
+			return false;
+
 		// Can be something like array('cat1', 'cat2', 'cat3')
 		$exclude_terms = (array) apply_filters('bwp_gxs_term_exclude', array(''), $requested);
 		// Build an array with term_id as key

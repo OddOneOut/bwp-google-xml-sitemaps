@@ -66,7 +66,9 @@ class BWP_GXS_CACHE {
 		global $bwp_gxs;
 		// Build cache file name, WPMS compatible
 		$file_name = 'gxs_' . md5($this->module . '_' . get_option('home'));
-		$file_name .= (true == $this->gzip) ? '.xml.gz' : '.xml';
+		// $file_name .= (true == $this->gzip) ? '.xml.gz' : '.xml';
+		// Use gz all the time to save space
+		$file_name .= '.xml.gz';
 		$this->cache_file = trailingslashit($this->cache_dir) . $file_name;
 		$this->cache_ok = true;
 
@@ -118,22 +120,11 @@ class BWP_GXS_CACHE {
 
 		$file = $this->cache_file;
 
-		if (true == $this->gzip)
-		{
-			$handle = @gzopen($file, 'wb');
-			@flock($handle, LOCK_EX);
-			@gzwrite($handle, $bwp_gxs->output);
-			@flock($handle, LOCK_UN);
-			@gzclose($handle);
-		} 
-		else 
-		{
-			$handle = @fopen($file, 'wb');
-			@flock($handle, LOCK_EX);
-			@fwrite($handle, $bwp_gxs->output);
-			@flock($handle, LOCK_UN);
-			@fclose($handle);
-		}
+		$handle = @gzopen($file, 'wb');
+		@flock($handle, LOCK_EX);
+		@gzwrite($handle, $bwp_gxs->output);
+		@flock($handle, LOCK_UN);
+		@gzclose($handle);
 
 		@umask(0000);
 		@chmod($file, 0666);

@@ -3,8 +3,8 @@ Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#contributions
 Tags: xml sitemaps, google xml sitemaps, sitemapindex, sitemap, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
-Tested up to: 3.2
-Stable tag: 1.1.2
+Tested up to: 3.2.1
+Stable tag: 1.1.3
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex and Multi-site.
 
@@ -143,6 +143,12 @@ That's the default behaviour of this plugin and I plan to improve it in future v
 4. The Configuration Page
 
 == Changelog ==
+
+= 1.1.3 =
+* Gzip is now off by default as it was causing issue on some hosts.
+* In previous versions, this plugin automatically cleaned unexpected outputs before sitemap generation so that sitemaps are generated properly. Such feature also causes issues on certain hosts. As of 1.1.3 this is an option in Generator tab, and it is enabled by default.
+* Fixed a possible bug in the taxonomy module that could cause a maximum execution time error. Thanks to David Killingsworth for reporting this bug!
+* Other minor bug fixes and improvements.
 
 = 1.1.2 =
 * Fixed a possible memory leak.

@@ -61,7 +61,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.1.2')
+	function __construct($version = '1.1.3')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
@@ -76,7 +76,8 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		$options = array(
 			'enable_cache' => 'yes',
 			'enable_cache_auto_gen'  => 'yes',
-			'enable_gzip' => 'yes',
+			'enable_gzip' => '',
+			'enable_php_clean' => 'yes',
 			'enable_xslt' => 'yes',
 			'enable_sitemap_date' => '',
 			'enable_sitemap_taxonomy' => 'yes',
@@ -119,7 +120,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			'input_sitemap_struct' => ''
 		);
 		// Super admin only options
-		$this->site_options = array('enable_robots', 'enable_global_robots', 'enable_log', 'enable_debug', 'enable_ping', 'enable_ping_google', 'enable_ping_yahoo', 'enable_ping_bing', 'enable_ping_ask', 'enable_gzip', 'enable_cache', 'enable_cache_auto_gen', 'input_cache_age', 'input_alt_module_dir', 'input_sql_limit', 'input_cache_dir', 'select_time_type');
+		$this->site_options = array('enable_robots', 'enable_global_robots', 'enable_log', 'enable_debug', 'enable_ping', 'enable_ping_google', 'enable_ping_yahoo', 'enable_ping_bing', 'enable_ping_ask', 'enable_gzip', 'enable_php_clean', 'enable_cache', 'enable_cache_auto_gen', 'input_cache_age', 'input_alt_module_dir', 'input_sql_limit', 'input_cache_dir', 'select_time_type');
 
 		$this->build_properties('BWP_GXS', 'bwp-simple-gxs', $options, 'BWP Google XML Sitemaps', dirname(dirname(__FILE__)) . '/bwp-simple-gxs.php', 'http://betterwp.net/wordpress-plugins/google-xml-sitemaps/', false);
 
@@ -401,7 +402,7 @@ if (!empty($page))
 		$bwp_option_page->set_current_tab(2);
 
 		$form = array(
-			'items'			=> array('input', 'select', 'select', 'select', 'checkbox', 'checkbox', 'input', 'checkbox', 'checkbox', 'checkbox', 'heading', 'checkbox', 'checkbox', 'checkbox', 'section', 'section', 'section', 'heading', 'input', 'input', 'heading', 'checkbox', 'checkbox', 'input', 'input'),
+			'items'			=> array('input', 'select', 'select', 'select', 'checkbox', 'checkbox', 'input', 'checkbox', 'checkbox', 'checkbox', 'checkbox', 'heading', 'checkbox', 'checkbox', 'checkbox', 'section', 'section', 'section', 'heading', 'input', 'input', 'heading', 'checkbox', 'checkbox', 'input', 'input'),
 			'item_labels'	=> array
 			(
 				__('Output no more than', 'bwp-simple-gxs'),
@@ -414,6 +415,7 @@ if (!empty($page))
 				__('Show build stats in sitemaps?', 'bwp-simple-gxs'),
 				__('Enable credit?', 'bwp-simple-gxs'),
 				__('Enable Gzip?', 'bwp-simple-gxs'),
+				__('Clean unexpected output before sitemap generation?', 'bwp-simple-gxs'),
 				__('Sitemap Index Options', 'bwp-simple-gxs'),
 				__('Automatically split post-based sitemaps into smaller sitemaps?', 'bwp-simple-gxs'),
 				__('Add sitemapindex to individual blog\'s virtual robots.txt?', 'bwp-simple-gxs'),
@@ -430,7 +432,7 @@ if (!empty($page))
 				__('Cached sitemaps will last for', 'bwp-simple-gxs'),
 				__('Cached sitemaps are stored in (auto detected)', 'bwp-simple-gxs')
 			),
-			'item_names'	=> array('input_item_limit', 'select_default_freq', 'select_default_pri', 'select_min_pri', 'cb14', 'cb10', 'input_custom_xslt', 'cb3', 'cb6', 'cb4', 'h5', 'cb12', 'cb11', 'cb5', 'sec1', 'sec2', 'sec3', 'h4', 'input_alt_module_dir', 'input_sql_limit', 'h3', 'cb1', 'cb2', 'input_cache_age', 'input_cache_dir'),
+			'item_names'	=> array('input_item_limit', 'select_default_freq', 'select_default_pri', 'select_min_pri', 'cb14', 'cb10', 'input_custom_xslt', 'cb3', 'cb6', 'cb4', 'cb15', 'h5', 'cb12', 'cb11', 'cb5', 'sec1', 'sec2', 'sec3', 'h4', 'input_alt_module_dir', 'input_sql_limit', 'h3', 'cb1', 'cb2', 'input_cache_age', 'input_cache_dir'),
 			'heading'			=> array(
 				'h3'	=> __('<em>Cache your sitemaps for better performance.</em>', 'bwp-simple-gxs'),
 				'h4'	=> sprintf(__('<em>This plugin uses modules to build sitemap data so it is recommended that you extend this plugin using modules rather than hooks. Some of the settings below only affect modules extending the base module class. Read more about using modules <a href="%s#using-modules">here</a>.</em>', 'bwp-simple-gxs'), $this->plugin_url),
@@ -470,7 +472,8 @@ if (!empty($page))
 				'cb1' => array(__('your sitemaps are generated and then cached to reduce unnecessary work.', 'bwp-simple-gxs') => 'enable_cache'),
 				'cb2' => array(__('when a cached sitemap expires, this plugin will try to generate the cache again. If you disable this, remember to manually flush the cache once in a while.', 'bwp-simple-gxs') . ' <input type="submit" class="button-secondary action" name="flush_cache" value="' . __('Flush the cache', 'bwp-simple-gxs') . '" />' => 'enable_cache_auto_gen'),
 				'cb3' => array(__('tell you useful information such as build time, memory usage, SQL queries, etc.', 'bwp-simple-gxs') => 'enable_stats'),
-				'cb4' => array(__('make your sitemaps ~ 70% smaller.', 'bwp-simple-gxs') => 'enable_gzip'),
+				'cb4' => array(__('make your sitemaps ~ 70% smaller. <strong>Important:</strong> If you see an error after enabling this, it\'s very likely that you have gzip active on your server already.', 'bwp-simple-gxs') => 'enable_gzip'),
+				'cb15' => array(__('only disable this when sitemaps appear in plain text.', 'bwp-simple-gxs') => 'enable_php_clean'),
 				'cb5' => array(sprintf(__("If you have like 50 blogs, 50 <code>Sitemap: http://example.com/sitemapindex.xml</code> entries will be added to your primary blog's robots.txt, i.e. <code>%s</code>.", 'bwp-simple-gxs'), get_site_option('home') . '/robots.txt') => 'enable_global_robots'),
 				'cb7' => array(__("taxonomy archives' sitemaps, including custom taxonomies.", 'bwp-simple-gxs') => 'enable_sitemap_taxonomy'),
 				//'cb8' => array(__("tag archives' sitemap.", 'bwp-simple-gxs') => 'enable_sitemap_tag'),
@@ -506,7 +509,7 @@ if (!empty($page))
 		$form['select']['select_default_freq'] = $changefreq;
 
 		// Get the options
-		$options = $bwp_option_page->get_options(array('input_item_limit', 'input_split_limit_post', 'input_alt_module_dir', 'input_cache_dir', 'input_sql_limit', 'input_cache_age', 'input_custom_xslt', 'input_exclude_post_type', 'input_exclude_taxonomy', 'enable_gmt', 'enable_robots', 'enable_xslt', 'enable_cache', 'enable_cache_auto_gen', 'enable_stats', 'enable_credit', 'enable_sitemap_split_post', 'enable_global_robots', 'enable_sitemap_date', 'enable_sitemap_taxonomy', 'enable_sitemap_external', 'enable_gzip', 'select_time_type', 'select_default_freq', 'select_default_pri', 'select_min_pri'), $this->options);
+		$options = $bwp_option_page->get_options(array('input_item_limit', 'input_split_limit_post', 'input_alt_module_dir', 'input_cache_dir', 'input_sql_limit', 'input_cache_age', 'input_custom_xslt', 'input_exclude_post_type', 'input_exclude_taxonomy', 'enable_gmt', 'enable_robots', 'enable_xslt', 'enable_cache', 'enable_cache_auto_gen', 'enable_stats', 'enable_credit', 'enable_sitemap_split_post', 'enable_global_robots', 'enable_sitemap_date', 'enable_sitemap_taxonomy', 'enable_sitemap_external', 'enable_gzip', 'enable_php_clean', 'select_time_type', 'select_default_freq', 'select_default_pri', 'select_min_pri'), $this->options);
 
 		// Get option from the database
 		$options = $bwp_option_page->get_db_options($page, $options);
@@ -617,13 +620,13 @@ if (!empty($page))
 
 		// [WPMS Compatible]
 		if (!$this->is_multisite() && $page == BWP_GXS_OPTION_GENERATOR)
-			$bwp_option_page->kill_html_fields($form, array(12));
+			$bwp_option_page->kill_html_fields($form, array(14));
 		if ($this->is_normal_admin())
 		{
 			switch ($page)
 			{
 				case BWP_GXS_OPTION_GENERATOR:
-					$bwp_option_page->kill_html_fields($form, array(9,12,13,17,18,19,20,21,22,23,24));
+					$bwp_option_page->kill_html_fields($form, array(9,10,13,14,18,19,20,21,22,23,24,25));
 				break;
 
 				case BWP_GXS_STATS:
@@ -1067,12 +1070,13 @@ if (!empty($page))
 			{
 				$this->send_header($bwp_gxs_cache->get_header());
 				$file = $bwp_gxs_cache->get_cache_file();
-				// decompress the gz file if the server or script is already gzipping
-				// this is to avoid double compression
-				if (self::is_gzipped())
-					readgzfile($file);
-				else
+				// Decompress the gz file only if the server or script is not already gzipping, and gzip is enabled
+				// This is to avoid double compression
+				if ('yes' == $this->options['enable_gzip'] && !self::is_gzipped())
 					readfile($file);
+				else
+					readgzfile($file);
+				// Get from cache successfully
 				$this->slog(sprintf(__('Successfully served a cached version of <em>%s.xml</em>.', 'bwp-simple-gxs'), $module_name), true);
 				$this->commit_logs();
 				exit;
@@ -1212,7 +1216,7 @@ if (!empty($page))
 
 		// If debug is not enabled and gzip is not turned on in between, 
 		// we try to clean all errors before sending new headers - @since 1.1.2
-		$clean_ok = ((int) $bwp_gxs_gzipped == (int) self::is_gzipped()) ? true : false;
+		$clean_ok = ((int) $bwp_gxs_gzipped == (int) self::is_gzipped() && 'yes' == $this->options['enable_php_clean']) ? true : false;
 		$ob_contents = '';
 		if ($bwp_gxs_ob_start && @ob_get_level())
 		{
@@ -1267,6 +1271,7 @@ if (!empty($page))
 	{
 		if (ini_get('zlib.output_compression') || ini_get('output_handler') == 'ob_gzhandler' || in_array('ob_gzhandler', @ob_list_handlers()))
 			return true;
+		return false;
 	}
 
 	function init_gzip() 
