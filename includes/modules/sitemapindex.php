@@ -80,7 +80,12 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE {
 			$data = $this->init_data($data);
 			$data['location'] = $this->get_xml_link($item[0]);
 			$passed = false; // Whether or not to pass data back at the end
-			if (isset($item[1]))
+			if ('site' == $item[0])
+			{
+				// Site home URL sitemap - @since 1.1.5
+				$data['lastmod'] = $prime_lastmod;
+			}
+			else if (isset($item[1]))
 			{
 				if (isset($item[1]['post']))
 				{

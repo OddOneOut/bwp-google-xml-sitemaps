@@ -277,6 +277,7 @@ class BWP_GXS_MODULE {
 
 		if ('post' != $post->post_type && !in_array($post->post_type, $custom_post_types))
 			return '';
+
 		if (in_array($post->post_type, $custom_post_types))
 		{
 			if ($this->post_type->hierarchical)
@@ -287,6 +288,7 @@ class BWP_GXS_MODULE {
 			else
 				return $this->get_post_permalink();
 		}
+
 		// In case module author doesn't initialize this variable
 		$permalink = (empty($this->perma_struct)) ? get_option('permalink_structure') : $this->perma_struct;
 		$permalink = apply_filters('pre_post_link', $permalink, $post, $leavename);
@@ -341,6 +343,7 @@ class BWP_GXS_MODULE {
 				$author,
 				$post->post_name
 			);
+
 			$permalink = home_url(str_replace($rewritecode, $rewritereplace, $permalink));
 			$permalink = user_trailingslashit($permalink, 'single');
 		}
@@ -361,6 +364,10 @@ class BWP_GXS_MODULE {
 
 		$start 		= (!empty($this->url_sofar)) ? $this->offset + (int) $this->url_sofar : $this->offset;
 		$end 		= (int) $bwp_gxs->options['input_sql_limit'];
+		$limit 		= (empty($this->part)) ? $bwp_gxs->options['input_item_limit'] : $bwp_gxs->options['input_split_limit_post'];
+		// If we exceed the actual limit, limit $end to the correct limit - @since 1.1.5
+		if ($this->url_sofar + $end > $limit)
+			$end = $limit - $this->url_sofar;
 		$query_str  = trim($query_str);
 		$query_str .= ' LIMIT ' . $start . ',' . $end;
 

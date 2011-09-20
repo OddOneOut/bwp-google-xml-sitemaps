@@ -61,7 +61,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.1.3')
+	function __construct($version = '1.1.5')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
@@ -83,6 +83,8 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			'enable_sitemap_taxonomy' => 'yes',
 			'enable_sitemap_external' => '',
 			'enable_sitemap_split_post' => 'yes',
+			'enable_sitemap_author' => '',
+			'enable_sitemap_site' => 'yes',
 			'enable_stats' => 'yes',
 			'enable_credit' => 'yes',
 			'enable_ping' => 'yes',
@@ -175,15 +177,15 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		{
 			$this->use_permalink = false;
 			$this->query_var_non_perma = apply_filters('bwp_gxs_query_var_non_perma', 'bwpsitemap');
-			$this->options['input_sitemap_url'] = get_option('home') . '/?' . $this->query_var_non_perma . '=sitemapindex';
-			$this->options['input_sitemap_struct'] = get_option('home') . '/?' . $this->query_var_non_perma . '=%s';
+			$this->options['input_sitemap_url'] = home_url() . '/?' . $this->query_var_non_perma . '=sitemapindex';
+			$this->options['input_sitemap_struct'] = home_url() . '/?' . $this->query_var_non_perma . '=%s';
 		}
 		else
 		{
 			// If user is using index.php in their permalink structure, we will have to include it also
 			$indexphp = (strpos($permalink, 'index.php') === false) ? '' : '/index.php';
-			$this->options['input_sitemap_url'] = get_option('home') . $indexphp . '/sitemapindex.xml';
-			$this->options['input_sitemap_struct'] = get_option('home') . $indexphp . '/%s.xml';
+			$this->options['input_sitemap_url'] = home_url() . $indexphp . '/sitemapindex.xml';
+			$this->options['input_sitemap_struct'] = home_url() . $indexphp . '/%s.xml';
 		}
 
 		// No more than 50000 URLs per sitemap
@@ -205,14 +207,23 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			$user_host = strtolower($_SERVER['HTTP_HOST']);
 			$blog_home = @parse_url(home_url());
 			$blog_host = strtolower($blog_home['host']);
-			$this->xslt = (!empty($this->options['input_custom_xslt'])) ? $this->options['input_custom_xslt'] : trailingslashit(plugins_url('', $this->plugin_file)) . 'xsl/bwp-sitemap.xsl';
+			$this->xslt = (!empty($this->options['input_custom_xslt'])) ? $this->options['input_custom_xslt'] : plugin_dir_url($this->plugin_file) . 'xsl/bwp-sitemap.xsl';
 			$this->xslt = ($user_host == $blog_host) ? $this->xslt : str_replace($blog_host, $user_host, $this->xslt);
-			$this->xslt = apply_filters('bwp_gxs_xslt', $this->xslt);
-			$this->xslt_index = (empty($this->xslt)) ? '' : str_replace('.xsl', 'index.xsl', $this->xslt);
+			add_action('init', array($this, 'late_init'));
 		}
 
 		// Some stats
 		$this->build_stats['mem'] = memory_get_usage();
+	}
+
+	function late_init()
+	{
+		$this->xslt = apply_filters('bwp_gxs_xslt', $this->xslt);
+		$this->xslt_index = (empty($this->xslt)) ? '' : str_replace('.xsl', 'index.xsl', $this->xslt);
+		// Update from 1.1.4 to 1.1.5
+		$db_options = get_option(BWP_GXS_OPTION_GENERATOR);
+		if (!isset($db_options['enable_sitemap_site']))
+			self::flush_rewrite_rules();
 	}
 
 	function enqueue_media()
@@ -233,32 +244,28 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		return $vars;
 	}
 
-	function check_rewrite_rules()
-	{
-		/*global $wp_rewrite;
-		// Check rewrite rules - @since 1.0.3
-		$rules = get_option('rewrite_rules');
-		if (!empty($rules) && is_array($rules) && (!isset($rules['sitemapindex\.xml$']) || !isset($rules['post\.xml$'])))
-		{
-			add_filter('rewrite_rules_array', array($this, 'insert_rewrite_rules'));
-			$wp_rewrite->flush_rules();
-		}*/
-	}
-
 	function insert_rewrite_rules($rules)
 	{
 		// More compatible with blogs that are set up with sitemap.xml - @since 1.0.1
 		$rewrite_rules = array(
 			'sitemap\.xml$' => 'index.php?gxs_module=sitemapindex',
 			'sitemapindex\.xml$' => 'index.php?gxs_module=sitemapindex',
+			'site\.xml$' => 'index.php?gxs_module=site',
 			'page\.xml$' => 'index.php?gxs_module=page',
 			'post\.xml$' => 'index.php?gxs_module=post',
+			'author\.xml$' => 'index.php?gxs_module=author',
 			'([a-z0-9]+)_([a-z0-9_-]+)\.xml$' => 'index.php?gxs_module=$matches[1]&gxs_sub_module=$matches[2]'
 		);
 		// @since 1.0.3
 		$custom_rules = apply_filters('bwp_gxs_rewrite_rules', array());
 		$rules = array_merge($custom_rules, $rewrite_rules, $rules);
 		return $rules;
+	}
+
+	private static function flush_rewrite_rules()
+	{
+		global $wp_rewrite;
+		$wp_rewrite->flush_rules();
 	}
 
 	function add_hooks()
@@ -282,7 +289,6 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	function install()
 	{
 		global $wp_rewrite;
-		add_filter('rewrite_rules_array', array($this, 'insert_rewrite_rules'));
 		$wp_rewrite->flush_rules();
 	}
 	
@@ -442,7 +448,9 @@ if (!empty($page))
 				array('checkbox', 'name' => 'cb7'),
 				//array('checkbox', 'name' => 'cb8'),
 				array('checkbox', 'name' => 'cb9'),
-				array('checkbox', 'name' => 'cb13')
+				array('checkbox', 'name' => 'cb13'),
+				array('checkbox', 'name' => 'cb16'),
+				array('checkbox', 'name' => 'cb17')
 			),
 			'sec2' => array(),
 			'sec3' => array(),
@@ -473,7 +481,7 @@ if (!empty($page))
 				'cb2' => array(__('when a cached sitemap expires, this plugin will try to generate the cache again. If you disable this, remember to manually flush the cache once in a while.', 'bwp-simple-gxs') . ' <input type="submit" class="button-secondary action" name="flush_cache" value="' . __('Flush the cache', 'bwp-simple-gxs') . '" />' => 'enable_cache_auto_gen'),
 				'cb3' => array(__('tell you useful information such as build time, memory usage, SQL queries, etc.', 'bwp-simple-gxs') => 'enable_stats'),
 				'cb4' => array(__('make your sitemaps ~ 70% smaller. <strong>Important:</strong> If you see an error after enabling this, it\'s very likely that you have gzip active on your server already.', 'bwp-simple-gxs') => 'enable_gzip'),
-				'cb15' => array(__('only disable this when sitemaps appear in plain text.', 'bwp-simple-gxs') => 'enable_php_clean'),
+				'cb15' => array(__('only disable this when sitemaps appear in either blank page or plain text.', 'bwp-simple-gxs') => 'enable_php_clean'),
 				'cb5' => array(sprintf(__("If you have like 50 blogs, 50 <code>Sitemap: http://example.com/sitemapindex.xml</code> entries will be added to your primary blog's robots.txt, i.e. <code>%s</code>.", 'bwp-simple-gxs'), get_site_option('home') . '/robots.txt') => 'enable_global_robots'),
 				'cb7' => array(__("taxonomy archives' sitemaps, including custom taxonomies.", 'bwp-simple-gxs') => 'enable_sitemap_taxonomy'),
 				//'cb8' => array(__("tag archives' sitemap.", 'bwp-simple-gxs') => 'enable_sitemap_tag'),
@@ -483,7 +491,9 @@ if (!empty($page))
 				'cb10' => array(__('This will load the default style sheet provided by this plugin. You can set a custom style sheet below or filter the <code>bwp_gxs_xslt</code> hook.', 'bwp-simple-gxs') => 'enable_xslt'),
 				'cb11' => array(sprintf(__('If you\'re on a Multi-site installation with Sub-domain enabled, each site will have its own robots.txt, sites in sub-directory will not. Please read the <a href="%s#toc-robots" target="_blank">documentation</a> for more info.', 'bwp-simple-gxs'), $this->plugin_url) => 'enable_robots'),
 				'cb12' => array(__('e.g. post1.xml, post2.xml, etc. And each sitemap will contain', 'bwp-simple-gxs') => 'enable_sitemap_split_post'),
-				'cb14' => array(__('If you disable this, make sure you also use <code>date_default_timezone_set</code> to correctly set up a timezone for your application.', 'bwp-simple-gxs') => 'enable_gmt')
+				'cb14' => array(__('If you disable this, make sure you also use <code>date_default_timezone_set</code> to correctly set up a timezone for your application.', 'bwp-simple-gxs') => 'enable_gmt'),
+				'cb16' => array(__('author archives\' sitemap.', 'bwp-simple-gxs') => 'enable_sitemap_author'),
+				'cb17' => array(__('site\'s home URL sitemap. For a multi-site installation of WordPress, this sitemap will list all domains within your network, not just the main blog. This also supports WPMU Domain Mapping plugin.', 'bwp-simple-gxs') => 'enable_sitemap_site')
 			),
 			'input'	=> array(
 				'input_item_limit' => array('size' => 5, 'label' => __('item(s) in one sitemap. You can not go over 50,000.', 'bwp-simple-gxs')),
@@ -509,7 +519,7 @@ if (!empty($page))
 		$form['select']['select_default_freq'] = $changefreq;
 
 		// Get the options
-		$options = $bwp_option_page->get_options(array('input_item_limit', 'input_split_limit_post', 'input_alt_module_dir', 'input_cache_dir', 'input_sql_limit', 'input_cache_age', 'input_custom_xslt', 'input_exclude_post_type', 'input_exclude_taxonomy', 'enable_gmt', 'enable_robots', 'enable_xslt', 'enable_cache', 'enable_cache_auto_gen', 'enable_stats', 'enable_credit', 'enable_sitemap_split_post', 'enable_global_robots', 'enable_sitemap_date', 'enable_sitemap_taxonomy', 'enable_sitemap_external', 'enable_gzip', 'enable_php_clean', 'select_time_type', 'select_default_freq', 'select_default_pri', 'select_min_pri'), $this->options);
+		$options = $bwp_option_page->get_options(array('input_item_limit', 'input_split_limit_post', 'input_alt_module_dir', 'input_cache_dir', 'input_sql_limit', 'input_cache_age', 'input_custom_xslt', 'input_exclude_post_type', 'input_exclude_taxonomy', 'enable_gmt', 'enable_robots', 'enable_xslt', 'enable_cache', 'enable_cache_auto_gen', 'enable_stats', 'enable_credit', 'enable_sitemap_split_post', 'enable_global_robots', 'enable_sitemap_date', 'enable_sitemap_taxonomy', 'enable_sitemap_external', 'enable_sitemap_author', 'enable_sitemap_site', 'enable_gzip', 'enable_php_clean', 'select_time_type', 'select_default_freq', 'select_default_pri', 'select_min_pri'), $this->options);
 
 		// Get option from the database
 		$options = $bwp_option_page->get_db_options($page, $options);
@@ -583,8 +593,10 @@ if (!empty($page))
 		if (isset($_POST['submit_' . $bwp_option_page->get_form_name()]) && isset($options) && is_array($options))
 		{
 			check_admin_referer($page);
+			$need_flushed = false;
 			foreach ($options as $key => &$option)
 			{
+				$pre_option = $option;
 				// Get rid of options that do not have a key
 				if (preg_match('/^[0-9]+$/i', $key))
 				{
@@ -610,9 +622,15 @@ if (!empty($page))
 						$option = trim(stripslashes($_POST[$key]));
 					else
 						$option = $this->options_default[$key];
+					// Mark that we need to flush rewrite rules
+					if (false !== strpos($key, 'enable_sitemap_') && $pre_option != $option)
+						$need_flushed = true;
 				}
 			}
 			update_option($page, $options);
+			// Flush rewrite rules if needed
+			if ($need_flushed)
+				self::flush_rewrite_rules();
 			// [WPMS Compatible]
 			if (!$this->is_normal_admin())
 				update_site_option($page, $options);
@@ -748,7 +766,7 @@ if (!empty($page))
 				$log_time[$key] = $row['time'];		
 			array_multisort($log_time, SORT_DESC, $logs);
 		}
-		$log_str = (!$sitemap) ? '<li class="clear" style="margin-top: 5px; line-height: 1.7;"><span style="float: left; margin-right: 5px;">%s &mdash;</span> <span style="color: #%s;">' . __('%s', 'bwp-simple-gxs') . '</span></li>' : '<span style="margin-top: 5px; display: inline-block;">' . __('<a href="%s" target="_blank">%s</a> has been successfully built on <strong>%s</strong>.', 'bwp-simple-gxs') . '</span><br />';
+		$log_str = (!$sitemap) ? '<li class="clear" style="margin-top: 5px; line-height: 1.7;"><span style="float: left; margin-right: 5px;">%s &mdash;</span> <span style="color: #%s;">%s</span></li>' : '<span style="margin-top: 5px; display: inline-block;">' . __('<a href="%s" target="_blank">%s</a> has been successfully built on <strong>%s</strong>.', 'bwp-simple-gxs') . '</span><br />';
 		$output = '<ul class="bwp-gxs-log">' . "\n";
 		foreach ($logs as $log)
 		{
@@ -761,12 +779,27 @@ if (!empty($page))
 				$output .= sprintf($log_str, date(__('M j, Y : H:i:s', 'bwp-simple-gxs'), $log['time']), $color, $log['log']) . "\n";
 			}
 			else
-				$output .= sprintf($log_str, sprintf($this->options['input_sitemap_struct'], $log['url']), $log['url'], date(__('M j, Y : H:i:s', 'bwp-simple-gxs'), $log['time'])) . "\n";
+			{
+				// @since 1.1.5 - check for mapped domain
+				global $wpdb, $blog_id;
+				if (!empty($wpdb->dmtable) && !empty($wpdb->blogs) && $this->is_multisite())
+				{
+					$mapped_domain = $wpdb->get_var($wpdb->prepare('
+							SELECT wpdm.domain as mapped_domain FROM ' . $wpdb->blogs . ' wpblogs
+								INNER JOIN ' . $wpdb->dmtable . ' wpdm
+									ON wpblogs.blog_id = wpdm.blog_id
+							WHERE wpblogs.public = 1 AND wpblogs.spam = 0 AND wpblogs.deleted = 0 AND wpblogs.blog_id = %d', $blog_id));
+				}
+				// Default to the main site's scheme
+				$home = @parse_url(home_url());
+				$sitemap_struct = (!empty($mapped_domain)) ? str_replace($home['host'], str_replace(array('http', 'https'), '', $mapped_domain), $this->options['input_sitemap_struct']) : $this->options['input_sitemap_struct'];
+				$output .= sprintf($log_str, sprintf($sitemap_struct, $log['url']), $log['url'], date(__('M j, Y : H:i:s', 'bwp-simple-gxs'), $log['time'])) . "\n";
+			}
 		}
-		
+
 		return $output . '</ul>' . "\n";
 	}
-	
+
 	function format_label($label)
 	{
 		return str_replace(' ', '_', strtolower($label));
@@ -795,7 +828,7 @@ if (!empty($page))
 					continue;
 				$scheme = is_ssl() ? 'https://' : 'http://';
 				$path = rtrim($blog->path, '/');
-				$output .= 'Sitemap: ' . str_replace(get_option('home'), $scheme . $blog->domain . $path, $this->options['input_sitemap_url']) . "\n";
+				$output .= 'Sitemap: ' . str_replace(home_url(), $scheme . $blog->domain . $path, $this->options['input_sitemap_url']) . "\n";
 			}
 			$output .= "\n";
 		}
@@ -881,6 +914,10 @@ if (!empty($page))
 	function allowed_modules()
 	{
 		$allowed_modules = array();
+		$this->allowed_modules = &$allowed_modules;
+		// Site home URL sitemap - @since 1.1.5
+		if ('yes' == $this->options['enable_sitemap_site'])
+			$this->add_module('site');
 		// Module exclusion list
 		$excluded_post_types = explode(',', $this->options['input_exclude_post_type']);
 		$excluded_taxonomies = explode(',', $this->options['input_exclude_taxonomy']);
@@ -906,13 +943,13 @@ if (!empty($page))
 				if (!in_array($taxonomy->name, $excluded_taxonomies))
 					$allowed_modules['taxonomy'][] = $taxonomy->name;
 		}
-		// Our global module list
-		$this->allowed_modules = $allowed_modules;
 		// Remove some unnecessary sitemap
 		$this->remove_module('post', 'attachment');
 		$this->remove_module('taxonomy', 'post_format');
 		$this->remove_module('taxonomy', 'nav_menu');
 		// Add / Remove modules based on users' preferences
+		if ('yes' == $this->options['enable_sitemap_author'])
+			$this->add_module('author');
 		if ('yes' == $this->options['enable_sitemap_external'])
 			$this->add_module('page', 'external');
 		// Hook for a custom module list
@@ -1029,7 +1066,7 @@ if (!empty($page))
 		{
 			if (!empty($sub_module))
 			{
-				if (in_array($sub_module, $allowed_modules[$module]) || (empty($module_virtual) && !empty($module_part)) || (!empty($module_virtual) && in_array($module_virtual, $allowed_modules[$module])))
+				if (in_array($sub_module, $allowed_modules[$module]) || (empty($module_virtual) && !empty($module_part) && in_array($module, $allowed_modules[$module])) || (!empty($module_virtual) && in_array($module_virtual, $allowed_modules[$module])))
 					$module_key = $module . '_' . $sub_module;
 				else
 					$module_key = '';
@@ -1052,13 +1089,17 @@ if (!empty($page))
 			$this->elog(sprintf(__('Requested module (<em>%s</em>) not found or not allowed.', 'bwp-simple-gxs'), $pre_module), true, 404);
 			$this->commit_logs();
 			// If debugging is not enabled, redirect to homepage
-			wp_redirect(get_option('home'));
+			wp_redirect(home_url());
 			exit;
 		}
 
 		// @since 1.0.1 - Start counting correct build time and queries
 		timer_start();
 		$this->build_stats['query'] = get_num_queries();
+
+		// Don't let other instrusive plugins mess up our permalnks - @since 1.1.4
+		remove_filter('post_link', 'syndication_permalink', 1, 3);
+		remove_filter('page_link', 'suffusion_unlink_page', 10, 2);
 
 		// If cache is enabled, we check the cache first
 		if ('yes' == $this->options['enable_cache'])
@@ -1330,24 +1371,31 @@ if (!empty($page))
 					$response = wp_remote_post($url, array('timeout' => $this->timeout));
 					if (is_wp_error($response))
 					{
-						$errno    = $response->get_error_code();
-						$errorstr = $response->get_error_message();
+						$errno		= $response->get_error_code();
+						$errorstr 	= $response->get_error_message();
 						$this->elog($errorstr);
-						$this->commit_logs();
 					}
-					else
+					else if (isset($response['response']))
 					{
-						$this->slog(sprintf(__('Pinged %s successfully!', 'bwp-simple-gxs'), ucfirst($key)));
-						$this->commit_logs();
+						$the_response = $response['response'];
+						if (empty($the_response['code']))
+							$this->elog(__('Unknown response code from search engines. Ping failed.', 'bwp-simple-gxs'));
+						else if (200 == (int) $the_response['code'])
+							$this->slog(sprintf(__('Pinged %s successfully!', 'bwp-simple-gxs'), ucfirst($key)));
+						else if (200 != (int) $the_response['code'])
+						{
+							$errno		= $the_response['code'];
+							$errorstr 	= $the_response['message'];
+							$this->elog(sprintf(__('Error %s from %s', 'bwp-simple-gxs'), $errno, ucfirst($key)) . ': ' . $errorstr);
+						}
 					}
 				}
 				else
-				{
 					$this->elog(sprintf(__('Ping limit for today to %s has been reached, sorry!', 'bwp-simple-gxs'), ucfirst($key)));
-					$this->commit_logs();
-				}
 			}
 		}
+		// Update statistics
+		$this->commit_logs();
 		update_option(BWP_GXS_PING, $ping_data);
 	}
 

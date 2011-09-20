@@ -1,10 +1,10 @@
 === Better WordPress Google XML Sitemaps (with sitemapindex and Multi-site support) ===
 Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#contributions
-Tags: xml sitemaps, google xml sitemaps, sitemapindex, sitemap, bing, google, msn, ask, multi-site, multisite
+Tags: xml sitemaps, xml sitemap, google xml sitemaps, sitemapindex, sitemap, sitemaps, seo, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 1.1.3
+Stable tag: 1.1.5
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex and Multi-site.
 
@@ -65,7 +65,7 @@ Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using
 
 == Frequently Asked Questions ==
 
-**Q1: I've got white pages and/or 'Content Encoding Error' error?**
+**Q1: I got white pages and/or 'Content Encoding Error' error?**
 
 1. PHP error messages from other plugins or from this plugin itself can cause this issue, especially when you have `WP_DEBUG` set to true (try commenting out this line in your `wp-config.php` file: `define(WP_DEBUG, true);`). Refer to the second question to know how to trace the actual errors.
 
@@ -78,7 +78,11 @@ Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using
 
 3. A caching plugin is interfering. Tell that caching plugin to ignore `.xml` file. For example, if you use WP Super Cache, on the Advanced Tab, scroll to the 'Accepted Filenames & Rejected URIs' section, and then in the first textarea, type in `\.xml`. Now save the changes and flush the all caches. See if that works for you.
 
-**Q2: I got the error 'Content Encoding Error', what should I do?**
+**Q2: I've tried the tips mentioned in Question #1, but still got white pages / plain text sitemaps?**
+
+It's very likely that you're enabling this option: 'Clean unexpected output before sitemap generation', try disabling it and your sitemaps will show up as expected.
+
+**Q3: I got the error 'Content Encoding Error', what should I do?**
 
 If you are enabling this plugin's debug mode and/or WP_DEBUG, this error is very normal because the module you use might print errors on pages, thus corrupting your xml sitemaps. To view the actual errors without being greeted with the 'Content Encoding Error', please follow these steps:
 
@@ -95,7 +99,11 @@ function output_sitemap()
 
 Note that, however, some error messages will never show up. In such case, you might want to locate the `error_log` file within your WordPress installation's root directory and read its contents for the error messages.
 
-**Q3: I got a HTTP parse error when I submit sitemap to Google Webmaster Tools, what should I do?**
+**Q4: I got an 'Error loading stylesheet' error, what should I do?**
+
+As of version 1.1.0 it is almost impossible for such error to show up, but if you set the site url and the home url differently (one with `www` and one isn't), you will see this error. Just choose to disable stylesheet in Generator tab or change your site / home URL settings.
+
+**Q5: I got a HTTP parse error when I submit sitemap to Google Webmaster Tools, what should I do?**
 
 Please see the answer to the first question, if it didn't work, and you are using a cache plugin such as W3 Total Cache, it is possible that such plugin wrongly assigns HTTP status headers to the sitemaps. For example, in W3 Total Cache 0.9.2.2 or possibly older, you can find in your `.htaccess` file this line of code:
 <pre>
@@ -109,27 +117,27 @@ Please change it to:
 </pre>
 And BWP GXS's sitemaps will have correct HTTP status headers.
 
-**Q4: When I visit `http://example.com/sitemapindex.xml` , WordPress returns a 404 page. What should I do?**
+**Q6: When I visit `http://example.com/sitemapindex.xml` , WordPress returns a 404 page. What should I do?**
 
 This might be caused by unflushed rewrite rules, which should have been flushed when you activate this plugin. You can try flushing them manually by visiting Settings -> Permalinks and then clicking Save Changes.
 
-**Q5: When I visit any sitemap, a plain (no theme) 404 error page appears, what's the problem?**
+**Q7: When I visit any sitemap, a plain (no theme) 404 error page appears, what's the problem?**
 
 You are possibly using some caching plugins that redirect all non-existent pages to 404 error page. Sitemaps produced by this plugin are virtual sitemaps so they will all be redirected. Just open the .htaccess file and change the `sitemap\.xml` part to something like `[a-z0-9-_]+\.xml` and you're fine.
 
-**Q6: I choose not to display certain sitemaps but the sitemapindex still displays the them?**
+**Q8: I choose not to display certain sitemaps but the sitemapindex still displays the them?**
 
 What you see is actually a cached version of the sitemapindex. You can wait for it to be refreshed automatically or simply choose to 'Flush the Cache'.
 
-**Q7: BWP GXS tells me that 'Requested module not found or not allowed', what should I do?**
+**Q9: BWP GXS tells me that 'Requested module not found or not allowed', what should I do?**
 
 This depends on specific situations and your current settings. Basically this means that the module you're trying to access has not been registered with BWP GXS or that module has been disabled but the cached sitemapindex still displays it  (which is related to the question above). For a list of default modules (or sitemaps), please read this section.
 
-**Q8: Is there anyway to rename sitemapindex.xml to sitemap.xml?**
+**Q10: Is there anyway to rename sitemapindex.xml to sitemap.xml?**
 
 You don't have to. A visit to `http://example.com/sitemap.xml` will show you the same sitemapindex. This is done to make BWP GXS more compatible with blogs that have lots of real `robots.txt`. Please note that you must remove any real sitemap.xml file in your website's root for this feature to work.
 
-**Q9: The custom sitemapindex I create seems to be nested inside the default sitemapindex, is that a bug or something?**
+**Q11: The custom sitemapindex I create seems to be nested inside the default sitemapindex, is that a bug or something?**
 
 That's the default behaviour of this plugin and I plan to improve it in future versions. Don't worry, though, you might see a red X next to your sitemapindex's name in Google's Webmaster Tools but that's only because you haven't submitted your custom sitemapindex. If you submit it separately, the error will go away :).
 
@@ -143,6 +151,20 @@ That's the default behaviour of this plugin and I plan to improve it in future v
 4. The Configuration Page
 
 == Changelog ==
+
+= 1.1.5 =
+* Added a new 'site.xml' sitemap that lists all blogs within your site / network. 
+* Added a new 'author.xml' sitemap that lists all authors contributing to a blog.
+* BWP GXS should now show the correct mapped sitemap URLs in the Statistics tab if you use WPMU Domain Mapping plugin.
+* Fixed a bug that causes duplicate items to appear on sitemap parts, thanks to Aahan for reporting!
+* Fixed a bug that causes the `post` post type sitemaps to show up even when disabled.
+
+**Note that the site sitemap will be enabled, while the author sitemap will be disabled by default.**
+
+= 1.1.4 =
+* Changed some options' descriptions.
+* Fixed a possible incompatibility issue with FeedWordPress plugin and Suffusion theme.
+* Other minor bug fixes.
 
 = 1.1.3 =
 * Gzip is now off by default as it was causing issue on some hosts.

@@ -72,6 +72,7 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE {
 					, ' . $wpdb->terms . ' wpterms
 					WHERE wptax.term_id = wpterms.term_id ' 
 					. "$sql_where" . '
+				GROUP BY wposts.ID
 				ORDER BY wposts.post_modified DESC';
 		else
 			$latest_post_query = '
@@ -81,7 +82,6 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE {
 		// Use $this->get_results instead of $wpdb->get_results, remember to escape your query
 		// using $wpdb->prepare or $wpdb->escape, @see http://codex.wordpress.org/Function_Reference/wpdb_Class
 		$latest_posts = $this->get_results($wpdb->prepare($latest_post_query, $requested));
-
 		// This check helps you stop the cycling sooner
 		// It basically means if there is nothing to loop through anymore we return false so the cycling can stop.
 		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
