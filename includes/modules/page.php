@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2011 Khang Minh <betterwp.net>
+ * Copyright (c) 2012 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  */
 
@@ -31,13 +31,20 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE {
 		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
 			return false;
 
+		$using_permalinks = $this->using_permalinks();
+
 		$data = array();
 		for ($i = 0; $i < sizeof($latest_posts); $i++)
 		{
 			$post = $latest_posts[$i];
 			$data = $this->init_data($data);
-			wp_cache_add($post->ID, $post, 'posts');
-			$data['location'] = get_permalink();
+			if ($using_permalinks && empty($post->post_name))
+				$data['location'] = '';
+			else
+			{
+				wp_cache_add($post->ID, $post, 'posts');
+				$data['location'] = get_permalink();
+			}
 			$data['lastmod'] = $this->format_lastmod(strtotime($post->post_modified));
 			$data['freq'] = $this->cal_frequency($post);
 			$data['priority'] = $this->cal_priority($post, $data['freq']);

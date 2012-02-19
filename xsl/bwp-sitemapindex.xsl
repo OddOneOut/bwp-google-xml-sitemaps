@@ -82,7 +82,7 @@
 					</table>
 				</div>
 				<div id="footer">
-					This plugin is (c) 2011 <a href="http://profiles.wordpress.org/users/OddOneOut/">Khang Minh</a> and is licensed under GPLv3.
+					This plugin is (c) 2012 <a href="http://profiles.wordpress.org/users/OddOneOut/">Khang Minh</a> and is licensed under GPLv3.
 				</div>
 			</body>
 		</html>

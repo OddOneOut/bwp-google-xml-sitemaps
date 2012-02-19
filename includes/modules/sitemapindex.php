@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2011 Khang Minh <betterwp.net>
+ * Copyright (c) 2012 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  */
 
@@ -118,6 +118,26 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE {
 						}
 						else
 							$data['lastmod'] = $this->format_lastmod(strtotime($the_post->post_modified));
+					}
+				}
+				else if (isset($item[1]['special']))
+				{
+					switch ($item[1]['special'])
+					{
+						case 'google_news':
+
+							$news_cats = explode(',', $bwp_gxs->options['select_news_cats']);
+							if (0 < sizeof($news_cats) && !empty($news_cats[0]))
+							{
+								$news_cat_action = $bwp_gxs->options['select_news_cat_action'];
+								$cat_query = ('inc' == $news_cat_action) ? 'category__in' : 'category__not_in';
+								$the_post = get_posts(array('posts_per_page' => 1, $cat_query => $news_cats));
+								$data['lastmod'] = $this->format_lastmod(strtotime($the_post[0]->post_modified));
+							}
+							else
+								$passed = true;
+
+						break;
 					}
 				}
 				else if (isset($item[1]['taxonomy']))

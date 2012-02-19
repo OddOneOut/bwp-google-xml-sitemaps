@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2011 Khang Minh <betterwp.net>
+ * Copyright (c) 2012 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE VERSION 3.0 OR LATER
  */
  
@@ -90,9 +90,14 @@ class BWP_FRAMEWORK {
 
 	/**
 	 * Other things
-	 */	
+	 */
 	var $wp_ver = '2.8';
 	var $php_ver = '5';
+
+	/**
+	 * Other special variables
+	 */
+	protected static $_menu_under_settings = false;
 
 	/**
 	 * Build base properties
@@ -239,8 +244,6 @@ class BWP_FRAMEWORK {
 	{
 		// Build constants
 		$this->build_constants();
-		// Build tabs
-		$this->build_tabs();
 		// Build options
 		$this->build_options();
 		// Load libraries
@@ -248,7 +251,7 @@ class BWP_FRAMEWORK {
 		// Add actions and filters		
 		$this->add_hooks();
 		// Enqueue needed media, conditionally
-		$this->enqueue_media();
+		add_action('init', array($this, 'enqueue_media'));
 		// Load other properties
 		$this->init_properties();
 		// Loaded everything for this plugin, now you can add other things to it, such as stylesheet, etc.
@@ -308,7 +311,15 @@ class BWP_FRAMEWORK {
 		{
 			$db_option = get_option($option);
 			if ($db_option && is_array($db_option))
+			{
+				// Remove option without a key
+				foreach ($db_option as $k => $o)
+				{
+					if (preg_match('/^[0-9]+$/i', $key))
+						unset($db_option[$key]);
+				}
 				$options = array_merge($options, $db_option);
+			}
 			unset($db_option);
 			// Also check for global options if in Multi-site
 			if ($this->is_multisite())
@@ -326,6 +337,7 @@ class BWP_FRAMEWORK {
 				}
 			}
 		}
+
 		$this->options = $options;
 	}
 
@@ -367,19 +379,24 @@ class BWP_FRAMEWORK {
 
 	function plugin_action_links($links, $file) 
 	{
+		$option_script = (self::$_menu_under_settings) ? 'options-general.php' : 'admin.php';
 		$option_keys = array_values($this->option_keys);
 		if ($file == plugin_basename($this->plugin_file))
-			$links[] = '<a href="admin.php?page=' . $option_keys[0] . '">' . __('Settings') . '</a>';
+			$links[] = '<a href="' . $option_script . '?page=' . $option_keys[0] . '">' . __('Settings') . '</a>';
 
 		return $links;
 	}
 
 	function init_admin()
 	{
+		self::$_menu_under_settings = apply_filters('bwp_menus_under_settings', false);
+
 		add_filter('plugin_action_links', array($this, 'plugin_action_links'), 10, 2);
 
 		if ($this->is_admin_page())
 		{
+			// Build tabs
+			$this->build_tabs();
 			// Load option page builder
 			if (!class_exists('BWP_OPTION_PAGE'))
 				require_once(dirname(__FILE__) . '/bwp-option-page/bwp-option-page.php');
@@ -387,6 +404,7 @@ class BWP_FRAMEWORK {
 			wp_enqueue_style('bwp-option-page',  plugin_dir_url($this->plugin_file) . 'includes/bwp-option-page/css/bwp-option-page.css', array(), '1.0.1');
 			wp_enqueue_script('bwp-paypal-js',  plugin_dir_url($this->plugin_file) . 'includes/bwp-option-page/js/paypal.js', array('jquery'));
 		}
+
 		$this->build_menus();
 	}
 
@@ -400,10 +418,11 @@ class BWP_FRAMEWORK {
 	
 	function build_tabs()
 	{
+		$option_script = (!self::$_menu_under_settings) ? 'admin.php' : 'options-general.php';
 		foreach ($this->option_pages as $key => $page)
 		{
 			$pagelink = (!empty($this->option_keys[$key])) ? $this->option_keys[$key] : $this->extra_option_keys[$key];
-			$this->form_tabs[$page] = get_option('siteurl') . '/wp-admin/admin.php?page=' . $pagelink;
+			$this->form_tabs[$page] = get_option('siteurl') . '/wp-admin/' . $option_script . '?page=' . $pagelink;
 		}
 	}
 

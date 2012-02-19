@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2011 Khang Minh <betterwp.net>
+ * Copyright (c) 2012 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  */
 
@@ -36,7 +36,7 @@ class BWP_GXS_MODULE_SITE extends BWP_GXS_MODULE {
 				// If domain mapping is active
 				$blog_sql = 'SELECT wpblogs.*, wpdm.domain as mapped_domain FROM ' . $wpdb->blogs . ' wpblogs
 								LEFT JOIN ' . $wpdb->dmtable . ' wpdm
-									ON wpblogs.blog_id = wpdm.blog_id
+									ON wpblogs.blog_id = wpdm.blog_id AND wpdm.active = 1
 							WHERE wpblogs.public = 1 AND wpblogs.spam = 0 AND wpblogs.deleted = 0';
 			else
 				// Otherwise

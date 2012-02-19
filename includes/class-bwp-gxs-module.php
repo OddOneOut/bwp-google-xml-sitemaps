@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2011 Khang Minh <betterwp.net>
+ * Copyright (c) 2012 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE VERSION 3.0 OR LATER
  */
 
@@ -23,6 +23,7 @@ class BWP_GXS_MODULE {
 	
 	var $comment_count = 0, $now, $offset = 0, $url_sofar = 0, $circle = 0;
 	var $perma_struct = '', $post_type = NULL;
+	var $limit = 0;
 
 	function __contruct()
 	{
@@ -59,13 +60,13 @@ class BWP_GXS_MODULE {
 		global $bwp_gxs;
 		
 		if (!$bwp_gxs->use_permalink)
-			return get_option('home') . '/?' . $bwp_gxs->query_var_non_perma . '=' . $slug;
+			return home_url() . '/?' . $bwp_gxs->query_var_non_perma . '=' . $slug;
 		else
 		{
 			$permalink = get_option('permalink_structure');
 			// If user is using index.php in their permalink structure, we will have to include it also
 			$indexphp = (strpos($permalink, 'index.php') === false) ? '' : '/index.php';
-			return get_option('home') . $indexphp . '/' . $slug . '.xml';
+			return home_url() . $indexphp . '/' . $slug . '.xml';
 		}
 	}
 
@@ -165,6 +166,12 @@ class BWP_GXS_MODULE {
 			$lastmod[$i] = $this->data[$i][$column];
 		// Add $data as the last parameter, to sort by the common key
 		array_multisort($lastmod, SORT_DESC, $this->data);
+	}
+
+	function using_permalinks()
+	{
+		$perma_struct = get_option('permalink_structure');
+		return (!empty($perma_struct));
 	}
 
 	/**
@@ -320,14 +327,13 @@ class BWP_GXS_MODULE {
 					$category = is_wp_error($default_category) ? '' : $default_category->slug;
 				}
 			}
-
 			$author = '';
 			if (strpos($permalink, '%author%') !== false)
 			{
 				$authordata = get_userdata($post->post_author);
 				$author = $authordata->user_nicename;
 			}
-
+			
 			$date = explode(' ', date('Y m d H i s', $unixtime));
 			$rewritereplace =
 			array(
@@ -364,7 +370,7 @@ class BWP_GXS_MODULE {
 
 		$start 		= (!empty($this->url_sofar)) ? $this->offset + (int) $this->url_sofar : $this->offset;
 		$end 		= (int) $bwp_gxs->options['input_sql_limit'];
-		$limit 		= (empty($this->part)) ? $bwp_gxs->options['input_item_limit'] : $bwp_gxs->options['input_split_limit_post'];
+		$limit 		= $this->limit;
 		// If we exceed the actual limit, limit $end to the correct limit - @since 1.1.5
 		if ($this->url_sofar + $end > $limit)
 			$end = $limit - $this->url_sofar;
@@ -407,10 +413,12 @@ class BWP_GXS_MODULE {
 		global $bwp_gxs;
 
 		// Use part limit or global item limit - @since 1.1.0
-		$limit = (empty($this->part)) ? $bwp_gxs->options['input_item_limit'] : $bwp_gxs->options['input_split_limit_post'];
+		$this->limit = (empty($this->part)) ? $bwp_gxs->options['input_item_limit'] : $bwp_gxs->options['input_split_limit_post'];
+		// If this is a Google News sitemap, limit is 1000
+		$this->limit = ('news' == $this->type) ? 1000 : $this->limit;
 		$this->offset = (empty($this->part)) ? 0 : ($this->part - 1) * $bwp_gxs->options['input_split_limit_post'];
 
-		while ($this->url_sofar < $limit && false != $this->generate_data())
+		while ($this->url_sofar < $this->limit && false != $this->generate_data())
 			$this->url_sofar = sizeof($this->data);
 
 		// Sort the data by preference

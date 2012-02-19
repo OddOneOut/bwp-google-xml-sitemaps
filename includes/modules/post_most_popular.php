@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2011 Khang Minh <betterwp.net>
+ * Copyright (c) 2012 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  * 
  * This is a sample custom module. Some if about the module developer here would be nice!
@@ -47,6 +47,8 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE {
 		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
 			return false;
 
+		$using_permalinks = $this->using_permalinks();
+
 		// Always init your $data
 		$data = array();
 		for ($i = 0; $i < sizeof($latest_posts); $i++)
@@ -54,7 +56,10 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE {
 			$post = $latest_posts[$i];
 			// Init your $data with the previous item's data. This makes sure no item is mal-formed.
 			$data = $this->init_data($data);
-			$data['location'] = get_permalink();
+			if ($using_permalinks && empty($post->post_name))
+				$data['location'] = '';
+			else
+				$data['location'] = get_permalink();
 			$data['lastmod'] = $this->format_lastmod(strtotime($post->post_modified));
 			$data['freq'] = $this->cal_frequency($post);
 			$data['priority'] = $this->cal_priority($post, $data['freq']);

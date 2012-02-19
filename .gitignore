@@ -1,0 +1,5 @@
+*.dat
+*.inc
+*.xml.gz
+*.xml
+cache/

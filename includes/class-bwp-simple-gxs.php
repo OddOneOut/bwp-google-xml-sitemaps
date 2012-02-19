@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2011 Khang Minh <betterwp.net>
+ * Copyright (c) 2012 Khang Minh <betterwp.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,10 +58,13 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	// @since 1.0.1
 	var $build_data = array('time', 'mem', 'query');
 
+	// @since 1.2.0
+	private $_ping_sitemap = 'sitemapindex';
+
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.1.5')
+	function __construct($version = '1.2.0')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
@@ -71,7 +74,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		// Basic version checking
 		if (!$this->check_required_versions())
 			return;
-		
+
 		// Default options
 		$options = array(
 			'enable_cache' => 'yes',
@@ -89,7 +92,6 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			'enable_credit' => 'yes',
 			'enable_ping' => 'yes',
 			'enable_ping_google' => 'yes',
-			'enable_ping_yahoo' => 'yes',
 			'enable_ping_bing' => 'yes',
 			'enable_ping_ask' => '',
 			'enable_log' => 'yes',
@@ -97,6 +99,16 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			'enable_robots' => 'yes',
 			'enable_global_robots' => '',
 			'enable_gmt' => 'yes',
+			// Google news options
+			'enable_news_sitemap' => '',
+			'enable_news_keywords' => '',
+			'enable_news_ping' => '',
+			'select_news_lang' => 'en',
+			/*'select_news_keyword_type' => 'cat',*/
+			'select_news_cat_action' => 'inc',
+			'select_news_cats' => '',
+			'input_news_genres' => array(),
+			// End of Google news options
 			'input_exclude_post_type' => '',
 			'input_exclude_taxonomy' => 'post_tag',
 			'input_cache_age' => 1,
@@ -114,20 +126,20 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			'select_min_pri' => 0.1,
 			'input_cache_dir' => '',
 			'input_ping' => array(
-				'google' => 'http://www.google.com/webmasters/sitemaps/ping?sitemap=%s', 
-				'yahoo' => 'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=%s', 
+				'google' => 'http://www.google.com/webmasters/sitemaps/ping?sitemap=%s',
 				'bing' => 'http://www.bing.com/webmaster/ping.aspx?siteMap=%s', 
 				'ask' => 'http://submissions.ask.com/ping?sitemap=%s'),
 			'input_sitemap_url' => '',
 			'input_sitemap_struct' => ''
 		);
 		// Super admin only options
-		$this->site_options = array('enable_robots', 'enable_global_robots', 'enable_log', 'enable_debug', 'enable_ping', 'enable_ping_google', 'enable_ping_yahoo', 'enable_ping_bing', 'enable_ping_ask', 'enable_gzip', 'enable_php_clean', 'enable_cache', 'enable_cache_auto_gen', 'input_cache_age', 'input_alt_module_dir', 'input_sql_limit', 'input_cache_dir', 'select_time_type');
+		$this->site_options = array('enable_robots', 'enable_global_robots', 'enable_log', 'enable_debug', 'enable_ping', 'enable_ping_google', 'enable_ping_bing', 'enable_ping_ask', 'enable_gzip', 'enable_php_clean', 'enable_cache', 'enable_cache_auto_gen', 'input_cache_age', 'input_alt_module_dir', 'input_sql_limit', 'input_cache_dir', 'select_time_type');
 
 		$this->build_properties('BWP_GXS', 'bwp-simple-gxs', $options, 'BWP Google XML Sitemaps', dirname(dirname(__FILE__)) . '/bwp-simple-gxs.php', 'http://betterwp.net/wordpress-plugins/google-xml-sitemaps/', false);
 
 		$this->add_option_key('BWP_GXS_STATS', 'bwp_gxs_stats', __('Sitemap Statistics', 'bwp-simple-gxs'));
 		$this->add_option_key('BWP_GXS_OPTION_GENERATOR', 'bwp_gxs_generator', __('Sitemap Generator', 'bwp-simple-gxs'));
+		$this->add_option_key('BWP_GXS_GOOGLE_NEWS', 'bwp_gxs_google_news', __('News Sitemap', 'bwp-simple-gxs'));
 
 		define('BWP_GXS_LOG', 'bwp_gxs_log');
 		define('BWP_GXS_PING', 'bwp_gxs_ping_data');
@@ -140,11 +152,23 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		$this->module_directory = plugin_dir_path($this->plugin_file) . 'includes/modules/';
 
 		$this->templates = array(
+			// Sitemap index
 			'sitemap' 		=> "\n\t" . '<sitemap>' . "\n\t\t" . '<loc>%s</loc>%s' . "\n\t" . '</sitemap>',
+			// Normal sitemap
 			'url' 			=> "\n\t" . '<url>' . "\n\t\t" . '<loc>%1$s</loc>%2$s%3$s%4$s' . "\n\t" . '</url>',
 			'lastmod' 		=> "\n\t\t" . '<lastmod>%s</lastmod>',
 			'changefreq' 	=> "\n\t\t" . '<changefreq>%s</changefreq>',
 			'priority' 		=> "\n\t\t" . '<priority>%.1f</priority>',
+			// Google News Sitemap
+			'news' 			=> "\n\t" . '<url>' . "\n\t\t" . '<loc>%1$s</loc>' . "\n\t\t" . '<news:news>%2$s%3$s%4$s%5$s%6$s' . "\n\t\t" . '</news:news>' . "\n\t" . '</url>',
+			'news_publication' => "\n\t\t\t" . '<news:publication>%1$s%2$s</news:publication>',
+			'news_name'		=> "\n\t\t\t\t" . '<news:name>%s</news:name>',
+			'news_language' => "\n\t\t\t\t" . '<news:language>%s</news:language>',
+			'news_genres'	=> "\n\t\t\t" . '<news:genres>%s</news:genres>',
+			'news_pub_date'	=> "\n\t\t\t" . '<news:publication_date>%s</news:publication_date>',
+			'news_title'	=> "\n\t\t\t" . '<news:title>%s</news:title>',
+			'news_keywords' => "\n\t\t\t" . '<news:keywords>%s</news:keywords>',
+			// Misc			
 			'xslt_style' 	=> '',
 			'stats'	=> "\n" . '<!-- ' . __('This sitemap was originally generated in %s second(s) (Memory usage: %s) - %s queries - %s URL(s) listed', 'bwp-simple-gxs') . ' -->'
 			/*'stats_cached'	=> "\n" . '<!-- ' . __('Served from cache in %s second(s) (Memory usage: %s) - %s queries - %s URL(s) listed', 'bwp-simple-gxs') . ' -->'*/
@@ -209,7 +233,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			$blog_host = strtolower($blog_home['host']);
 			$this->xslt = (!empty($this->options['input_custom_xslt'])) ? $this->options['input_custom_xslt'] : plugin_dir_url($this->plugin_file) . 'xsl/bwp-sitemap.xsl';
 			$this->xslt = ($user_host == $blog_host) ? $this->xslt : str_replace($blog_host, $user_host, $this->xslt);
-			add_action('init', array($this, 'late_init'));
+			add_action('init', array($this, 'late_init'), 99999);
 		}
 
 		// Some stats
@@ -273,12 +297,23 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		add_filter('rewrite_rules_array', array($this, 'insert_rewrite_rules'));
 		add_filter('query_vars', array($this, 'insert_query_vars'));
 		add_action('parse_request', array($this, 'request_sitemap'));
+		// @see `wp_transition_post_status` in wp-includes/post.php
 		if ('yes' == $this->options['enable_ping'])
 		{
+			add_action('auto-draft_to_publish', array($this, 'ping'), 1000);
 			add_action('draft_to_publish', array($this, 'ping'), 1000);
 			add_action('new_to_publish', array($this, 'ping'), 1000);
 			add_action('pending_to_publish', array($this, 'ping'), 1000);
 			add_action('future_to_publish', array($this, 'ping'), 1000);
+		}
+		// Enable ping for news sitemap
+		if ('yes' == $this->options['enable_news_ping'])
+		{
+			add_action('auto-draft_to_publish', array($this, 'ping_google_news'), 1000);
+			add_action('draft_to_publish', array($this, 'ping_google_news'), 1000);
+			add_action('new_to_publish', array($this, 'ping_google_news'), 1000);
+			add_action('pending_to_publish', array($this, 'ping_google_news'), 1000);
+			add_action('future_to_publish', array($this, 'ping_google_news'), 1000);
 		}
 		if ('yes' == $this->options['enable_robots'])
 		{
@@ -305,10 +340,20 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	 */
 	function build_menus()
 	{
-		add_menu_page(__('BWP Google XML Sitemaps', 'bwp-simple-gxs'), 'BWP GXS', BWP_GXS_CAPABILITY, BWP_GXS_STATS, array($this, 'build_option_pages'), BWP_GXS_IMAGES . '/icon_menu.png');
-		// Sub menus
-		add_submenu_page(BWP_GXS_STATS, __('BWP Google XML Sitemaps Statistics', 'bwp-simple-gxs'), __('Sitemap Statistics', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_STATS, array($this, 'build_option_pages'));
-		add_submenu_page(BWP_GXS_STATS, __('BWP Google XML Sitemaps Generator', 'bwp-simple-gxs'), __('Sitemap Generator', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_OPTION_GENERATOR, array($this, 'build_option_pages'));
+		// Give BWP GXS its own menus - create plugin's own menu if allowed
+		if (!empty(self::$_menu_under_settings))
+		{
+			add_options_page(__('BWP Google XML Sitemaps Statistics', 'bwp-simple-gxs'), __('Sitemap Statistics', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_STATS, array($this, 'build_option_pages'));
+			add_options_page(__('BWP Google XML Sitemaps Generator', 'bwp-simple-gxs'), __('Sitemap Generator', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_OPTION_GENERATOR, array($this, 'build_option_pages'));
+			add_options_page(__('BWP Google News XML Sitemap', 'bwp-simple-gxs'), __('News Sitemap', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_GOOGLE_NEWS, array($this, 'build_option_pages'));
+		}
+		else
+		{
+			add_menu_page(__('BWP Google XML Sitemaps', 'bwp-simple-gxs'), 'BWP GXS', BWP_GXS_CAPABILITY, BWP_GXS_STATS, array($this, 'build_option_pages'), BWP_GXS_IMAGES . '/icon_menu.png');
+			add_submenu_page(BWP_GXS_STATS, __('BWP Google XML Sitemaps Statistics', 'bwp-simple-gxs'), __('Sitemap Statistics', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_STATS, array($this, 'build_option_pages'));
+			add_submenu_page(BWP_GXS_STATS, __('BWP Google XML Sitemaps Generator', 'bwp-simple-gxs'), __('Sitemap Generator', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_OPTION_GENERATOR, array($this, 'build_option_pages'));
+			add_submenu_page(BWP_GXS_STATS, __('BWP Google News XML Sitemap', 'bwp-simple-gxs'), __('News Sitemap', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_GOOGLE_NEWS, array($this, 'build_option_pages'));
+		}
 	}
 
 	/**
@@ -360,7 +405,6 @@ if (!empty($page))
 			'item_names'	=> array('h1', 'h2', 'h4', 'h5', 'cb1', 'sec1', 'h3', 'cb2', 'cb3'),
 			'sec1' => array(
 					array('checkbox', 'name' => 'cb4'),
-					array('checkbox', 'name' => 'cb5'),
 					array('checkbox', 'name' => 'cb6'),
 					array('checkbox', 'name' => 'cb7')
 			),
@@ -368,7 +412,7 @@ if (!empty($page))
 				'h1'	=> __('In its simplest form, a Sitemap is an XML file that lists URLs for a site along with additional metadata about each URL (when it was last updated, how often it usually changes, and how important it is, relative to other URLs in the site) so that search engines can more intelligently crawl the site &mdash; <em>http://www.sitemaps.org/</em>', 'bwp-simple-gxs') . '<br /><br />' . __('This plugin helps you generate both Sitemap Index files as well as normal Sitemap files. A Sitemap Index, as its name suggests, is one kind of sitemaps that allows you to group multiple sitemap files inside it.', 'bwp-simple-gxs'),
 				'h2'	=> __('<em>Basic information about all your sitemaps.</em>', 'bwp-simple-gxs'),
 				'h3'	=> __('<em>More detailed information about how your sitemaps are generated including <span style="color: #999999;">notices</span>, <span style="color: #FF0000;">errors</span> and <span style="color: #009900;">success messages</span>.</em>', 'bwp-simple-gxs'),
-				'h4'	=> sprintf(__('<em>Submit your sitemapindex to major search engines like <a href="%s" target="_blank">Google</a>, <a href="%s" target="_blank">Yahoo</a>, <a href="%s" target="_blank">Bing</a> or <a href="%s" target="_blank">Ask</a>.</em>', 'bwp-simple-gxs'), 'https://www.google.com/webmasters/tools/home?hl=en', 'https://siteexplorer.search.yahoo.com/mysites', 'http://www.bing.com/toolbox/webmasters/', 'http://about.ask.com/en/docs/about/webmasters.shtml#22'),
+				'h4'	=> sprintf(__('<em>Submit your sitemapindex to major search engines like <a href="%s" target="_blank">Google</a>, <a href="%s" target="_blank">Bing</a> or <a href="%s" target="_blank">Ask</a>.</em>', 'bwp-simple-gxs'), 'https://www.google.com/webmasters/tools/home?hl=en', 'http://www.bing.com/toolbox/webmasters/', 'http://about.ask.com/en/docs/about/webmasters.shtml#22'),
 				'h5'	=> __('<em>Now when you post something new to your blog, you can <em>ping</em> those search engines to tell them your blog just got updated. Pinging could be less effective than you think it is but you should enable such feature anyway.</em>', 'bwp-simple-gxs')
 			),
 			'input'		=> array(
@@ -378,7 +422,6 @@ if (!empty($page))
 				'cb2' => array(__('No additional load is needed so enabling this is recommended.', 'bwp-simple-gxs') => 'enable_log'),
 				'cb3' => array(__('Minor errors will be printed on screen. Also, when debug is on, no caching is used, useful when you develop new modules.', 'bwp-simple-gxs') => 'enable_debug'),
 				'cb4' => array(__('Google', 'bwp-simple-gxs') => 'enable_ping_google'),
-				'cb5' => array(sprintf(__('Yahoo &mdash; <a href="%s" target="_blank">important</a>', 'bwp-simple-gxs'), 'http://developer.yahoo.com/blogs/ydn/posts/2010/08/api_updates_and_changes/') => 'enable_ping_yahoo'),
 				'cb6' => array(__('Bing', 'bwp-simple-gxs') => 'enable_ping_bing'),
 				'cb7' => array(__('Ask.com', 'bwp-simple-gxs') => 'enable_ping_ask')
 			),
@@ -394,7 +437,7 @@ if (!empty($page))
 			add_filter('bwp_option_submit_button', array($this, 'add_clear_log_button'));
 
 		// Get the options
-		$options = $bwp_option_page->get_options(array('enable_ping', 'enable_ping_google', 'enable_ping_yahoo', 'enable_ping_bing', 'enable_ping_ask', 'enable_log', 'enable_debug'), $this->options);
+		$options = $bwp_option_page->get_options(array('enable_ping', 'enable_ping_google', 'enable_ping_bing', 'enable_ping_ask', 'enable_log', 'enable_debug'), $this->options);
 
 		// Get option from the database
 		$options = $bwp_option_page->get_db_options($page, $options);
@@ -578,6 +621,91 @@ if (!empty($page))
 		// [WPMS Compatible]
 		$option_super_admin = $this->site_options;
 	}
+	else if ($page == BWP_GXS_GOOGLE_NEWS)
+	{
+		$bwp_option_page->set_current_tab(3);
+
+		// Save news categories settings
+		if (isset($_POST['submit_bwp_gxs_google_news']))
+		{
+			check_admin_referer($page);
+
+			// News cats & News genres
+			$news_cats = array();
+			$news_genres = array();
+			$categories = get_categories(array('hide_empty' => 0));
+			foreach ($categories as $category)
+			{
+				if (!empty($_POST[$category->slug]))
+					$news_cats[] = $category->term_id;
+				if (isset($_POST[$category->slug . '_genres']) && is_array($_POST[$category->slug . '_genres']))
+				{
+					$genres = $_POST[$category->slug . '_genres'];
+					$genres_string = array();
+					foreach ($genres as $genre)
+						$genres_string[] = trim($genre);
+					$news_genres['cat_' . $category->term_id] = implode(', ', $genres_string);
+				}
+			}
+			$this->options['select_news_cats'] = implode(',', $news_cats);
+			$this->options['input_news_genres'] = $news_genres;
+		}
+
+		$form = array(
+			'items'			=> array('heading', 'checkbox', 'checkbox', 'checkbox', 'select', 'heading', 'select'),
+			'item_labels'	=> array
+			(
+				__('What is a Google News Sitemap?', 'bwp-simple-gxs'),
+				__('Enable this module?', 'bwp-simple-gxs'),
+				__('Ping Search Engines when you publish a news article?', 'bwp-simple-gxs'),
+				__('Use keywords in News Sitemap?', 'bwp-simple-gxs'),
+				__('News Sitemap\'s language', 'bwp-simple-gxs'),
+				__('News Categories', 'bwp-simple-gxs'),
+				__('This module will', 'bwp-simple-gxs')
+			),
+			'item_names'	=> array('h1', 'cb1', 'cb3', 'cb2', 'select_news_lang', 'h2', 'select_news_cat_action'),
+			'heading'			=> array(
+				'h1'	=> __('A Google News Sitemap is a file that allows you to control which content you submit to Google News. By creating and submitting a Google News Sitemap, you\'re able to help Google News discover and crawl your site\'s articles &mdash; <em>http://support.google.com/</em>', 'bwp-simple-gxs'),
+				'h2'	=> __('<em>Below you will be able to choose what categories to use (or not use) in the news sitemap. You can also assign genres to a specific category.</em>', 'bwp-simple-gxs')
+			),
+			'post' => array(
+				'select_news_cat_action' => __('below selected categories in the news sitemap.', 'bwp-simple-gxs')
+			),
+			'select' => array(
+				'select_news_lang' => array(
+					__('English', 'bwp-simple-gxs') => 'en',
+					__('French', 'bwp-simple-gxs') => 'fr',
+					__('Italian', 'bwp-simple-gxs') => 'it',
+					__('Chinese', 'bwp-simple-gxs') => 'zh-cn'
+				),
+				'select_news_cat_action' => array(
+					__('include', 'bwp-simple-gxs') => 'inc',
+					__('exclude', 'bwp-simple-gxs') => 'exc'
+				)
+			),
+			'input'		=> array(
+			),
+			'checkbox'	=> array(
+				'cb1' => array(__('A new <code>post_google_news.xml</code> sitemap will be added to the main <code>sitemapindex.xml</code>.', 'bwp-simple-gxs') => 'enable_news_sitemap'),
+				'cb2' => array(__('Keywords are derived from news categories.', 'bwp-simple-gxs') => 'enable_news_keywords'),
+				'cb3' => array(__('This ping works separately from the sitemapindex ping, and only occurs when you publish an article in one of the news categories set below.', 'bwp-simple-gxs') => 'enable_news_ping')
+			),
+			'container'	=> array(
+				'select_news_cat_action' => $this->get_news_cats()
+			)
+		);
+
+		// Get the options
+		$options = $bwp_option_page->get_options(array('enable_news_sitemap', 'enable_news_ping', 'enable_news_keywords', 'select_news_lang', 'select_news_keyword_type', 'select_news_cat_action', 'select_news_cats', 'input_news_genres'), $this->options);
+
+		// Get option from the database
+		$options = $bwp_option_page->get_db_options($page, $options);
+		$options['select_news_cats'] = $this->options['select_news_cats'];
+		$options['input_news_genres'] = $this->options['input_news_genres'];
+		$option_ignore = array('select_news_cats', 'input_news_genres');
+		$option_formats = array();
+		$option_super_admin = $this->site_options;
+	}
 }
 		// Flush the cache
 		if (isset($_POST['flush_cache']) && !$this->is_normal_admin())
@@ -634,6 +762,8 @@ if (!empty($page))
 			// [WPMS Compatible]
 			if (!$this->is_normal_admin())
 				update_site_option($page, $options);
+			// Update options successfully
+			$this->add_notice(__("All options have been saved.", 'bwp-simple-gxs'));
 		}
 
 		// [WPMS Compatible]
@@ -766,7 +896,9 @@ if (!empty($page))
 				$log_time[$key] = $row['time'];		
 			array_multisort($log_time, SORT_DESC, $logs);
 		}
+
 		$log_str = (!$sitemap) ? '<li class="clear" style="margin-top: 5px; line-height: 1.7;"><span style="float: left; margin-right: 5px;">%s &mdash;</span> <span style="color: #%s;">%s</span></li>' : '<span style="margin-top: 5px; display: inline-block;">' . __('<a href="%s" target="_blank">%s</a> has been successfully built on <strong>%s</strong>.', 'bwp-simple-gxs') . '</span><br />';
+
 		$output = '<ul class="bwp-gxs-log">' . "\n";
 		foreach ($logs as $log)
 		{
@@ -786,8 +918,8 @@ if (!empty($page))
 				{
 					$mapped_domain = $wpdb->get_var($wpdb->prepare('
 							SELECT wpdm.domain as mapped_domain FROM ' . $wpdb->blogs . ' wpblogs
-								INNER JOIN ' . $wpdb->dmtable . ' wpdm
-									ON wpblogs.blog_id = wpdm.blog_id
+								LEFT JOIN ' . $wpdb->dmtable . ' wpdm
+									ON wpblogs.blog_id = wpdm.blog_id AND wpdm.active = 1
 							WHERE wpblogs.public = 1 AND wpblogs.spam = 0 AND wpblogs.deleted = 0 AND wpblogs.blog_id = %d', $blog_id));
 				}
 				// Default to the main site's scheme
@@ -818,21 +950,82 @@ if (!empty($page))
 			$output .= 'Sitemap: ' . $this->options['input_sitemap_url'];
 			$output .= "\n";
 		}
-		// Add all other sitemapindex within the network into the primary blog's robots.txt
+
+		// Add all other sitemapindex within the network into the primary blog's robots.txt, 
+		// except for ones that have their domains mapped
 		if ($this->is_multisite() && 'yes' == $this->options['enable_global_robots'] && isset($blog_id) && 1 == $blog_id)
 		{
-			$blogs = $wpdb->get_results("SELECT * FROM $wpdb->blogs WHERE public = 1 AND spam = 0 AND deleted = 0");
+			$blogs = (empty($wpdb->dmtable)) ? $wpdb->get_results("SELECT * FROM $wpdb->blogs WHERE public = 1 AND spam = 0 AND deleted = 0") : $wpdb->get_results('
+						SELECT wpdm.domain as mapped_domain, wpblogs.* FROM ' . $wpdb->blogs . ' wpblogs
+							LEFT JOIN ' . $wpdb->dmtable . ' wpdm
+								ON wpblogs.blog_id = wpdm.blog_id AND wpdm.active = 1
+						WHERE wpblogs.public = 1 AND wpblogs.spam = 0 AND wpblogs.deleted = 0');
+
+			$num_sites = 0;
 			foreach ($blogs as $blog)
 			{
 				if (1 == $blog->blog_id)
 					continue;
 				$scheme = is_ssl() ? 'https://' : 'http://';
 				$path = rtrim($blog->path, '/');
-				$output .= 'Sitemap: ' . str_replace(home_url(), $scheme . $blog->domain . $path, $this->options['input_sitemap_url']) . "\n";
+				$blog_domain = (empty($blog->mapped_domain)) ? $blog->domain . $path : '';
+				if (!empty($blog_domain))
+				{
+					$output .= 'Sitemap: ' . str_replace(home_url(), $scheme . $blog_domain, $this->options['input_sitemap_url']) . "\n";
+					$num_sites++;
+				}
 			}
-			$output .= "\n";
+
+			if (!empty($num_sites))
+				$output .= "\n";
 		}
+
 		return $output;
+	}
+
+	private function get_news_cats()
+	{
+		// News categories
+		$news_cats = explode(',', $this->options['select_news_cats']);
+		$categories = get_categories(array('hide_empty' => 0));
+		// News genres
+		$news_genres = $this->options['input_news_genres'];
+		// Genres taken from here: http://support.google.com/news/publisher/bin/answer.py?hl=en&answer=93992
+		$genres = array('PressRelease', 'Satire', 'Blog', 'OpEd', 'Opinion', 'UserGenerated'); 
+
+		$return = '<table class="bwp-table">' . "\n";
+		$return .= '<thead>' . "\n" . '<tr><th><span>#</span></th><th><span>' . __('Category\'s name', 'bwp-simple-gxs') . '</span></th><th>' . sprintf(__('<span>Genres used for this category</span> (more info <a href="%s" target="_blank">here</a>)', 'bwp-simple-gxs'), 'http://support.google.com/news/publisher/bin/answer.py?hl=en&answer=93992') . '</th></tr>' . "\n" . '</thead>';
+		$return .= '<tbody>' . "\n";
+
+		foreach ($categories as $category)
+		{
+			$return .= '<tr>' . "\n";
+			
+			$genres_cbs = '';
+			foreach ($genres as $genre)
+			{
+				$checked = '';
+				if (isset($news_genres['cat_' . $category->term_id]))
+				{
+					$genres_ary = explode(', ', $news_genres['cat_' . $category->term_id]);
+					$checked = (in_array($genre, $genres_ary)) ? ' checked="checked" ' : '';
+				}
+				$genres_cbs .= '<input type="checkbox" name="' . esc_attr($category->slug) . '_genres[]" value="' . $genre . '"' . $checked . '/> ' . $genre . ' &nbsp;&nbsp;&nbsp;&nbsp;';
+			}
+
+			$checked = (in_array($category->term_id, $news_cats)) ? ' checked="checked" ' : '';
+			$return .= 
+				'<td><input type="checkbox" name="' . esc_attr($category->slug) . '" value="' . esc_attr($category->slug) . '"' . $checked . ' /></td>' . "\n" . 
+				'<td class="bwp_gxs_news_cat_td">' . esc_html($category->name) . '</td>' . "\n" . 
+				'<td>' . $genres_cbs . '</td>' . "\n";
+			$return .= '</tr>' . "\n";
+		}
+
+		$return .= '</tbody>' . "\n";
+		$return .= '</table>' . "\n";
+
+		return $return;
+
 	}
 
 	/** 
@@ -929,6 +1122,9 @@ if (!empty($page))
 			if ('page' != $post_type->name && !in_array($post_type->name, $excluded_post_types))
 				$allowed_modules['post'][] = $post_type->name;
 		}
+		// Google News module, since 1.2.0
+		if ('yes' == $this->options['enable_news_sitemap'])
+			$this->add_module('post', 'google_news');
 		// Add pages to module list
 		if (!in_array('page', $excluded_post_types))
 			$allowed_modules['page'] = array('page');
@@ -967,7 +1163,6 @@ if (!empty($page))
 				if (isset($this->post_types[$sub_module])) // Module is a post type
 				{
 					// @since 1.0.4 - do not use label anymore, ugh
-					// $label = $this->format_label($this->post_types[$sub_module]->label);
 					$label = $this->format_label($this->post_types[$sub_module]->name);
 					if ('post' == $sub_module || 'page' == $sub_module || 'attachment' == $sub_module)
 						$data = array($label, array('post' => $this->post_types[$sub_module]->name));
@@ -975,13 +1170,17 @@ if (!empty($page))
 						$data = array($module_name . '_' . $label, array('post' => $this->post_types[$sub_module]->name));
 					$this->requested_modules[] = $data;
 				}
+				// Special post modules
+				else if ('google_news' == $sub_module)
+				{
+					$this->requested_modules[] = array($module_name . '_' . $sub_module, array('special' => $sub_module));
+				}
 				else if ('yes' == $this->options['enable_sitemap_taxonomy'] && isset($this->taxonomies[$sub_module])) // Module is a taxonomy
 				{
 					// $label = $this->format_label($this->taxonomies[$sub_module]->label);
 					$label = $this->format_label($this->taxonomies[$sub_module]->name);
 					$this->requested_modules[] = array($module_name . '_' . $label, array('taxonomy' => $sub_module));
 				}
-				/*else if ('term' == $module_name) // Module is a term {} */
 				else if (!empty($sub_module))
 					$this->requested_modules[] = array($module_name . '_' . $sub_module, array('archive' => $sub_module));
 				else
@@ -1080,7 +1279,7 @@ if (!empty($page))
 			$module_key = 'sitemapindex';
 			$module_name = 'sitemapindex';
 		}
-		
+
 		// Pass the real sub_module back
 		$sub_module = (!empty($module_part)) ? $module_virtual : $sub_module;
 
@@ -1159,6 +1358,7 @@ if (!empty($page))
 				if (false == $mapped_sub_loaded)
 				{
 					$module_file = $module . '_' . $sub_module . '.php';
+					$module_key = $module . '_' . $sub_module;
 					$path_custom = ($custom_module_dir) ? $this->uni_path_sep($custom_module_dir . $module_file) : '';
 					$path = $this->uni_path_sep($this->module_directory . $module_file);
 					if (!empty($path_custom) && @file_exists($path_custom))
@@ -1176,6 +1376,7 @@ if (!empty($page))
 						$this->nlog(sprintf(__('Sub-module file: <strong>%s</strong> is not available in both default and custom module directory. The plugin will now try loading the parent module instead.', 'bwp-simple-gxs'), $module_file));
 				}
 			}
+
 			if (false == $sub_loaded && false == $mapped_sub_loaded)
 			{
 				// Try loading the module
@@ -1198,13 +1399,15 @@ if (!empty($page))
 			}
 			
 			$this->module_data = array('module' => $module, 'sub_module' => $sub_module, 'module_key' => $module_key, 'module_name' => $module_name, 'module_part' => $module_part);
-			
+
 			if (class_exists('BWP_GXS_MODULE_' . $module_key))
 			{
 				$class_name = 'BWP_GXS_MODULE_' . $module_key;
 				$the_module = new $class_name();
 				if ('url' == $the_module->type)
 					$success = $this->generate_sitemap($the_module->data);
+				else if ('news' == $the_module->type)
+					$success = $this->generate_news_sitemap($the_module->data);
 				else
 					$success = $this->generate_sitemap_index($the_module->data);
 				unset($the_module->data);
@@ -1344,14 +1547,38 @@ if (!empty($page))
 		return 'gzip';
 	}
 
+	function ping_google_news($post)
+	{
+		if (empty($post->ID))
+			return;
+		// Get categories
+		$is_news = ('inc' == $this->options['select_news_cat_action']) ? false : true;
+		$news_cats = explode(',', $this->options['select_news_cats']);
+		$categories = get_the_category($post->ID);
+		foreach ($categories as $cat)
+		{
+			if (in_array($cat->term_id, $news_cats))
+			{
+				$is_news = ('inc' == $this->options['select_news_cat_action']) ? true : false;
+				break;
+			}
+		}
+
+		if ($is_news)
+		{
+			$this->_ping_sitemap = 'post_google_news';
+			$this->ping();
+		}
+	}
+
 	function ping()
 	{
 		$time = time();
 		$ping_data = get_option(BWP_GXS_PING);
-		if (!$ping_data || !is_array($ping_data))
+		if (!$ping_data || !is_array($ping_data) || isset($ping_data['data_pinged']['yahoo']))
 			$ping_data = array(
-				'data_pinged' => array('google' => 0, 'yahoo' => 0, 'bing' => 0, 'ask' => 0),
-				'data_last_pinged' => array('google' => 0, 'yahoo' => 0, 'bing' => 0, 'ask' => 0)
+				'data_pinged' => array('google' => 0, 'bing' => 0, 'ask' => 0),
+				'data_last_pinged' => array('google' => 0, 'bing' => 0, 'ask' => 0)
 			);
 		foreach ($this->options['input_ping'] as $key => $service)
 		{
@@ -1367,7 +1594,7 @@ if (!empty($page))
 				if ($this->ping_per_day > $ping_data['data_pinged'][$key])
 				{
 					$ping_data['data_pinged'][$key]++;
-					$url = sprintf($service, urlencode(str_replace('&', '&amp;', $this->options['input_sitemap_url'])));
+					$url = sprintf($service, urlencode(str_replace('&', '&amp;', sprintf($this->options['input_sitemap_struct'], $this->_ping_sitemap))));
 					$response = wp_remote_post($url, array('timeout' => $this->timeout));
 					if (is_wp_error($response))
 					{
@@ -1381,7 +1608,7 @@ if (!empty($page))
 						if (empty($the_response['code']))
 							$this->elog(__('Unknown response code from search engines. Ping failed.', 'bwp-simple-gxs'));
 						else if (200 == (int) $the_response['code'])
-							$this->slog(sprintf(__('Pinged %s successfully!', 'bwp-simple-gxs'), ucfirst($key)));
+							$this->slog(sprintf(__('Pinged %s with %s successfully!', 'bwp-simple-gxs'), ucfirst($key), $this->_ping_sitemap . '.xml'));
 						else if (200 != (int) $the_response['code'])
 						{
 							$errno		= $the_response['code'];
@@ -1419,7 +1646,7 @@ if (!empty($page))
 		// If output is empty we log it so the user knows what's going on, but let the page load normally
 		if (empty($output) || 0 == sizeof($output))
 		{
-			$this->elog(sprintf(__('<em>%s.xml</em> does not have any item. The plugin has fired a 404 header to the search engine that requests it. You should check the module that generates that sitemap (<em>%s.php</em>).', 'bwp-simple-gxs'), $this->module_data['module_name'], $this->module_data['module_key']), true, 404);
+			$this->elog(sprintf(__('<em>%s.xml</em> does not have any item. You can fix this easily by excluding any post types / terms you do not use in <em>Sitemap Generator</em> tab within your admin area. If you still see this error, consider checking the module that generates this sitemap (<em>%s.php</em>).', 'bwp-simple-gxs'), $this->module_data['module_name'], $this->module_data['module_key']), true, 404);
 			return false;
 		}
 		else
@@ -1437,7 +1664,39 @@ if (!empty($page))
 			echo "\n" . sprintf($this->templates['stats_cached'], $time, $memory, $sql);
 	}
 
-	function generate_url_item($url = '', $priority = 1.0, $freq = 'always', $lastmod = 0)
+	private static function is_local($url)
+	{
+		static $blog_url;
+
+		if (empty($blog_url))
+		{
+			$home_url = home_url();
+			$blog_url = @parse_url($home_url);
+		}
+
+		$url = @parse_url($url);
+		if (false === $url)
+			return false;
+		// If scheme is set
+		if (isset($url['scheme']))
+		{
+			if (false === strpos($url['host'], $blog_url['host']))
+				return false;
+			return true;
+		}
+		else
+			return true;
+	}
+
+	private static function is_url_valid($url)
+	{
+		$url = trim($url);
+		if ('#' == $url || (false === strpos($url, 'http') && false === strpos($url, 'https')) || !self::is_local($url))
+			return false;
+		return true;
+	}
+
+	private function generate_url_item($url = '', $priority = 1.0, $freq = 'always', $lastmod = 0)
 	{
 		$freq = sprintf($this->templates['changefreq'], $freq);
 		$priority = str_replace(',', '.', sprintf($this->templates['priority'], $priority));
@@ -1448,7 +1707,7 @@ if (!empty($page))
 			return '';
 	}
 
-	function generate_sitemap_item($url = '', $lastmod = 0)
+	private function generate_sitemap_item($url = '', $lastmod = 0)
 	{
 		$lastmod = (!empty($lastmod)) ? sprintf($this->templates['lastmod'], $lastmod) : '';
 		if (!empty($url))
@@ -1457,9 +1716,21 @@ if (!empty($page))
 			return '';
 	}
 
+	private function generate_news_sitemap_item($loc = '', $name = '', $lang = 'en', $genres = '', $pub_date = '', $title = '', $keywords = '')
+	{
+		$name = sprintf($this->templates['news_name'], $name);
+		$lang = sprintf($this->templates['news_language'], $lang);
+		$news_pub = sprintf($this->templates['news_publication'], $name, $lang);
+		$genres = (!empty($genres)) ? sprintf($this->templates['news_genres'], $genres) : '';
+		$pub_date = sprintf($this->templates['news_pub_date'], $pub_date);
+		$title = sprintf($this->templates['news_title'], $title);
+		$keywords = (!empty($keywords)) ? sprintf($this->templates['news_keywords'], $keywords) : '';
+		return sprintf($this->templates['news'], $loc, $news_pub, $genres, $pub_date, $title, $keywords);
+	}
+
 	function credit()
 	{
-		$xml = '<!-- Generated by BWP Google XML Sitemaps ' . $this->get_version() . ' (c) 2011 Khang Minh - betterwp.net' . "\n";
+		$xml = '<!-- Generated by BWP Google XML Sitemaps ' . $this->get_version() . ' (c) 2012 Khang Minh - betterwp.net' . "\n";
 		$xml .=' Plugin homepage: ' . $this->plugin_url . ' -->' . "\n";
 		return $xml;
 	}
@@ -1478,12 +1749,56 @@ if (!empty($page))
 		foreach ($output as &$url)
 		{
 			$url['location'] = (!empty($url['location'])) ? $url['location'] : '';
+			// Remove any invalid URL
+			if (empty($url['location']) || !self::is_url_valid($url['location']))
+				continue;
+
 			$url['lastmod'] = (!empty($url['lastmod'])) ? $url['lastmod'] : '';
 			$url['freq'] = (isset($url['freq']) && in_array($url['freq'], $this->frequency)) ? $url['freq'] : $this->options['select_default_freq'];
 			$url['priority'] = (isset($url['priority']) && $url['priority'] <= 1 && $url['priority'] > 0) ? $url['priority'] : $this->options['select_default_pri'];
+
 			$xml .= $this->generate_url_item(htmlspecialchars($url['location']), $url['priority'], $url['freq'], $url['lastmod']);
 			$this->output_num++;
 		}
+
+		if (!$this->check_output($this->output_num))
+			return false;
+
+		$xml .= "\n" . '</urlset>';
+		$this->output = $xml;
+
+		return true;
+	}
+
+	function generate_news_sitemap($output = array())
+	{
+		$xml = '<' . '?xml version="1.0" encoding="UTF-8"?'.'>' . "\n";
+		$xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n\t" . 'xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"' . "\n\t" . 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' . "\n\t" . 'xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd' . "\n\t" . 'http://www.google.com/schemas/sitemap-news/0.9 http://www.google.com/schemas/sitemap-news/0.9/sitemap-news.xsd">' . "\n";
+
+		if ('yes' == $this->options['enable_credit'])
+			$xml .= $this->credit();
+
+		if (!$this->check_output($output))
+			return false;
+
+		foreach ($output as &$url)
+		{
+			$url['location'] = (!empty($url['location'])) ? htmlspecialchars($url['location']) : '';
+			// Remove any invalid URL
+			if (empty($url['location']) || !self::is_url_valid($url['location']))
+				continue;
+			$url['name'] = (!empty($url['name'])) ? htmlspecialchars($url['name']) : htmlspecialchars(get_bloginfo('name'));
+			$url['language'] = $this->options['select_news_lang'];
+			$url['genres'] = (!empty($url['genres'])) ? $url['genres'] : 'PressRelease, Blog';
+			$url['pub_date'] = (!empty($url['pub_date'])) ? $url['pub_date'] : '';
+			$url['title'] = (!empty($url['title'])) ? htmlspecialchars($url['title']) : '';
+			$url['keywords'] = (!empty($url['keywords'])) ? htmlspecialchars($url['keywords']) : '';
+			$xml .= $this->generate_news_sitemap_item($url['location'], $url['name'], $url['language'], $url['genres'], $url['pub_date'], $url['title'], $url['keywords']);
+			$this->output_num++;
+		}
+
+		if (!$this->check_output($this->output_num))
+			return false;
 
 		$xml .= "\n" . '</urlset>';
 		$this->output = $xml;

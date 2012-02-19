@@ -10,3 +10,26 @@
 	max-height: 200px;
 	overflow: auto;
 }
+
+.bwp-table {
+	width: 100%;
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	padding: 10px;
+}
+
+.bwp-table th {
+	text-align: left;
+}
+
+.bwp-table th span {
+	text-decoration: underline;
+}
+
+.bwp-table td, .bwp-table th {
+	padding: 3px 7px;
+}
+
+.bwp-table td.bwp_gxs_news_cat_td {
+	width: 148px;
+}

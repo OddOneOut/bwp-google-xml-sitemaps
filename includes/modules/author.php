@@ -17,7 +17,7 @@ class BWP_GXS_MODULE_AUTHOR extends BWP_GXS_MODULE {
 		global $wpdb, $bwp_gxs;
 
 		// An array of what roles to include in sitemap
-		$roles = array('administrator', 'editor', 'author');
+		$roles = array('administrator', 'editor', 'author', 'contributor');
 		// The SQL query
 		$author_sql = 'SELECT wp_u.ID, wp_u.user_nicename, MAX(wp_p.post_modified) as lastmod, wp_um.meta_value as role 
 						FROM ' . $wpdb->users . ' wp_u
@@ -42,9 +42,7 @@ class BWP_GXS_MODULE_AUTHOR extends BWP_GXS_MODULE {
 			$data = $this->init_data($data);
 			$role = maybe_unserialize($author->role);
 			$role = array_keys($role);
-			if (!in_array($role[0], $roles))
-				continue;
-			$data['location'] = get_author_posts_url($author->ID, $author->user_nicename);
+			$data['location'] = (!in_array($role[0], $roles)) ? '' : get_author_posts_url($author->ID, $author->user_nicename);
 			$data['lastmod'] = $this->format_lastmod(strtotime($author->lastmod));
 			$data['freq'] = $this->cal_frequency(NULL, $author->lastmod);
 			$data['priority'] = $this->cal_priority(NULL, $data['freq']);
