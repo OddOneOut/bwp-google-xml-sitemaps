@@ -315,8 +315,8 @@ class BWP_FRAMEWORK {
 				// Remove option without a key
 				foreach ($db_option as $k => $o)
 				{
-					if (preg_match('/^[0-9]+$/i', $key))
-						unset($db_option[$key]);
+					if (preg_match('/^[0-9]+$/i', $k))
+						unset($db_option[$k]);
 				}
 				$options = array_merge($options, $db_option);
 			}
