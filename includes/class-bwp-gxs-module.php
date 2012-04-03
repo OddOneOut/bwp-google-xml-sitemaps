@@ -128,10 +128,12 @@ class BWP_GXS_MODULE {
 	function format_lastmod($lastmod)
 	{
 		global $bwp_gxs;
+		// Hit or miss :-?
+		$lastmod = $lastmod - get_option('gmt_offset') * 3600;
 		if ('yes' == $bwp_gxs->options['enable_gmt'])
-			return gmdate('Y-m-d\TH:i:s' . '+00:00', (int) $lastmod);
+			return gmdate('c', (int) $lastmod);
 		else
-			return date('Y-m-d\TH:i:s' . '+00:00', (int) $lastmod);
+			return date('c', (int) $lastmod);
 	}
 
 	function post_type_uses($post_type, $taxonomy_object)

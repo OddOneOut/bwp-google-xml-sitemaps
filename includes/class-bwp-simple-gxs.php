@@ -64,7 +64,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.2.0')
+	function __construct($version = '1.2.1')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
@@ -103,8 +103,9 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			'enable_news_sitemap' => '',
 			'enable_news_keywords' => '',
 			'enable_news_ping' => '',
+			'enable_news_multicat' => '',
 			'select_news_lang' => 'en',
-			/*'select_news_keyword_type' => 'cat',*/
+			'select_news_keyword_type' => 'cat',
 			'select_news_cat_action' => 'inc',
 			'select_news_cats' => '',
 			'input_news_genres' => array(),
@@ -652,18 +653,19 @@ if (!empty($page))
 		}
 
 		$form = array(
-			'items'			=> array('heading', 'checkbox', 'checkbox', 'checkbox', 'select', 'heading', 'select'),
+			'items'			=> array('heading', 'checkbox', 'checkbox', 'checkbox', 'checkbox', 'select', 'heading', 'select'),
 			'item_labels'	=> array
 			(
 				__('What is a Google News Sitemap?', 'bwp-simple-gxs'),
 				__('Enable this module?', 'bwp-simple-gxs'),
+				__('Enable Multi-category Mode?', 'bwp-simple-gxs'),
 				__('Ping Search Engines when you publish a news article?', 'bwp-simple-gxs'),
 				__('Use keywords in News Sitemap?', 'bwp-simple-gxs'),
 				__('News Sitemap\'s language', 'bwp-simple-gxs'),
 				__('News Categories', 'bwp-simple-gxs'),
 				__('This module will', 'bwp-simple-gxs')
 			),
-			'item_names'	=> array('h1', 'cb1', 'cb3', 'cb2', 'select_news_lang', 'h2', 'select_news_cat_action'),
+			'item_names'	=> array('h1', 'cb1', 'cb4', 'cb3', 'cb2', 'select_news_lang', 'h2', 'select_news_cat_action'),
 			'heading'			=> array(
 				'h1'	=> __('A Google News Sitemap is a file that allows you to control which content you submit to Google News. By creating and submitting a Google News Sitemap, you\'re able to help Google News discover and crawl your site\'s articles &mdash; <em>http://support.google.com/</em>', 'bwp-simple-gxs'),
 				'h2'	=> __('<em>Below you will be able to choose what categories to use (or not use) in the news sitemap. You can also assign genres to a specific category.</em>', 'bwp-simple-gxs')
@@ -673,22 +675,41 @@ if (!empty($page))
 			),
 			'select' => array(
 				'select_news_lang' => array(
+					/* http://www.loc.gov/standards/iso639-2/php/code_list.php */
 					__('English', 'bwp-simple-gxs') => 'en',
 					__('French', 'bwp-simple-gxs') => 'fr',
+					__('Spanish', 'bwp-simple-gxs') => 'es',
+					__('German', 'bwp-simple-gxs') => 'de',
+					__('Portuguese', 'bwp-simple-gxs') => 'pt',
+					__('Polish', 'bwp-simple-gxs') => 'pl',
+					__('Norwegian', 'bwp-simple-gxs') => 'no',
+					__('Dutch', 'bwp-simple-gxs') => 'nl',
 					__('Italian', 'bwp-simple-gxs') => 'it',
-					__('Chinese', 'bwp-simple-gxs') => 'zh-cn'
+					__('Vietnamese', 'bwp-simple-gxs') => 'vi',
+					__('Simplified Chinese', 'bwp-simple-gxs') => 'zh-cn'
 				),
 				'select_news_cat_action' => array(
 					__('include', 'bwp-simple-gxs') => 'inc',
 					__('exclude', 'bwp-simple-gxs') => 'exc'
+				),
+				'select_news_keyword_type' => array(
+					__('news categories', 'bwp-simple-gxs') => 'cat',
+					__('news tags', 'bwp-simple-gxs') => 'tag'
 				)
 			),
 			'input'		=> array(
 			),
 			'checkbox'	=> array(
 				'cb1' => array(__('A new <code>post_google_news.xml</code> sitemap will be added to the main <code>sitemapindex.xml</code>.', 'bwp-simple-gxs') => 'enable_news_sitemap'),
-				'cb2' => array(__('Keywords are derived from news categories.', 'bwp-simple-gxs') => 'enable_news_keywords'),
-				'cb3' => array(__('This ping works separately from the sitemapindex ping, and only occurs when you publish an article in one of the news categories set below.', 'bwp-simple-gxs') => 'enable_news_ping')
+				'cb2' => array(__('Keywords are derived from', 'bwp-simple-gxs') => 'enable_news_keywords'),
+				'cb3' => array(__('This ping works separately from the sitemapindex ping, and only occurs when you publish an article in one of the news categories set below.', 'bwp-simple-gxs') => 'enable_news_ping'),
+				'cb4' => array(__('This mode is meant for News Blogs that have posts assigned to more than one categories. It is an advanced feature and should only be enabled if you do have similar blogs.', 'bwp-simple-gxs') => 'enable_news_multicat')
+			),
+			'inline_fields'	=> array(
+				'cb2' => array('select_news_keyword_type' => 'select')
+			),
+			'post' => array(
+				'select_news_keyword_type' => __('. Do <strong>NOT</strong> use news tags if your news sitemap contains a lot of posts as it can be very inefficient to do so. This will be improved in future versions.', 'bwp-simple-gxs')
 			),
 			'container'	=> array(
 				'select_news_cat_action' => $this->get_news_cats()
@@ -696,7 +717,7 @@ if (!empty($page))
 		);
 
 		// Get the options
-		$options = $bwp_option_page->get_options(array('enable_news_sitemap', 'enable_news_ping', 'enable_news_keywords', 'select_news_lang', 'select_news_keyword_type', 'select_news_cat_action', 'select_news_cats', 'input_news_genres'), $this->options);
+		$options = $bwp_option_page->get_options(array('enable_news_sitemap', 'enable_news_ping', 'enable_news_keywords', 'enable_news_multicat', 'select_news_lang', 'select_news_keyword_type', 'select_news_cat_action', 'select_news_cats', 'input_news_genres'), $this->options);
 
 		// Get option from the database
 		$options = $bwp_option_page->get_db_options($page, $options);
@@ -1787,9 +1808,9 @@ if (!empty($page))
 			// Remove any invalid URL
 			if (empty($url['location']) || !self::is_url_valid($url['location']))
 				continue;
-			$url['name'] = (!empty($url['name'])) ? htmlspecialchars($url['name']) : htmlspecialchars(get_bloginfo('name'));
+			$url['name'] = (!empty($url['name'])) ? htmlspecialchars($url['name']) : apply_filters('bwp_gxs_news_name', htmlspecialchars(get_bloginfo('name')));
 			$url['language'] = $this->options['select_news_lang'];
-			$url['genres'] = (!empty($url['genres'])) ? $url['genres'] : 'PressRelease, Blog';
+			$url['genres'] = (!empty($url['genres'])) ? $url['genres'] : '';
 			$url['pub_date'] = (!empty($url['pub_date'])) ? $url['pub_date'] : '';
 			$url['title'] = (!empty($url['title'])) ? htmlspecialchars($url['title']) : '';
 			$url['keywords'] = (!empty($url['keywords'])) ? htmlspecialchars($url['keywords']) : '';

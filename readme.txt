@@ -4,7 +4,7 @@ Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#contribu
 Tags: xml sitemaps, xml sitemap, google xml sitemaps, sitemapindex, sitemap, sitemaps, seo, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
 Tested up to: 3.3.1
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex, Multi-site and Google News sitemap.
 
@@ -15,8 +15,6 @@ With BWP GXS you will no longer have to worry about the 50,000 URL limit or the 
 **===New in 1.2.0!===**
 
 The long-awaited BWP GXS 1.2.0 has finally been released with a new and very powerful feature: **Google News Sitemap creation**! All you have to do is click on the newly added tab (**News sitemap**), enable the module, choose some news categories as well as their genres and you're ready to go. Your news sitemap can also be used to ping Search Engines individually if you want. And of course, whenever you publish a new post in a news category, all selected Search Engines will be pinged!
-
-Here's a demo of the [google news sitemap](http://betterwp.net/post_google_news.xml) if you can't wait to see it live, enjoy!
 
 **Sitemapindex Support**
 
@@ -163,6 +161,21 @@ That's the default behaviour of this plugin and I plan to improve it in future v
 5. Google News Sitemap
 
 == Changelog ==
+
+= 1.2.1 =
+As you might have guessed, this release focuses on improving the new Google News Sitemap Module which was introduced in 1.2.0. Below are some enhancements:
+
+* Added new languages (Spanish, German, Polish, Portuguese, etc.).
+* Added a new hook (`bwp_gxs_news_name`) that allows you to set a custom sitename without having to change the sitename setting inside WordPress.
+* Added a new option that allows you to choose whether to use news categories or news tags as keywords (very experimental and can be inefficient if you have a lot of posts).
+* WordPress's timezone settings are now properly respected.
+* Genres tags are omitted entirely if no genres are set for a particular categories.
+* A new Multi-category mode (disabled by default) has been added that offers the following features:
+	* If a post is in both an included and an excluded category, it's now excluded.
+	* If a post is in two or more categories, it can now have all genres that are assigned to those categories.
+	* If a post is in two or more categories, it can now have all categories as its keywords (only if you choose to use news categories as keywords of course)
+
+Other functionality of BWP GXS remains the same, so test the News sitemap as much as you can and report any bug you may stumble upon. Enjoy :).
 
 = 1.2.0 =
 * Added a Google News sitemap module. Creating a news sitemap has never been so easy! More information can be found [here](http://betterwp.net/314-bwp-gxs-1-2-0-with-news-sitemap/).
