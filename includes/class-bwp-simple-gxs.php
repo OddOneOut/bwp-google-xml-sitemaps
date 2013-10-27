@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2012 Khang Minh <betterwp.net>
+ * Copyright (c) 2013 Khang Minh <betterwp.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.2.1')
+	function __construct($version = '1.2.2')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
@@ -93,7 +93,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			'enable_ping' => 'yes',
 			'enable_ping_google' => 'yes',
 			'enable_ping_bing' => 'yes',
-			'enable_ping_ask' => '',
+			//'enable_ping_ask' => '',
 			'enable_log' => 'yes',
 			'enable_debug' => '',
 			'enable_robots' => 'yes',
@@ -128,13 +128,13 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			'input_cache_dir' => '',
 			'input_ping' => array(
 				'google' => 'http://www.google.com/webmasters/sitemaps/ping?sitemap=%s',
-				'bing' => 'http://www.bing.com/webmaster/ping.aspx?siteMap=%s', 
-				'ask' => 'http://submissions.ask.com/ping?sitemap=%s'),
+				'bing' => 'http://www.bing.com/webmaster/ping.aspx?siteMap=%s'),
+				//'ask' => 'http://submissions.ask.com/ping?sitemap=%s'),
 			'input_sitemap_url' => '',
 			'input_sitemap_struct' => ''
 		);
 		// Super admin only options
-		$this->site_options = array('enable_robots', 'enable_global_robots', 'enable_log', 'enable_debug', 'enable_ping', 'enable_ping_google', 'enable_ping_bing', 'enable_ping_ask', 'enable_gzip', 'enable_php_clean', 'enable_cache', 'enable_cache_auto_gen', 'input_cache_age', 'input_alt_module_dir', 'input_sql_limit', 'input_cache_dir', 'select_time_type');
+		$this->site_options = array('enable_robots', 'enable_global_robots', 'enable_log', 'enable_debug', 'enable_ping', 'enable_ping_google', 'enable_ping_bing', /* 'enable_ping_ask', */ 'enable_gzip', 'enable_php_clean', 'enable_cache', 'enable_cache_auto_gen', 'input_cache_age', 'input_alt_module_dir', 'input_sql_limit', 'input_cache_dir', 'select_time_type');
 
 		$this->build_properties('BWP_GXS', 'bwp-simple-gxs', $options, 'BWP Google XML Sitemaps', dirname(dirname(__FILE__)) . '/bwp-simple-gxs.php', 'http://betterwp.net/wordpress-plugins/google-xml-sitemaps/', false);
 
@@ -342,7 +342,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	function build_menus()
 	{
 		// Give BWP GXS its own menus - create plugin's own menu if allowed
-		if (!empty(self::$_menu_under_settings))
+		if (!empty($this->_menu_under_settings))
 		{
 			add_options_page(__('BWP Google XML Sitemaps Statistics', 'bwp-simple-gxs'), __('Sitemap Statistics', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_STATS, array($this, 'build_option_pages'));
 			add_options_page(__('BWP Google XML Sitemaps Generator', 'bwp-simple-gxs'), __('Sitemap Generator', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_OPTION_GENERATOR, array($this, 'build_option_pages'));
@@ -406,14 +406,14 @@ if (!empty($page))
 			'item_names'	=> array('h1', 'h2', 'h4', 'h5', 'cb1', 'sec1', 'h3', 'cb2', 'cb3'),
 			'sec1' => array(
 					array('checkbox', 'name' => 'cb4'),
-					array('checkbox', 'name' => 'cb6'),
-					array('checkbox', 'name' => 'cb7')
+					array('checkbox', 'name' => 'cb6')
+					//array('checkbox', 'name' => 'cb7')
 			),
 			'heading'			=> array(
 				'h1'	=> __('In its simplest form, a Sitemap is an XML file that lists URLs for a site along with additional metadata about each URL (when it was last updated, how often it usually changes, and how important it is, relative to other URLs in the site) so that search engines can more intelligently crawl the site &mdash; <em>http://www.sitemaps.org/</em>', 'bwp-simple-gxs') . '<br /><br />' . __('This plugin helps you generate both Sitemap Index files as well as normal Sitemap files. A Sitemap Index, as its name suggests, is one kind of sitemaps that allows you to group multiple sitemap files inside it.', 'bwp-simple-gxs'),
 				'h2'	=> __('<em>Basic information about all your sitemaps.</em>', 'bwp-simple-gxs'),
 				'h3'	=> __('<em>More detailed information about how your sitemaps are generated including <span style="color: #999999;">notices</span>, <span style="color: #FF0000;">errors</span> and <span style="color: #009900;">success messages</span>.</em>', 'bwp-simple-gxs'),
-				'h4'	=> sprintf(__('<em>Submit your sitemapindex to major search engines like <a href="%s" target="_blank">Google</a>, <a href="%s" target="_blank">Bing</a> or <a href="%s" target="_blank">Ask</a>.</em>', 'bwp-simple-gxs'), 'https://www.google.com/webmasters/tools/home?hl=en', 'http://www.bing.com/toolbox/webmasters/', 'http://about.ask.com/en/docs/about/webmasters.shtml#22'),
+				'h4'	=> sprintf(__('<em>Submit your sitemapindex to major search engines like <a href="%s" target="_blank">Google</a>, <a href="%s" target="_blank">Bing</a>.</em>', 'bwp-simple-gxs'), 'https://www.google.com/webmasters/tools/home?hl=en', 'http://www.bing.com/toolbox/webmasters/'/*, 'http://about.ask.com/en/docs/about/webmasters.shtml#22'*/),
 				'h5'	=> __('<em>Now when you post something new to your blog, you can <em>ping</em> those search engines to tell them your blog just got updated. Pinging could be less effective than you think it is but you should enable such feature anyway.</em>', 'bwp-simple-gxs')
 			),
 			'input'		=> array(
@@ -423,8 +423,8 @@ if (!empty($page))
 				'cb2' => array(__('No additional load is needed so enabling this is recommended.', 'bwp-simple-gxs') => 'enable_log'),
 				'cb3' => array(__('Minor errors will be printed on screen. Also, when debug is on, no caching is used, useful when you develop new modules.', 'bwp-simple-gxs') => 'enable_debug'),
 				'cb4' => array(__('Google', 'bwp-simple-gxs') => 'enable_ping_google'),
-				'cb6' => array(__('Bing', 'bwp-simple-gxs') => 'enable_ping_bing'),
-				'cb7' => array(__('Ask.com', 'bwp-simple-gxs') => 'enable_ping_ask')
+				'cb6' => array(__('Bing', 'bwp-simple-gxs') => 'enable_ping_bing')
+				//'cb7' => array(__('Ask.com', 'bwp-simple-gxs') => 'enable_ping_ask')
 			),
 			'container'	=> array(
 				'h4' => sprintf(__('After you activate this plugin, all sitemaps should be available right away. The next step is to submit the sitemapindex to major search engines. You only need the <strong>sitemapindex</strong> and nothing else, those search engines will automatically recognize other included sitemaps. You can read a small <a href="%s">How-to</a> if you are interested.', 'bwp-simple-gxs'), 'http://help.yahoo.com/l/us/yahoo/smallbusiness/store/promote/sitemap/sitemap-06.html'),
@@ -438,7 +438,7 @@ if (!empty($page))
 			add_filter('bwp_option_submit_button', array($this, 'add_clear_log_button'));
 
 		// Get the options
-		$options = $bwp_option_page->get_options(array('enable_ping', 'enable_ping_google', 'enable_ping_bing', 'enable_ping_ask', 'enable_log', 'enable_debug'), $this->options);
+		$options = $bwp_option_page->get_options(array('enable_ping', 'enable_ping_google', 'enable_ping_bing', /*'enable_ping_ask',*/ 'enable_log', 'enable_debug'), $this->options);
 
 		// Get option from the database
 		$options = $bwp_option_page->get_db_options($page, $options);
@@ -451,6 +451,8 @@ if (!empty($page))
 	{
 		$bwp_option_page->set_current_tab(2);
 
+		//add_filter('bwp_ad_showable', function() { return false;});
+		
 		$form = array(
 			'items'			=> array('input', 'select', 'select', 'select', 'checkbox', 'checkbox', 'input', 'checkbox', 'checkbox', 'checkbox', 'checkbox', 'heading', 'checkbox', 'checkbox', 'checkbox', 'section', 'section', 'section', 'heading', 'input', 'input', 'heading', 'checkbox', 'checkbox', 'input', 'input'),
 			'item_labels'	=> array
@@ -547,7 +549,7 @@ if (!empty($page))
 				'input_sql_limit' => array('size' => 5, 'label' => __('item(s) in one SQL query. This helps you avoid running too heavy queries.', 'bwp-simple-gxs')),
 				'input_oldest' => array('size' => 3, 'label' => '&mdash;'),
 				'input_cache_age' => array('size' => 5, 'label' => '&mdash;'),
-				'input_custom_xslt' => array('size' => 90, 'label' => __('expected to be an absolute URL, e.g. <code>http://example.com/my-stylesheet.xsl</code>. You must also have a style sheet for the sitemapindex that can be accessed through the above URL, e.g. <code>my-stylesheet.xsl</code> and <code>my-stylesheetindex.xsl</code>). Please leave blank if you do not wish to use.', 'bwp-simple-gxs'))
+				'input_custom_xslt' => array('size' => 56, 'label' => __('expected to be an absolute URL, e.g. <code>http://example.com/my-stylesheet.xsl</code>. You must also have a style sheet for the sitemapindex that can be accessed through the above URL, e.g. <code>my-stylesheet.xsl</code> and <code>my-stylesheetindex.xsl</code>). Please leave blank if you do not wish to use.', 'bwp-simple-gxs'))
 			),
 			'inline_fields' => array(
 				'input_cache_age' => array('select_time_type' => 'select'),
@@ -677,16 +679,18 @@ if (!empty($page))
 				'select_news_lang' => array(
 					/* http://www.loc.gov/standards/iso639-2/php/code_list.php */
 					__('English', 'bwp-simple-gxs') => 'en',
-					__('French', 'bwp-simple-gxs') => 'fr',
-					__('Spanish', 'bwp-simple-gxs') => 'es',
-					__('German', 'bwp-simple-gxs') => 'de',
-					__('Portuguese', 'bwp-simple-gxs') => 'pt',
-					__('Polish', 'bwp-simple-gxs') => 'pl',
-					__('Norwegian', 'bwp-simple-gxs') => 'no',
 					__('Dutch', 'bwp-simple-gxs') => 'nl',
+					__('French', 'bwp-simple-gxs') => 'fr',
+					__('German', 'bwp-simple-gxs') => 'de',
 					__('Italian', 'bwp-simple-gxs') => 'it',
-					__('Vietnamese', 'bwp-simple-gxs') => 'vi',
-					__('Simplified Chinese', 'bwp-simple-gxs') => 'zh-cn'
+					__('Norwegian', 'bwp-simple-gxs') => 'no',
+					__('Portuguese', 'bwp-simple-gxs') => 'pt',
+					__('Polish', 'bwp-simple-gxs') => 'pl',					
+					__('Russian', 'bwp-simple-gxs') => 'ru',
+					__('Simplified Chinese', 'bwp-simple-gxs') => 'zh-cn',
+					__('Spanish', 'bwp-simple-gxs') => 'es',
+					__('Turkish', 'bwp-simple-gxs') => 'tr',
+					__('Vietnamese', 'bwp-simple-gxs') => 'vi'
 				),
 				'select_news_cat_action' => array(
 					__('include', 'bwp-simple-gxs') => 'inc',
@@ -1596,11 +1600,14 @@ if (!empty($page))
 	{
 		$time = time();
 		$ping_data = get_option(BWP_GXS_PING);
-		if (!$ping_data || !is_array($ping_data) || isset($ping_data['data_pinged']['yahoo']))
+		if (!$ping_data || !is_array($ping_data) 
+		|| isset($ping_data['data_pinged']['yahoo']) || isset($ping_data['data_pinged']['ask'])
+		) {
 			$ping_data = array(
-				'data_pinged' => array('google' => 0, 'bing' => 0, 'ask' => 0),
-				'data_last_pinged' => array('google' => 0, 'bing' => 0, 'ask' => 0)
+				'data_pinged' => array('google' => 0, 'bing' => 0),
+				'data_last_pinged' => array('google' => 0, 'bing' => 0)
 			);
+		}
 		foreach ($this->options['input_ping'] as $key => $service)
 		{
 			if ('yes' == $this->options['enable_ping_' . $key])

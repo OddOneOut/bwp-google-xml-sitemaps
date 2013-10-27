@@ -24,9 +24,9 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE {
 		// BWP_GXS_MODULE_TAXONOMY_CATEGORY and save the file as taxonomy_category.php (similar to taxonomy_post_tag.php).
 		// If no custom post type is requested, use the default post type
 		$this->requested = (!empty($bwp_gxs->module_data['sub_module'])) ? $bwp_gxs->module_data['sub_module'] : 'post';
-		// module_part let you determine whether or not to build a post sitemap as part of a large post sitemap. If this value is 
-		// greater than 0, for example 2, or 3 it means that we are building part 2, or part 3 of that large sitemap, and we
-		// will have to modify our SQL query accordingly - @since 1.1.0
+		// module_part let you determine whether or not to build a post sitemap as part of a large post sitemap. 
+		// If this value is greater than 0, for example 2, or 3 it means that we are building part 2, 
+		// or part 3 of that large sitemap, and we will have to modify our SQL query accordingly - @since 1.1.0
 		$this->part = $bwp_gxs->module_data['module_part'];
 		// Get the permalink this website uses, apply to normal posts
 		$this->perma_struct = get_option('permalink_structure');

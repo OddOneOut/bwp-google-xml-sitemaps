@@ -11,8 +11,9 @@
 	zoom: 1;
 }
 
-.bwp-option-page li.clear, .bwp-option-page div.clear {
+.bwp-option-page li.bwp-clear, .bwp-option-page div.bwp-clear {
 	clear: left;
+	display: block;
 	margin: 1em 0 0 0;
 	zoom: 1;
 }
@@ -88,7 +89,7 @@ p.bwp-option-page-inputs {
 	margin: 0 0 10px 10px;
 }
 
-#bwp-donation, #bwp-contact {
+#bwp-donation, #bwp-contact, #bwp-ads {
 	width: 255px;
 	padding: 7px; padding-bottom: 0px;
 	background-color: #ffffff;
@@ -96,8 +97,16 @@ p.bwp-option-page-inputs {
 	text-align: center;
 }
 
-#bwp-donation p {
+#bwp-donation p, #bwp-ads p {
 	margin: 0.5em 0 1em 0;
+}
+
+#bwp-ads {
+	padding-bottom: 5px;
+}
+
+#bwp-ads p {
+	text-decoration: underline;
 }
 
 #bwp-info-place small {
@@ -111,7 +120,7 @@ p.bwp-option-page-inputs {
 	padding: 0px;
 }
 
-#bwp-seperator {
+.bwp-separator {
 	width: 271px;
 }
 

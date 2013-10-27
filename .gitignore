@@ -1,5 +1,7 @@
 *.dat
 *.inc
-*.xml.gz
-*.xml
 cache/
+gxs_*
+/.settings
+/.buildpath
+/.project

@@ -322,7 +322,7 @@ class BWP_OPTION_PAGE {
 			$container_array = (array) $this->form['container'][$name];
 			foreach ($container_array as $container)
 			{
-				$containers .= (empty($container)) ? '<div style="display: none;"><!-- --></div>' : '<div class="clear">' . $container . '</div>' . "\n";
+				$containers .= (empty($container)) ? '<div style="display: none;"><!-- --></div>' : '<div class="bwp-clear">' . $container . '</div>' . "\n";
 			}
 		}
 		
@@ -386,7 +386,7 @@ class BWP_OPTION_PAGE {
 		{				
 			if (!empty($this->form_item_names[$key]) && !empty($this->form_item_labels[$key]))
 			{
-				$return_str .= '<li class="clear">' . $this->generate_html_fields($type, $this->form_item_names[$key]) . '</li>' . "\n";
+				$return_str .= '<li class="bwp-clear">' . $this->generate_html_fields($type, $this->form_item_names[$key]) . '</li>' . "\n";
 			}
 		}
 

@@ -97,7 +97,8 @@ class BWP_FRAMEWORK {
 	/**
 	 * Other special variables
 	 */
-	protected static $_menu_under_settings = false;
+	protected $_menu_under_settings = false;
+	protected $_simple_menu = false;
 
 	/**
 	 * Build base properties
@@ -179,7 +180,8 @@ class BWP_FRAMEWORK {
 
 	function show_donation()
 	{
-		$showable = apply_filters('bwp_donation_showable', true);		
+		$showable = apply_filters('bwp_donation_showable', true);
+		$ad_showable = apply_filters('bwp_ad_showable', true);
 ?>
 <div id="bwp-info-place">
 <div id="bwp-donation" style="margin-bottom: 0px;">
@@ -223,17 +225,35 @@ class BWP_FRAMEWORK {
 		}
 ?>
 </div>
-<div id="bwp-seperator">
+<div class="bwp-separator">
 	<div style="height: 10px; width: 5px; background-color: #cccccc; margin: 0 auto;"><!-- --></div>
 </div>
 <div id="bwp-contact">
 	<a class="bwp-rss" href="http://feeds.feedburner.com/BetterWPnet"><?php _e('Latest updates from BetterWP.net!', $this->plugin_dkey); ?></a>
 	<a class="bwp-twitter" href="http://twitter.com/0dd0ne0ut"><?php _e('Follow me on Twitter!', $this->plugin_dkey); ?></a>
 </div>
+<?php
+		if (true == $ad_showable) 
+		{
+?>
+<div class="bwp-separator">
+	<div style="height: 10px; width: 5px; background-color: #cccccc; margin: 0 auto;"><!-- --></div>
+</div>
+<div id="bwp-ads">
+	<p><strong><?php _e('This Plugin is Proudly Sponsored By', $this->plugin_dkey); ?></strong></p>
+	<div style="width: 250px; margin: 0 auto;">
+		<a href="http://managewp.com/?utm_source=<?php echo $this->plugin_key; ?>&amp;utm_medium=Banner&amp;utm_content=mwp250_2&amp;utm_campaign=Plugins">
+			<img src="<?php echo plugin_dir_url($this->plugin_file) . 'includes/bwp-option-page/images/ad_250x250.png'; ?>" />
+		</a>
+	</div>
+</div>
+<?php
+		}
+?>
 </div>
 <?php
 	}
-	
+
 	function show_version()
 	{
 		if (empty($this->plugin_ver)) return '';
@@ -311,15 +331,7 @@ class BWP_FRAMEWORK {
 		{
 			$db_option = get_option($option);
 			if ($db_option && is_array($db_option))
-			{
-				// Remove option without a key
-				foreach ($db_option as $k => $o)
-				{
-					if (preg_match('/^[0-9]+$/i', $k))
-						unset($db_option[$k]);
-				}
 				$options = array_merge($options, $db_option);
-			}
 			unset($db_option);
 			// Also check for global options if in Multi-site
 			if ($this->is_multisite())
@@ -337,7 +349,6 @@ class BWP_FRAMEWORK {
 				}
 			}
 		}
-
 		$this->options = $options;
 	}
 
@@ -379,7 +390,7 @@ class BWP_FRAMEWORK {
 
 	function plugin_action_links($links, $file) 
 	{
-		$option_script = (self::$_menu_under_settings) ? 'options-general.php' : 'admin.php';
+		$option_script = (!$this->_menu_under_settings && !$this->_simple_menu) ? 'admin.php' : 'options-general.php';
 		$option_keys = array_values($this->option_keys);
 		if ($file == plugin_basename($this->plugin_file))
 			$links[] = '<a href="' . $option_script . '?page=' . $option_keys[0] . '">' . __('Settings') . '</a>';
@@ -389,7 +400,7 @@ class BWP_FRAMEWORK {
 
 	function init_admin()
 	{
-		self::$_menu_under_settings = apply_filters('bwp_menus_under_settings', false);
+		$this->_menu_under_settings = apply_filters('bwp_menus_under_settings', false);
 
 		add_filter('plugin_action_links', array($this, 'plugin_action_links'), 10, 2);
 
@@ -418,7 +429,7 @@ class BWP_FRAMEWORK {
 	
 	function build_tabs()
 	{
-		$option_script = (!self::$_menu_under_settings) ? 'admin.php' : 'options-general.php';
+		$option_script = (!$this->_menu_under_settings) ? 'admin.php' : 'options-general.php';
 		foreach ($this->option_pages as $key => $page)
 		{
 			$pagelink = (!empty($this->option_keys[$key])) ? $this->option_keys[$key] : $this->extra_option_keys[$key];

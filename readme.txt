@@ -3,8 +3,8 @@ Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#contributions
 Tags: xml sitemaps, xml sitemap, google xml sitemaps, sitemapindex, sitemap, sitemaps, seo, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
-Tested up to: 3.3.1
-Stable tag: 1.2.1
+Tested up to: 3.7
+Stable tag: 1.2.2
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex, Multi-site and Google News sitemap.
 
@@ -162,6 +162,14 @@ That's the default behaviour of this plugin and I plan to improve it in future v
 
 == Changelog ==
 
+= 1.2.2 =
+
+* Marked as WordPress 3.7 compatible.
+* Added two new Google News Sitemap languages: Turkish (tr) and Russian (ru).
+* Updated BWP Framework to fix a possible bug that caues BWP setting pages to go blank.
+* Removed Ask.com's pinging service as it has been retired.
+* **Good news**: ManageWP.com has become the official sponsor for BWP Google Xml Sitemaps - [Read more](http://betterwp.net/319-better-wordpress-plugins-updates-2013/).
+
 = 1.2.1 =
 As you might have guessed, this release focuses on improving the new Google News Sitemap Module which was introduced in 1.2.0. Below are some enhancements:
 
@@ -259,7 +267,7 @@ For a detailed description of each new feature, please refer to the [release ann
 **Thanks everyone for using this plugin!**
 
 = 1.0.4 =
-* Hot fix for WordPress in other languages, such as French, Russian. Prior to this version this plugin tries to use posts' and taxonomies' labels to build sitemaps' URLs in plural forms (e.g. taxonomy_categories). Unfortunately this breaks sitemaps when labels contain UTF8 characters with marks (such as catégories). All sitemaps now have singular forms. Hope that we will have a better solution in the future.
+* Hot fix for WordPress in other languages, such as French, Russian. Prior to this version this plugin tries to use posts' and taxonomies' labels to build sitemaps' URLs in plural forms (e.g. taxonomy_categories). Unfortunately this breaks sitemaps when labels contain UTF8 characters with marks (such as catï¿½gories). All sitemaps now have singular forms. Hope that we will have a better solution in the future.
 
 **This change will make all logs' contents change as well. To remove redundant logs, please deactivate this plugin and then reactivate it.**
 
