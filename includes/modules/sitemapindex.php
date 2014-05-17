@@ -132,7 +132,11 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE {
 								$news_cat_action = $bwp_gxs->options['select_news_cat_action'];
 								$cat_query = ('inc' == $news_cat_action) ? 'category__in' : 'category__not_in';
 								$the_post = get_posts(array('posts_per_page' => 1, $cat_query => $news_cats));
-								$data['lastmod'] = $this->format_lastmod(strtotime($the_post[0]->post_modified));
+								// temp fix TODO
+								$last_mod = strtotime($the_post[0]->post_modified);
+								$data['lastmod'] = $last_mod > 0
+									? $this->format_lastmod($last_mod)
+									: $this->format_lastmod(strtotime($the_post[0]->post_date));
 							}
 							else
 								$passed = true;

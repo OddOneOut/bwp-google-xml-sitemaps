@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2013 Khang Minh <betterwp.net>
+ * Copyright (c) 2014 Khang Minh <betterwp.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	 * Modules to load when generating sitemapindex
 	 */
 	var $allowed_modules = array(), $requested_modules = array();
-	
+
 	/**
 	 * Directory to load modules from
 	 */
@@ -40,13 +40,13 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	 * The permalink structure for sitemap files
 	 */
 	var $module_url = array();
-	
+
 	/**
 	 * Frequency & priority
 	 */
 	var $frequency = array('always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never');
 	var $priority = array('0.1' => 0.1, '0.2' => 0.2, '0.3' => 0.3, '0.4' => 0.4, '0.5' => 0.5, '0.6' => 0.6, '0.7' => 0.7, '0.8' => 0.8, '0.9' => 0.9, '1.0' => 1.0);
-	
+
 	/**
 	 * Other properties
 	 */
@@ -64,7 +64,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.2.2')
+	function __construct($version = '1.2.3')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BWP Google XML Sitemaps';
@@ -147,7 +147,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 
 		$this->init();
 	}
-	
+
 	function init_properties()
 	{
 		$this->module_directory = plugin_dir_path($this->plugin_file) . 'includes/modules/';
@@ -169,14 +169,14 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			'news_pub_date'	=> "\n\t\t\t" . '<news:publication_date>%s</news:publication_date>',
 			'news_title'	=> "\n\t\t\t" . '<news:title>%s</news:title>',
 			'news_keywords' => "\n\t\t\t" . '<news:keywords>%s</news:keywords>',
-			// Misc			
+			// Misc
 			'xslt_style' 	=> '',
 			'stats'	=> "\n" . '<!-- ' . __('This sitemap was originally generated in %s second(s) (Memory usage: %s) - %s queries - %s URL(s) listed', 'bwp-simple-gxs') . ' -->'
 			/*'stats_cached'	=> "\n" . '<!-- ' . __('Served from cache in %s second(s) (Memory usage: %s) - %s queries - %s URL(s) listed', 'bwp-simple-gxs') . ' -->'*/
 		);
 
 		$this->init_gzip();
-		
+
 		$this->cache_time = (int) $this->options['input_cache_age'] * (int) $this->options['select_time_type'];
 		$this->oldest_time = (int) $this->options['input_oldest'] * (int) $this->options['select_oldest_type'];
 		$this->options['input_cache_dir'] = plugin_dir_path($this->plugin_file) . 'cache/';
@@ -184,7 +184,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 
 		$module_map = apply_filters('bwp_gxs_module_mapping', array());
 		$this->module_map = wp_parse_args($module_map, array('post_format' => 'post_tag'));
-		
+
 		// Logs
 		$this->logs = get_option(BWP_GXS_LOG);
 		if (!$this->logs)
@@ -216,14 +216,14 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		// No more than 50000 URLs per sitemap
 		if (50000 < (int) $this->options['input_item_limit'])
 			$this->options['input_item_limit'] = 50000;
-		
+
 		// Limit per split sitemap - @since 1.1.0
 		// Not higher than 50000 URLs and must be >= SQL cycling limit
 		if ($this->options['input_split_limit_post'] < $this->options['input_sql_limit'])
 			$this->options['input_split_limit_post'] = $this->options['input_sql_limit'];
 		if (50000 < (int) $this->options['input_split_limit_post'])
 			$this->options['input_split_limit_post'] = 50000;
-		
+
 		// XSLT style sheet
 		if ('yes' == $this->options['enable_xslt'])
 		{
@@ -327,7 +327,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		global $wp_rewrite;
 		$wp_rewrite->flush_rules();
 	}
-	
+
 	function uninstall()
 	{
 		global $wp_rewrite;
@@ -344,16 +344,62 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 		// Give BWP GXS its own menus - create plugin's own menu if allowed
 		if (!empty($this->_menu_under_settings))
 		{
-			add_options_page(__('BWP Google XML Sitemaps Statistics', 'bwp-simple-gxs'), __('Sitemap Statistics', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_STATS, array($this, 'build_option_pages'));
-			add_options_page(__('BWP Google XML Sitemaps Generator', 'bwp-simple-gxs'), __('Sitemap Generator', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_OPTION_GENERATOR, array($this, 'build_option_pages'));
-			add_options_page(__('BWP Google News XML Sitemap', 'bwp-simple-gxs'), __('News Sitemap', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_GOOGLE_NEWS, array($this, 'build_option_pages'));
+			add_options_page(
+				__('BWP Google XML Sitemaps Statistics', 'bwp-simple-gxs'),
+				__('Sitemap Statistics', 'bwp-simple-gxs'),
+				BWP_GXS_CAPABILITY,
+				BWP_GXS_STATS,
+				array($this, 'build_option_pages')
+			);
+			add_options_page(
+				__('BWP Google XML Sitemaps Generator', 'bwp-simple-gxs'),
+				__('Sitemap Generator', 'bwp-simple-gxs'),
+				BWP_GXS_CAPABILITY,
+				BWP_GXS_OPTION_GENERATOR,
+				array($this, 'build_option_pages')
+			);
+			add_options_page(
+				__('BWP Google News XML Sitemap', 'bwp-simple-gxs'),
+				__('News Sitemap', 'bwp-simple-gxs'),
+				BWP_GXS_CAPABILITY,
+				BWP_GXS_GOOGLE_NEWS,
+				array($this, 'build_option_pages')
+			);
 		}
 		else
 		{
-			add_menu_page(__('BWP Google XML Sitemaps', 'bwp-simple-gxs'), 'BWP GXS', BWP_GXS_CAPABILITY, BWP_GXS_STATS, array($this, 'build_option_pages'), BWP_GXS_IMAGES . '/icon_menu.png');
-			add_submenu_page(BWP_GXS_STATS, __('BWP Google XML Sitemaps Statistics', 'bwp-simple-gxs'), __('Sitemap Statistics', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_STATS, array($this, 'build_option_pages'));
-			add_submenu_page(BWP_GXS_STATS, __('BWP Google XML Sitemaps Generator', 'bwp-simple-gxs'), __('Sitemap Generator', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_OPTION_GENERATOR, array($this, 'build_option_pages'));
-			add_submenu_page(BWP_GXS_STATS, __('BWP Google News XML Sitemap', 'bwp-simple-gxs'), __('News Sitemap', 'bwp-simple-gxs'), BWP_GXS_CAPABILITY, BWP_GXS_GOOGLE_NEWS, array($this, 'build_option_pages'));
+			add_menu_page(
+				__('BWP Google XML Sitemaps', 'bwp-simple-gxs'),
+				'BWP GXS',
+				BWP_GXS_CAPABILITY,
+				BWP_GXS_STATS,
+				array($this, 'build_option_pages'),
+				BWP_GXS_IMAGES . '/icon_menu.png'
+			);
+			add_submenu_page(
+				BWP_GXS_STATS,
+				__('BWP Google XML Sitemaps Statistics', 'bwp-simple-gxs'),
+				__('Sitemap Statistics', 'bwp-simple-gxs'),
+				BWP_GXS_CAPABILITY,
+				BWP_GXS_STATS,
+				array($this, 'build_option_pages')
+			);
+			add_submenu_page(
+				BWP_GXS_STATS,
+				__('BWP Google XML Sitemaps Generator', 'bwp-simple-gxs'),
+				__('Sitemap Generator', 'bwp-simple-gxs'),
+				BWP_GXS_CAPABILITY,
+				BWP_GXS_OPTION_GENERATOR,
+				array($this, 'build_option_pages')
+			);
+			add_submenu_page(
+				BWP_GXS_STATS,
+				__('BWP Google News XML Sitemap', 'bwp-simple-gxs'),
+				__('News Sitemap', 'bwp-simple-gxs'),
+				BWP_GXS_CAPABILITY,
+				BWP_GXS_GOOGLE_NEWS,
+				array($this, 'build_option_pages')
+			);
 		}
 	}
 
@@ -368,9 +414,9 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK {
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		// Init the class
-		$page = $_GET['page'];		
+		$page = $_GET['page'];
 		$bwp_option_page = new BWP_OPTION_PAGE($page, $this->site_options);
-		
+
 		$options = array();
 		$dynamic_options = array();
 
@@ -452,7 +498,7 @@ if (!empty($page))
 		$bwp_option_page->set_current_tab(2);
 
 		//add_filter('bwp_ad_showable', function() { return false;});
-		
+
 		$form = array(
 			'items'			=> array('input', 'select', 'select', 'select', 'checkbox', 'checkbox', 'input', 'checkbox', 'checkbox', 'checkbox', 'checkbox', 'heading', 'checkbox', 'checkbox', 'checkbox', 'section', 'section', 'section', 'heading', 'input', 'input', 'heading', 'checkbox', 'checkbox', 'input', 'input'),
 			'item_labels'	=> array
@@ -479,7 +525,7 @@ if (!empty($page))
 				__('Alternate module directory', 'bwp-simple-gxs'),
 				__('Get no more than', 'bwp-simple-gxs'),
 				__('Caching Options', 'bwp-simple-gxs'),
-				__('Enable caching?', 'bwp-simple-gxs'),				
+				__('Enable caching?', 'bwp-simple-gxs'),
 				__('Enable auto cache re-generation?', 'bwp-simple-gxs'),
 				__('Cached sitemaps will last for', 'bwp-simple-gxs'),
 				__('Cached sitemaps are stored in (auto detected)', 'bwp-simple-gxs')
@@ -685,7 +731,7 @@ if (!empty($page))
 					__('Italian', 'bwp-simple-gxs') => 'it',
 					__('Norwegian', 'bwp-simple-gxs') => 'no',
 					__('Portuguese', 'bwp-simple-gxs') => 'pt',
-					__('Polish', 'bwp-simple-gxs') => 'pl',					
+					__('Polish', 'bwp-simple-gxs') => 'pl',
 					__('Russian', 'bwp-simple-gxs') => 'ru',
 					__('Simplified Chinese', 'bwp-simple-gxs') => 'zh-cn',
 					__('Spanish', 'bwp-simple-gxs') => 'es',
@@ -812,10 +858,10 @@ if (!empty($page))
 		if (!@file_exists($this->options['input_cache_dir']) || !@is_writable($this->options['input_cache_dir']))
 			$this->add_notice('<strong>' . __('Warning') . ':</strong> ' . __("Cache directory does not exist or is not writable. Please read more about directory permission <a href='http://www.zzee.com/solutions/unix-permissions.shtml'>here</a> (Unix).", 'bwp-simple-gxs'));
 
-		// Assign the form and option array		
+		// Assign the form and option array
 		$bwp_option_page->init($form, $options + $dynamic_options, $this->form_tabs);
 
-		// Build the option page	
+		// Build the option page
 		echo $bwp_option_page->generate_html_form();
 	}
 
@@ -918,7 +964,7 @@ if (!empty($page))
 		{
 			$log_time = array();
 			foreach ($logs as $key => $row)
-				$log_time[$key] = $row['time'];		
+				$log_time[$key] = $row['time'];
 			array_multisort($log_time, SORT_DESC, $logs);
 		}
 
@@ -976,7 +1022,7 @@ if (!empty($page))
 			$output .= "\n";
 		}
 
-		// Add all other sitemapindex within the network into the primary blog's robots.txt, 
+		// Add all other sitemapindex within the network into the primary blog's robots.txt,
 		// except for ones that have their domains mapped
 		if ($this->is_multisite() && 'yes' == $this->options['enable_global_robots'] && isset($blog_id) && 1 == $blog_id)
 		{
@@ -1016,7 +1062,7 @@ if (!empty($page))
 		// News genres
 		$news_genres = $this->options['input_news_genres'];
 		// Genres taken from here: http://support.google.com/news/publisher/bin/answer.py?hl=en&answer=93992
-		$genres = array('PressRelease', 'Satire', 'Blog', 'OpEd', 'Opinion', 'UserGenerated'); 
+		$genres = array('PressRelease', 'Satire', 'Blog', 'OpEd', 'Opinion', 'UserGenerated');
 
 		$return = '<table class="bwp-table">' . "\n";
 		$return .= '<thead>' . "\n" . '<tr><th><span>#</span></th><th><span>' . __('Category\'s name', 'bwp-simple-gxs') . '</span></th><th>' . sprintf(__('<span>Genres used for this category</span> (more info <a href="%s" target="_blank">here</a>)', 'bwp-simple-gxs'), 'http://support.google.com/news/publisher/bin/answer.py?hl=en&answer=93992') . '</th></tr>' . "\n" . '</thead>';
@@ -1025,7 +1071,7 @@ if (!empty($page))
 		foreach ($categories as $category)
 		{
 			$return .= '<tr>' . "\n";
-			
+
 			$genres_cbs = '';
 			foreach ($genres as $genre)
 			{
@@ -1039,9 +1085,9 @@ if (!empty($page))
 			}
 
 			$checked = (in_array($category->term_id, $news_cats)) ? ' checked="checked" ' : '';
-			$return .= 
-				'<td><input type="checkbox" name="' . esc_attr($category->slug) . '" value="' . esc_attr($category->slug) . '"' . $checked . ' /></td>' . "\n" . 
-				'<td class="bwp_gxs_news_cat_td">' . esc_html($category->name) . '</td>' . "\n" . 
+			$return .=
+				'<td><input type="checkbox" name="' . esc_attr($category->slug) . '" value="' . esc_attr($category->slug) . '"' . $checked . ' /></td>' . "\n" .
+				'<td class="bwp_gxs_news_cat_td">' . esc_html($category->name) . '</td>' . "\n" .
 				'<td>' . $genres_cbs . '</td>' . "\n";
 			$return .= '</tr>' . "\n";
 		}
@@ -1053,7 +1099,7 @@ if (!empty($page))
 
 	}
 
-	/** 
+	/**
 	 * Redirect to correct domain
 	 *
 	 * This plugin generates sitemaps dynamically and exits before WordPress does any canonical redirection.
@@ -1082,7 +1128,7 @@ if (!empty($page))
 		}
 	}
 
-	/** 
+	/**
 	 * A convenient function to add wanted modules or sub modules
 	 *
 	 * When you filter the 'bwp_gxs_modules' hook it is recommended that you use this function.
@@ -1104,7 +1150,7 @@ if (!empty($page))
 			$this->allowed_modules[$module][] = $sub_module;
 	}
 
-	/** 
+	/**
 	 * A convenient function to remove unwanted modules or sub modules
 	 *
 	 * When you filter the 'bwp_gxs_modules' hook it is recommended that you use this function.
@@ -1267,7 +1313,7 @@ if (!empty($page))
 		// Remember to use $wpdb->prepare or $wpdb->escape when developing module
 		$module = stripslashes($module);
 		$sub_module = stripslashes($sub_module);
-		// Check whether or not splitting is enabled and the sub_module has a 'part' part, 
+		// Check whether or not splitting is enabled and the sub_module has a 'part' part,
 		// if so, remove it and pass a parameter to let the module knows that it must produce a split sitemap
 		$module_part = 0;
 		$module_virtual = '';
@@ -1368,8 +1414,8 @@ if (!empty($page))
 					{
 						$module_key = $module . '_' . $this->module_map[$sub_module];
 						include_once($path_custom);
-						$mapped_sub_loaded = true;	
-						$this->nlog(sprintf(__('Loaded a custom sub-module file: <strong>%s</strong>.', 'bwp-simple-gxs'), $module_file));					
+						$mapped_sub_loaded = true;
+						$this->nlog(sprintf(__('Loaded a custom sub-module file: <strong>%s</strong>.', 'bwp-simple-gxs'), $module_file));
 					}
 					else if (@file_exists($path))
 					{
@@ -1378,7 +1424,7 @@ if (!empty($page))
 						$mapped_sub_loaded = true;
 					}
 					else // Don't fire a wp_die
-						$this->nlog(sprintf(__('Mapped sub-module file: <strong>%s</strong> is not available in both default and custom module directory. The plugin will now try loading the requested sub-module instead.', 'bwp-simple-gxs'), $module_file));					
+						$this->nlog(sprintf(__('Mapped sub-module file: <strong>%s</strong> is not available in both default and custom module directory. The plugin will now try loading the requested sub-module instead.', 'bwp-simple-gxs'), $module_file));
 				}
 				if (false == $mapped_sub_loaded)
 				{
@@ -1390,7 +1436,7 @@ if (!empty($page))
 					{
 						include_once($path_custom);
 						$sub_loaded = true;
-						$this->nlog(sprintf(__('Loaded a custom sub-module file: <strong>%s</strong>.', 'bwp-simple-gxs'), $module_file));					
+						$this->nlog(sprintf(__('Loaded a custom sub-module file: <strong>%s</strong>.', 'bwp-simple-gxs'), $module_file));
 					}
 					else if (@file_exists($path))
 					{
@@ -1412,7 +1458,7 @@ if (!empty($page))
 				if (!empty($path_custom) && @file_exists($path_custom))
 				{
 					include_once($path_custom);
-					$this->nlog(sprintf(__('Loaded a custom module file: <strong>%s</strong>.', 'bwp-simple-gxs'), $module_file));					
+					$this->nlog(sprintf(__('Loaded a custom module file: <strong>%s</strong>.', 'bwp-simple-gxs'), $module_file));
 				}
 				else if (@file_exists($path))
 					include_once($path);
@@ -1422,7 +1468,7 @@ if (!empty($page))
 					$this->elog($error_log, true);
 				}
 			}
-			
+
 			$this->module_data = array('module' => $module, 'sub_module' => $sub_module, 'module_key' => $module_key, 'module_name' => $module_name, 'module_part' => $module_part);
 
 			if (class_exists('BWP_GXS_MODULE_' . $module_key))
@@ -1466,7 +1512,7 @@ if (!empty($page))
 			if ('yes' == $this->options['enable_stats'])
 				$this->sitemap_stats();
 			// Now cache the sitemap if we have to
-			if ('yes' == $this->options['enable_cache'] && true == $bwp_gxs_cache->cache_ok) 
+			if ('yes' == $this->options['enable_cache'] && true == $bwp_gxs_cache->cache_ok)
 				$bwp_gxs_cache->write_cache();
 			// Output the requested sitemap
 			$this->output_sitemap();
@@ -1483,7 +1529,7 @@ if (!empty($page))
 	{
 		global $bwp_gxs_ob_start, $bwp_gxs_ob_level, $bwp_gxs_gzipped;
 
-		// If debug is not enabled and gzip is not turned on in between, 
+		// If debug is not enabled and gzip is not turned on in between,
 		// we try to clean all errors before sending new headers - @since 1.1.2
 		$clean_ok = ((int) $bwp_gxs_gzipped == (int) self::is_gzipped() && 'yes' == $this->options['enable_php_clean']) ? true : false;
 		$ob_contents = '';
@@ -1509,7 +1555,7 @@ if (!empty($page))
 			header ('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
 
 		$content_types = array('google' => 'text/xml', 'yahoo' => 'text/plain');
-		
+
 		$time = time();
 		$expires = $this->format_header_time($time + $this->cache_time);
 
@@ -1520,7 +1566,7 @@ if (!empty($page))
 		);
 
 		$header = wp_parse_args($header, $default_headers);
-		
+
 		header('Expires: ' . $header['expires']);
 		header('Last-Modified: ' . $header['lastmod']);
 		if (!empty($header['etag']))
@@ -1543,7 +1589,7 @@ if (!empty($page))
 		return false;
 	}
 
-	function init_gzip() 
+	function init_gzip()
 	{
 		if (!$this->check_gzip() && 'yes' == $this->options['enable_gzip'])
 			$this->options['enable_gzip'] = 'no';
@@ -1600,7 +1646,7 @@ if (!empty($page))
 	{
 		$time = time();
 		$ping_data = get_option(BWP_GXS_PING);
-		if (!$ping_data || !is_array($ping_data) 
+		if (!$ping_data || !is_array($ping_data)
 		|| isset($ping_data['data_pinged']['yahoo']) || isset($ping_data['data_pinged']['ask'])
 		) {
 			$ping_data = array(
@@ -1661,7 +1707,7 @@ if (!empty($page))
 			$this->output = (!self::is_gzipped()) ? gzencode($this->output, 6) : $this->output;
 			$this->send_header();
 			echo $this->output;
-		} 
+		}
 		else
 		{
 			$this->send_header();
@@ -1859,4 +1905,3 @@ if (!empty($page))
 		return true;
 	}
 }
-?>

@@ -102,9 +102,15 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE {
 				$data['location'] = '';
 			else
 				$data['location'] = $this->get_permalink();
-			$data['lastmod'] = $this->format_lastmod(strtotime($post->post_modified));
+
+			// temp fix TODO
+			$last_mod = strtotime($post->post_modified);
+			$data['lastmod'] = $last_mod > 0
+				? $this->format_lastmod($last_mod)
+				: $this->format_lastmod(strtotime($post->post_date));
 			$data['freq'] = $this->cal_frequency($post);
 			$data['priority'] = $this->cal_priority($post, $data['freq']);
+
 			// Pass data back to the plugin to handle
 			$this->data[] = $data;
 		}
