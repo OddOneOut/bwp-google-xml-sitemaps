@@ -134,7 +134,7 @@ class BWP_FRAMEWORK {
 		$this->plugin_folder = basename(dirname($plugin_file));
 
 		// we need to hook to init action to build WP-specific properties
-		add_action('init', array($this, 'build_wp_properties'));
+		/* add_action('init', array($this, 'build_wp_properties')); */
 
 		// Load locale
 		load_plugin_textdomain($dkey, false, $this->plugin_folder . '/languages');
@@ -299,6 +299,8 @@ class BWP_FRAMEWORK {
 	{
 		// Triggers this event to allow plugins to prepare for initialization
 		do_action($this->plugin_key . '_pre_init');
+		// Build wp properties
+		$this->build_wp_properties();
 		// Build constants
 		$this->build_constants();
 		// Build options
