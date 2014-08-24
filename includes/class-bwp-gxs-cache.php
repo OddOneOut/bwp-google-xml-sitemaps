@@ -1,136 +1,146 @@
 <?php
 /**
- * Copyright (c) 2011 Khang Minh <betterwp.net>
+ * Copyright (c) 2014 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  */
 
-class BWP_GXS_CACHE {
+class BWP_GXS_CACHE
+{
+	var $main         = false;
+	var $options      = array();
 
-	var $module = '';
-	var $cache_dir = '';
-	var $cache_file = '';
-	var $cache_time = 0;
-	var $gzip = false;
-	var $has_cache = false;
-	var $options;
+	var $module_name  = '';
+	var $sitemap_name = '';
+
+	var $cache_dir     = '';
+	var $cache_file    = '';
+	var $cache_time    = 0;
+	var $cache_headers = array();
+
+	var $gzip         = false;
 	var $now;
-	var $cache_header = array();
-	var $cache_ok = false;
 
-	function __construct($config = array())
+	public function __construct($main)
+	{
+		// Init necessary config to work with the cache
+		$this->main    = $main;
+		$this->options = $main->options;
+
+		$this->cache_dir  = $this->main->cache_directory;
+		$this->gzip       = 'yes' == $this->options['enable_gzip'] ? true : false;
+		$this->cache_time = (int) $this->options['input_cache_age'] * (int) $this->options['select_time_type'];
+
+		$this->now = time();
+	}
+
+	private function _check_http_cache($lastmod, $etag)
+	{
+		if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) || isset($_SERVER['HTTP_IF_NONE_MATCH']))
+		{
+			// a conditional GET
+			if ((isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
+					&& $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $lastmod)
+				|| (isset($_SERVER['HTTP_IF_NONE_MATCH'])
+					&& str_replace('"', '', stripslashes($_SERVER['HTTP_IF_NONE_MATCH'])) == $etag)
+			) {
+				// if the cached file in browser matches 'modified since'
+				// or 'etag' header of server's cached file, we only need to
+				// send a 304 Not Modified header back
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function _check_cache()
+	{
+		// cache is found and readable, check if we can still use it based
+		// on its last modified timestamp
+		$last_modified = @filemtime($this->cache_file);
+
+		if ($last_modified + $this->cache_time <= $this->now
+			&& 'yes' == $this->options['enable_cache_auto_gen']
+		) {
+			// cached sitemap file has expired, and cache auto-regenerate
+			// is enabled, remove the cached sitemap file and return to the main
+			// handle to re-generate a new sitemap file.
+			@unlink($this->cache_file);
+			return false;
+		}
+
+		$expires = $this->main->format_header_time($last_modified + $this->cache_time);
+		$etag    = md5($expires . $this->cache_file);
+
+		// build cached sitemap's headers for later use
+		$this->cache_headers = array(
+			'lastmod' => $this->main->format_header_time($last_modified),
+			'expires' => $expires,
+			'etag'    => $etag
+		);
+
+		if ($this->_check_http_cache($lastmod, $etag))
+			return '304';
+
+		return '200';
+	}
+
+	public function write_cache($contents)
+	{
+		$cache_file = $this->cache_file;
+
+		$handle = @gzopen($cache_file, 'wb')
+
+		if ($handle)
+		{
+			@flock($handle, LOCK_EX);
+			@gzwrite($handle, $contents);
+			@flock($handle, LOCK_UN);
+			@gzclose($handle);
+
+			/* @umask(0000); */
+			@chmod($cache_file, 0644);
+		}
+		else
+		{
+			return false;
+		}
+
+		// return the modification timestamp to construct etag
+		return @filemtime($cache_file);
+	}
+
+	/**
+	 * Gets current cache status for the requested sitemap
+	 *
+	 * @since BWP GXS 1.2.4
+	 * @access public
+	 * @return bool|string false if cache is invalid
+	 *                     '304' if http cache can be used
+	 *                     '200' if file cache must be used
+	 */
+	public function get_cache_status($module_name, $sitemap_name)
 	{
 		global $bwp_gxs;
 
-		// Init necessary config to work with the cache
-		$this->options = $bwp_gxs->get_options();
-		$this->module = $config['module'];
-		$this->module_name = $config['module_name'];
-		$this->cache_dir = $this->options['input_cache_dir'];
-		$this->gzip = ('yes' == $this->options['enable_gzip']) ? true : false;
-		$this->cache_time = (int) $this->options['input_cache_age'] * (int) $this->options['select_time_type'];
-		$this->now = time();
-		
-		if (empty($this->cache_dir) || !@is_writable($this->cache_dir))
-			$bwp_gxs->elog(sprintf(__('Cache directory ("%s") does not exist or is not writable.', 'bwp-simple-gxs'), $this->cache_dir));
-		else
-			$this->setup_cache();
+		$this->module_name  = $module_name;
+		$this->sitemap_name = $sitemap_name;
+
+		$this->cache_file = bwp_gxs_get_filename($module_name);
+
+		if (!@is_readable($this->cache_file))
+			return false;
+
+		return $this->_check_cache();
 	}
 
-	function get_header()
+	public function get_headers()
 	{
-		return $this->cache_header;
+		return $this->cache_headers;
 	}
 
-	function get_cache_file()
+	public function get_cache_file()
 	{
 		return $this->cache_file;
 	}
-
-	function check_cache()
-	{
-		global $bwp_gxs;
-
-		// If the cache file is not found
-		if (!@file_exists($this->cache_file))
-		{
-			$bwp_gxs->nlog(sprintf(__('Cache file for module <em>%s</em> is not found and will be built right away.', 'bwp-simple-gxs'), $this->module));
-			return false;
-		}
-		$this->has_cache = true;
-
-		return true;
-	}
-
-	function setup_cache()
-	{
-		global $bwp_gxs;
-		// Build cache file name, WPMS compatible
-		$file_name = 'gxs_' . md5($this->module . '_' . get_option('home'));
-		// $file_name .= (true == $this->gzip) ? '.xml.gz' : '.xml';
-		// Use gz all the time to save space
-		$file_name .= '.xml.gz';
-		$this->cache_file = trailingslashit($this->cache_dir) . $file_name;
-		$this->cache_ok = true;
-
-		if ($this->check_cache())
-		{
-			// So cache is found, check if we can still use it
-			$filemtime = @filemtime($this->cache_file);
-			if ($filemtime + $this->cache_time <= $this->now && 'yes' == $this->options['enable_cache_auto_gen'])
-			{
-				@unlink($this->cache_file);
-				$this->has_cache = false;
-			}
-
-			if (!$this->has_cache)
-			{
-				$header['lastmod'] = $bwp_gxs->format_header_time($this->now);
-				$header['expires'] = $bwp_gxs->format_header_time($this->now + $this->cache_time);
-				$header['etag'] = md5($header['expires'] . $this->cache_file);
-			}
-			else
-			{
-				$header['lastmod'] = $bwp_gxs->format_header_time($filemtime);
-				$header['expires'] = $bwp_gxs->format_header_time($filemtime + $this->cache_time);
-				$header['etag'] = md5($header['expires'] . $this->cache_file);
-			}
-			
-			$this->cache_header = $header;
-			
-			if ('yes' == $this->options['enable_debug'])
-				return;
-
-			if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) || isset($_SERVER['HTTP_IF_NONE_MATCH']))
-			{
-				if ((isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $header['lastmod']) || 
-					(isset($_SERVER['HTTP_IF_NONE_MATCH']) && str_replace('"', '', stripslashes($_SERVER['HTTP_IF_NONE_MATCH'])) == $header['etag']))
-				{
-					$bwp_gxs->slog(sprintf(__('Successfully served a cached version of <em>%s.xml</em>.', 'bwp-simple-gxs'), $this->module_name), true);
-					$bwp_gxs->commit_logs();
-					header('HTTP/1.1 304 Not Modified');
-					exit();
-				}
-			}
-		}
-	}
-
-	function write_cache()
-	{
-		global $bwp_gxs;
-
-		$file = $this->cache_file;
-
-		$handle = @gzopen($file, 'wb');
-		@flock($handle, LOCK_EX);
-		@gzwrite($handle, $bwp_gxs->output);
-		@flock($handle, LOCK_UN);
-		@gzclose($handle);
-
-		@umask(0000);
-		@chmod($file, 0666);
-
-		return true;
-	}
 }
-
-?>

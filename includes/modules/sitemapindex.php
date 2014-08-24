@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright (c) 2012 Khang Minh <betterwp.net>
+ * Copyright (c) 2014 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  */
 
-class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE {
-
+class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
+{
 	// Declare all properties you need for your modules here
 	var $requested_modules = array();
 
@@ -53,7 +53,7 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE {
 			$temp_posts[$a_post->post_type] = $this->format_lastmod(strtotime($a_post->post_modified));
 		arsort($temp_posts);
 		$prime_lastmod = current($temp_posts);
-		
+
 		// Determine whether or not to split post-based sitemaps - @since 1.1.0
 		$post_count_array = array();
 		if ('yes' == $bwp_gxs->options['enable_sitemap_split_post'])
@@ -164,4 +164,3 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE {
 		}
 	}
 }
-?>

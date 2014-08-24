@@ -155,23 +155,24 @@ class BWP_OPTION_PAGE {
 	 */
 	function generate_html_field($type = '', $data = array(), $name = '', $in_section = false)
 	{
-		$pre_html_field     = '';
-		$post_html_field    = '';
-		$checked            = 'checked="checked" ';
-		$selected           = 'selected="selected" ';
+		$pre_html_field  = '';
+		$post_html_field = '';
+		$checked         = 'checked="checked" ';
+		$selected        = 'selected="selected" ';
 
-		$value              = isset($this->form_options[$name])
+		$value = isset($this->form_options[$name])
 			? $this->form_options[$name]
 			: '';
 
-		$value              = !empty($this->domain)
+		$value = !empty($this->domain)
 			&& ('textarea' == $type || 'input' == $type)
 			? __($value, $this->domain)
 			: $value;
 
 		if (is_array($value))
 		{
-			$value = array_map('esc_attr', $value);
+			foreach ($value as &$v)
+				$v = is_array($v) ? array_map('esc_attr', $v) : esc_attr($v);
 		}
 		else
 		{
@@ -180,18 +181,21 @@ class BWP_OPTION_PAGE {
 				: esc_attr($value);
 		}
 
-		$array_replace      = array();
-		$array_search       = array('size', 'name', 'value', 'cols',
-									'rows', 'label', 'disabled', 'pre', 'post');
-		$return_html        = '';
+		$array_replace = array();
+		$array_search  = array('size', 'name', 'value', 'cols',
+			'rows', 'label', 'disabled', 'pre', 'post');
+		$return_html   = '';
 
-		$br                 = isset($this->form['inline_fields'][$name])
+		$br = isset($this->form['inline_fields'][$name])
 			&& is_array($this->form['inline_fields'][$name])
 			? ''
 			: "<br />\n";
 
-		$pre                = !empty($data['pre']) ? $data['pre'] : '';
-		$post               = !empty($data['post']) ? $data['post'] : '';
+		$pre   = !empty($data['pre']) ? $data['pre'] : '';
+		$post  = !empty($data['post']) ? $data['post'] : '';
+
+		$param = empty($this->form['params'][$name])
+			? false : $this->form['params'][$name];
 
 		switch ($type)
 		{
@@ -204,7 +208,10 @@ class BWP_OPTION_PAGE {
 			break;
 
 			case 'select':
-				$pre_html_field = '%pre%<select id="' . $name . '" name="' . $name . '">' . "\n";
+			case 'select_multi':
+				$pre_html_field = 'select_multi' == $type
+					? '%pre%<select id="' . $name . '" name="' . $name . '[]" multiple>' . "\n"
+					: '%pre%<select id="' . $name . '" name="' . $name . '">' . "\n";
 				$html_field = '<option %selected%value="%value%" />%option%</option>';
 				$post_html_field = '</select>%post%' . $br;
 			break;
@@ -232,50 +239,79 @@ class BWP_OPTION_PAGE {
 		{
 			$return_html .= sprintf($html_field, $data) . $br;
 		}
-		else if ($type == 'radio' || $type == 'checkbox' || $type == 'checkbox_multi' || $type == 'select')
-		{
+		else if ($type == 'radio'
+			|| $type == 'checkbox' || $type == 'checkbox_multi'
+			|| $type == 'select' || $type == 'select_multi'
+		) {
 			foreach ($data as $key => $value)
 			{
-				// handle checkbox a little bit differently
 				if ($type == 'checkbox')
 				{
+					// handle checkbox a little bit differently
 					if ($this->form_options[$value] == 'yes')
+					{
 						$return_html .= str_replace(
 							array('%value%', '%name%', '%label%', '%checked%'),
 							array($value, $value, $key, $checked),
 							$html_field
-						) . $br;
+						);
+
+						$return_html .= apply_filters('bwp_option_after_' . $type . '_' . $name . '_checked', '', $value, $param);
+						$return_html .= $br;
+					}
 					else
+					{
 						$return_html .= str_replace(
 							array('%value%', '%name%', '%label%', '%checked%'),
 							array($value, $value, $key, ''),
 							$html_field
-						) . $br;
+						);
+
+						$return_html .= apply_filters('bwp_option_after_' . $type . '_' . $name, '', $value, $param);
+						$return_html .= $br;
+					}
 				}
 				else if ($type == 'checkbox_multi')
 				{
+					// handle a multi checkbox differently
 					if (isset($this->form_options[$name])
 						&& is_array($this->form_options[$name])
-						&& in_array($value, $this->form_options[$name]))
+						&& (in_array($value, $this->form_options[$name])
+							|| array_key_exists($value, $this->form_options[$name]))
+					) {
 						$return_html .= str_replace(
 							array('%value%', '%name%', '%label%', '%checked%'),
 							array($value, $name, $key, $checked),
 							$html_field
-						) . $br;
+						);
+
+						$return_html .= apply_filters('bwp_option_after_' . $type . '_' . $name . '_checked', '', $value, $param);
+						$return_html .= $br;
+					}
 					else
+					{
 						$return_html .= str_replace(
 							array('%value%', '%name%', '%label%', '%checked%'),
 							array($value, $name, $key, ''),
 							$html_field
-						) . $br;
+						);
+
+						$return_html .= apply_filters('bwp_option_after_' . $type . '_' . $name, '', $value, $param);
+						$return_html .= $br;
+					}
 				}
 				else if (isset($this->form_options[$name])
-					&& $this->form_options[$name] == $value)
+					&& ($this->form_options[$name] == $value
+						|| (is_array($this->form_options[$name])
+							&& (in_array($value, $this->form_options[$name])
+								|| array_key_exists($value, $this->form_options[$name]))))
+				) {
 					$return_html .= str_replace(
 						array('%value%', '%name%', '%label%', '%option%', '%checked%', '%selected%', '%pre%', '%post%'),
 						array($value, $value, $key, $key, $checked, $selected, $pre, $post),
 						$html_field
 					) . $br;
+				}
 				else
 					$return_html .= str_replace(
 						array('%value%', '%name%', '%label%', '%option%', '%checked%', '%selected%', '%pre%', '%post%'),

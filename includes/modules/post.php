@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright (c) 2012 Khang Minh <betterwp.net>
+ * Copyright (c) 2014 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
- * 
+ *
  * You can take this as a sample module, it is documented rather well ;)
  */
 
-class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE {
-
+class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
+{
 	// Declare all properties you need for your modules here
 	var $requested;
 
@@ -19,13 +19,13 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE {
 		$this->set_current_time();
 		// $bwp_gxs->module_data hold four things, but you only need to take note of 'sub_module' and 'module_key'
 		// For example when you are browsing to http://example.com/taxonomy_category.xml
-		// $bwp_gxs->module_data['sub_module'] is 'category' (the singular name) and $bwp_gxs->module_data['module_key'] is 
-		// 'taxonomy_category' (also singular). If you have a custom module for taxonomy_category, you must name your class 
+		// $bwp_gxs->module_data['sub_module'] is 'category' (the singular name) and $bwp_gxs->module_data['module_key'] is
+		// 'taxonomy_category' (also singular). If you have a custom module for taxonomy_category, you must name your class
 		// BWP_GXS_MODULE_TAXONOMY_CATEGORY and save the file as taxonomy_category.php (similar to taxonomy_post_tag.php).
 		// If no custom post type is requested, use the default post type
-		$this->requested = (!empty($bwp_gxs->module_data['sub_module'])) ? $bwp_gxs->module_data['sub_module'] : 'post';
-		// module_part let you determine whether or not to build a post sitemap as part of a large post sitemap. 
-		// If this value is greater than 0, for example 2, or 3 it means that we are building part 2, 
+		$this->requested = !empty($bwp_gxs->module_data['sub_module']) ? $bwp_gxs->module_data['sub_module'] : 'post';
+		// module_part let you determine whether or not to build a post sitemap as part of a large post sitemap.
+		// If this value is greater than 0, for example 2, or 3 it means that we are building part 2,
 		// or part 3 of that large sitemap, and we will have to modify our SQL query accordingly - @since 1.1.0
 		$this->part = $bwp_gxs->module_data['module_part'];
 		// Get the permalink this website uses, apply to normal posts
@@ -42,8 +42,8 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE {
 	/**
 	 * This is the main function that generates our data.
 	 *
-	 * Since we are dealing with heavy queries here, it's better that you use 
-	 * generate_data() which will get called by build_data(). This way you will query for no more than 
+	 * Since we are dealing with heavy queries here, it's better that you use
+	 * generate_data() which will get called by build_data(). This way you will query for no more than
 	 * the SQL limit configurable in this plugin's option page.
 	 * If you happen to use LIMIT in your SQL statement for other reasons then use build_data() instead.
 	 */
@@ -70,7 +70,7 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE {
 						ON wprel.term_taxonomy_id = wptax.term_taxonomy_id' . "
 						AND wptax.taxonomy = 'category'" . '
 					, ' . $wpdb->terms . ' wpterms
-					WHERE wptax.term_id = wpterms.term_id ' 
+					WHERE wptax.term_id = wpterms.term_id '
 					. "$sql_where" . '
 				GROUP BY wposts.ID
 				ORDER BY wposts.post_modified DESC';
@@ -122,4 +122,3 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE {
 		return true;
 	}
 }
-?>

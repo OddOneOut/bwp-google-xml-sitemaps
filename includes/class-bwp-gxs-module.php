@@ -1,26 +1,34 @@
 <?php
 /**
- * Copyright (c) 2012 Khang Minh <betterwp.net>
+ * Copyright (c) 2014 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE VERSION 3.0 OR LATER
  */
 
-class BWP_GXS_MODULE {
-
+class BWP_GXS_MODULE
+{
 	/**
 	 * Data used to build a sitemap
 	 */
 	var $data = array();
-	
+
 	/**
 	 * Is this a sitemapindex or a url set?
 	 */
 	var $type = 'url';
-	
+
 	/**
 	 * Priority mapping
 	 */
-	var $freq_to_pri = array('always' => 1.0, 'hourly' => 0.8, 'daily' => 0.7, 'weekly' => 0.6, 'monthly' => 0.4, 'yearly' => 0.3, 'never' => 0.2);
-	
+	var $freq_to_pri = array(
+		'always'  => 1.0,
+		'hourly'  => 0.8,
+		'daily'   => 0.7,
+		'weekly'  => 0.6,
+		'monthly' => 0.4,
+		'yearly'  => 0.3,
+		'never'   => 0.2
+	);
+
 	var $comment_count = 0, $now, $offset = 0, $url_sofar = 0, $circle = 0;
 	var $perma_struct = '', $post_type = NULL;
 	var $limit = 0;
@@ -43,8 +51,10 @@ class BWP_GXS_MODULE {
 			$this->set_current_time();
 
 		$data['location'] = '';
-		$data['lastmod'] = (!empty($pre_data['lastmod'])) ? strtotime($pre_data['lastmod']) - $bwp_gxs->oldest_time : $this->now - $bwp_gxs->oldest_time;
-		$data['lastmod'] = $this->format_lastmod($data['lastmod']);
+		$data['lastmod']  = !empty($pre_data['lastmod'])
+			? strtotime($pre_data['lastmod']) - $bwp_gxs->oldest_time
+			: $this->now - $bwp_gxs->oldest_time;
+		$data['lastmod']  = $this->format_lastmod($data['lastmod']);
 
 		if (empty($pre_data) || sizeof($pre_data) == 0)
 			return $data;
@@ -58,7 +68,7 @@ class BWP_GXS_MODULE {
 	function get_xml_link($slug)
 	{
 		global $bwp_gxs;
-		
+
 		if (!$bwp_gxs->use_permalink)
 			return home_url() . '/?' . $bwp_gxs->query_var_non_perma . '=' . $slug;
 		else
@@ -82,15 +92,20 @@ class BWP_GXS_MODULE {
 		if (empty($this->now))
 			$this->now = $this->set_current_time();
 
-		$lastmod = (is_object($item)) ? $item->post_modified : $lastmod;
+		$lastmod = is_object($item) ? $item->post_modified : $lastmod;
 
 		if (empty($lastmod))
-			$freq = $bwp_gxs->options['select_default_freq'];			
+		{
+			$freq = $bwp_gxs->options['select_default_freq'];
+		}
 		else
 		{
 			$time = $this->now - strtotime($lastmod);
-			$freq = $time > 30000000 ? 'yearly' : ($time > 2592000 ? 'monthly' : ($time > 604800 ? 'weekly' : ($time > 86400 ? 'daily' : ($time > 43200 ? 'hourly' : 'always'))));
+			$freq = $time > 30000000
+				? 'yearly'
+				: ($time > 2592000 ? 'monthly' : ($time > 604800 ? 'weekly' : ($time > 86400 ? 'daily' : ($time > 43200 ? 'hourly' : 'always'))));
 		}
+
 		return apply_filters('bwp_gxs_freq', $freq, $item);
 	}
 
@@ -99,7 +114,7 @@ class BWP_GXS_MODULE {
 	 *
 	 * This is just a basic way to calculate priority and module should use its own function instead.
 	 * Search engines don't really care about priority and change frequency much, do they ;)?
-	 */	
+	 */
 	function cal_priority($item, $freq = 'daily')
 	{
 		global $bwp_gxs;
@@ -118,7 +133,7 @@ class BWP_GXS_MODULE {
 			$score = $this->now + ($this->now - (int) strtotime($item->post_modified)) / $comment * 164;
 			$score = $this->now / $score;
 		}
-		
+
 		$score = ($score < $bwp_gxs->options['select_min_pri']) ? $bwp_gxs->options['select_min_pri'] : $score;
 
 		// For people who doesn't like using module
@@ -128,7 +143,7 @@ class BWP_GXS_MODULE {
 	function format_lastmod($lastmod)
 	{
 		global $bwp_gxs;
-		// Hit or miss :-?
+
 		$lastmod = $lastmod - get_option('gmt_offset') * 3600;
 		if ('yes' == $bwp_gxs->options['enable_gmt'])
 			return gmdate('c', (int) $lastmod);
@@ -138,8 +153,13 @@ class BWP_GXS_MODULE {
 
 	function post_type_uses($post_type, $taxonomy_object)
 	{
-		if (isset($taxonomy_object->object_type) && is_array($taxonomy_object->object_type) && in_array($post_type, $taxonomy_object->object_type))
+		if (isset($taxonomy_object->object_type)
+			&& is_array($taxonomy_object->object_type)
+			&& in_array($post_type, $taxonomy_object->object_type)
+		) {
 			return true;
+		}
+
 		return false;
 	}
 
@@ -178,7 +198,7 @@ class BWP_GXS_MODULE {
 
 	/**
 	 * Get term links without using any SQL queries and the cache.
-	 */	
+	 */
 	function get_term_link($term, $taxonomy = '')
 	{
 		global $wp_rewrite;
@@ -246,7 +266,7 @@ class BWP_GXS_MODULE {
 			if (!$leavename)
 				$post_link = str_replace("%$post->post_type%", $slug, $post_link);
 			$post_link = home_url(user_trailingslashit($post_link));
-		} 
+		}
 		else
 		{
 			if ($post_type->query_var && (isset($post->post_status) && !$draft_or_pending))
@@ -305,7 +325,7 @@ class BWP_GXS_MODULE {
 		{
 			$unixtime = strtotime($post->post_date);
 			$category = '';
-			if (strpos($permalink, '%category%') !== false) 
+			if (strpos($permalink, '%category%') !== false)
 			{
 				// If this post belongs to a category with a parent, we have to rely on WordPress to build our permalinks
 				// This can cause white page for sites that have a lot of posts, don't blame this plugin, blame WordPress ;)
@@ -335,7 +355,7 @@ class BWP_GXS_MODULE {
 				$authordata = get_userdata($post->post_author);
 				$author = $authordata->user_nicename;
 			}
-			
+
 			$date = explode(' ', date('Y m d H i s', $unixtime));
 			$rewritereplace =
 			array(
@@ -358,7 +378,7 @@ class BWP_GXS_MODULE {
 		else // if they're not using the fancy permalink option
 			$permalink = home_url('?p=' . $post->ID);
 
-		return apply_filters('post_link', $permalink, $post, $leavename);	
+		return apply_filters('post_link', $permalink, $post, $leavename);
 	}
 
 	/**
@@ -415,10 +435,17 @@ class BWP_GXS_MODULE {
 		global $bwp_gxs;
 
 		// Use part limit or global item limit - @since 1.1.0
-		$this->limit = (empty($this->part)) ? $bwp_gxs->options['input_item_limit'] : $bwp_gxs->options['input_split_limit_post'];
+		$this->limit = empty($this->part)
+			? $bwp_gxs->options['input_item_limit']
+			: $bwp_gxs->options['input_split_limit_post'];
+
 		// If this is a Google News sitemap, limit is 1000
-		$this->limit = ('news' == $this->type) ? 1000 : $this->limit;
-		$this->offset = (empty($this->part)) ? 0 : ($this->part - 1) * $bwp_gxs->options['input_split_limit_post'];
+		$this->limit = 'news' == $this->type
+			? 1000 : $this->limit;
+
+		$this->offset = empty($this->part)
+			? 0
+			: ($this->part - 1) * $bwp_gxs->options['input_split_limit_post'];
 
 		while ($this->url_sofar < $this->limit && false != $this->generate_data())
 			$this->url_sofar = sizeof($this->data);
@@ -427,5 +454,14 @@ class BWP_GXS_MODULE {
 		if (!empty($sort_column))
 			$this->sort_data_by($sort_column);
 	}
+
+	public function get_data()
+	{
+		return $this->data;
+	}
+
+	public function get_type()
+	{
+		return $this->type;
+	}
 }
-?>
