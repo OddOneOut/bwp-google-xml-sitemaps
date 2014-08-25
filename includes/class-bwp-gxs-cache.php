@@ -89,7 +89,7 @@ class BWP_GXS_CACHE
 	{
 		$cache_file = $this->cache_file;
 
-		$handle = @gzopen($cache_file, 'wb')
+		$handle = @gzopen($cache_file, 'wb');
 
 		if ($handle)
 		{

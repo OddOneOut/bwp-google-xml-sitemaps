@@ -245,7 +245,6 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 			'enable_cache'              => 'yes',
 			'enable_cache_auto_gen'     => 'yes',
 			'enable_gzip'               => '',
-			'enable_php_clean'          => 'yes',
 			'enable_xslt'               => 'yes',
 			'enable_sitemap_date'       => '',
 			'enable_sitemap_taxonomy'   => 'yes',
@@ -279,7 +278,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 			'input_exclude_taxonomy'    => 'post_tag',
 			'input_cache_age'           => 1,
 			'input_item_limit'          => 5000,
-			'input_split_limit_post'    => 5000,
+			'input_split_limit_post'    => 0,
 			'input_alt_module_dir'      => $this->_normalize_path_separator(ABSPATH),
 			'input_oldest'              => 7,
 			'input_sql_limit'           => 1000,
@@ -306,7 +305,6 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 			'enable_ping_bing',
 			/* 'enable_ping_ask', */
 			'enable_gzip',
-			'enable_php_clean',
 			'enable_cache',
 			'enable_cache_auto_gen',
 			'input_cache_age',
@@ -316,12 +314,12 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 			'select_time_type'
 		);
 
-		$this->add_option_key('BWP_GXS_STATS', 'bwp_gxs_stats',
-			__('Sitemap Statistics', $this->domain));
 		$this->add_option_key('BWP_GXS_OPTION_GENERATOR', 'bwp_gxs_generator',
-			__('XML Sitemap', $this->domain));
+			__('XML Sitemaps', $this->domain));
 		$this->add_option_key('BWP_GXS_GOOGLE_NEWS', 'bwp_gxs_google_news',
 			__('Google News Sitemap', $this->domain));
+		$this->add_option_key('BWP_GXS_STATS', 'bwp_gxs_stats',
+			__('Sitemap Log', $this->domain));
 
 		define('BWP_GXS_LOG', 'bwp_gxs_log');
 		define('BWP_GXS_PING', 'bwp_gxs_ping_data');
@@ -457,6 +455,9 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 	{
 		if ($this->is_admin_page())
 			wp_enqueue_style('bwp-gxs-admin', BWP_GXS_CSS . '/bwp-simple-gxs.css');
+
+		if ($this->is_admin_page(BWP_GXS_OPTION_GENERATOR))
+			wp_enqueue_script('bwp-gxs-setting', BWP_GXS_JS . '/bwp-gxs.js');
 	}
 
 	public function insert_query_vars($vars)
@@ -590,23 +591,23 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 			// use simple menu if instructed to
 			add_options_page(
 				__('BWP Google XML Sitemaps Statistics', $this->domain),
-				__('Sitemap Statistics', $this->domain),
-				BWP_GXS_CAPABILITY,
-				BWP_GXS_STATS,
-				array($this, 'build_option_pages')
-			);
-			add_options_page(
-				__('BWP Google XML Sitemaps Generator', $this->domain),
-				__('Sitemap Generator', $this->domain),
+				__('BWP XML Sitemaps', $this->domain),
 				BWP_GXS_CAPABILITY,
 				BWP_GXS_OPTION_GENERATOR,
 				array($this, 'build_option_pages')
 			);
 			add_options_page(
 				__('BWP Google News XML Sitemap', $this->domain),
-				__('News Sitemap', $this->domain),
+				__('BWP Google News Sitemap', $this->domain),
 				BWP_GXS_CAPABILITY,
 				BWP_GXS_GOOGLE_NEWS,
+				array($this, 'build_option_pages')
+			);
+			add_options_page(
+				__('BWP Google XML Sitemaps Generator', $this->domain),
+				__('BWP Sitemap Log', $this->domain),
+				BWP_GXS_CAPABILITY,
+				BWP_GXS_STATS,
 				array($this, 'build_option_pages')
 			);
 		}
@@ -614,34 +615,34 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 		{
 			add_menu_page(
 				__('Better WordPress Google XML Sitemaps', $this->domain),
-				'BWP GXS',
+				'BWP Sitemap',
 				BWP_GXS_CAPABILITY,
-				BWP_GXS_STATS,
+				BWP_GXS_OPTION_GENERATOR,
 				array($this, 'build_option_pages'),
 				BWP_GXS_IMAGES . '/icon_menu.png'
 			);
 			add_submenu_page(
-				BWP_GXS_STATS,
+				BWP_GXS_OPTION_GENERATOR,
 				__('Better WordPress Google XML Sitemaps Statistics', $this->domain),
-				__('Sitemap Statistics', $this->domain),
-				BWP_GXS_CAPABILITY,
-				BWP_GXS_STATS,
-				array($this, 'build_option_pages')
-			);
-			add_submenu_page(
-				BWP_GXS_STATS,
-				__('Better WordPress Google XML Sitemaps Generator', $this->domain),
-				__('Sitemap Generator', $this->domain),
+				__('XML Sitemaps', $this->domain),
 				BWP_GXS_CAPABILITY,
 				BWP_GXS_OPTION_GENERATOR,
 				array($this, 'build_option_pages')
 			);
 			add_submenu_page(
-				BWP_GXS_STATS,
+				BWP_GXS_OPTION_GENERATOR,
 				__('Better WordPress Google News XML Sitemap', $this->domain),
-				__('News Sitemap', $this->domain),
+				__('Google News Sitemap', $this->domain),
 				BWP_GXS_CAPABILITY,
 				BWP_GXS_GOOGLE_NEWS,
+				array($this, 'build_option_pages')
+			);
+			add_submenu_page(
+				BWP_GXS_OPTION_GENERATOR,
+				__('Better WordPress Google XML Sitemaps Generator', $this->domain),
+				__('Sitemap Log', $this->domain),
+				BWP_GXS_CAPABILITY,
+				BWP_GXS_STATS,
 				array($this, 'build_option_pages')
 			);
 		}
@@ -666,130 +667,188 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 
 		if (!empty($page))
 		{
-			if ($page == BWP_GXS_STATS)
+			if ($page == BWP_GXS_OPTION_GENERATOR)
 			{
 				$bwp_option_page->set_current_tab(1);
 
-				// Clear logs = @since 1.1.0
-				if (isset($_POST['clear_log']) && !$this->is_normal_admin())
-				{
-					check_admin_referer($page);
-					$this->logs = array('log' => array(), 'sitemap' => array());
-					$this->commit_logs();
-					$this->add_notice('<strong>' . __('Notice', $this->domain) . ':</strong> ' . __("All logs have been cleared successfully!", $this->domain));
-				}
-
 				$form = array(
-					'items'			=> array('heading', 'heading', 'heading', 'heading', 'checkbox', 'section', 'heading', 'checkbox', 'checkbox'),
-					'item_labels'	=> array
-					(
-						__('What are Sitemaps?', $this->domain),
+					'items' => array(
+						'heading',
+						'heading',
+						'section',
+						'section',
+						'section',
+						'heading',
+						'input',
+						'checkbox',
+						'input',
+						'heading',
+						'select',
+						'select',
+						'select',
+						'checkbox',
+						'checkbox',
+						'heading',
+						'checkbox',
+						'input',
+						'checkbox',
+						'checkbox',
+						'heading',
+						'checkbox',
+						'checkbox',
+						'heading',
+						'checkbox',
+						'section',
+						'heading',
+						'checkbox',
+						'checkbox',
+						'input',
+						'input',
+						'heading',
+						'input',
+						'input',
+						'heading',
+						'checkbox',
+						'checkbox'
+					),
+					'item_labels' => array(
 						__('Your sitemaps', $this->domain),
-						__('Submit your sitemaps', $this->domain),
-						__('Pinging search engines', $this->domain),
-						__('Enable pinging functionality?', $this->domain),
-						__('Enable pinging individual SE', $this->domain),
-						__('Sitemap Generator\'s Log', $this->domain),
-						__('Enable logging?', $this->domain),
-						__('Enable debugging?', $this->domain)
-					),
-					'item_names'	=> array('h1', 'h2', 'h4', 'h5', 'cb1', 'sec1', 'h3', 'cb2', 'cb3'),
-					'sec1' => array(
-							array('checkbox', 'name' => 'cb4'),
-							array('checkbox', 'name' => 'cb6')
-							//array('checkbox', 'name' => 'cb7')
-					),
-					'heading'			=> array(
-						'h1'	=> __('In its simplest form, a Sitemap is an XML file that lists URLs for a site along with additional metadata about each URL (when it was last updated, how often it usually changes, and how important it is, relative to other URLs in the site) so that search engines can more intelligently crawl the site &mdash; <em>http://www.sitemaps.org/</em>', $this->domain) . '<br /><br />' . __('This plugin helps you generate both Sitemap Index files as well as normal Sitemap files. A Sitemap Index, as its name suggests, is one kind of sitemaps that allows you to group multiple sitemap files inside it.', $this->domain),
-						'h2'	=> __('<em>Basic information about all your sitemaps.</em>', $this->domain),
-						'h3'	=> __('<em>More detailed information about how your sitemaps are generated including <span style="color: #999999;">notices</span>, <span style="color: #FF0000;">errors</span> and <span style="color: #009900;">success messages</span>.</em>', $this->domain),
-						'h4'	=> sprintf(__('<em>Submit your sitemapindex to major search engines like <a href="%s" target="_blank">Google</a>, <a href="%s" target="_blank">Bing</a>.</em>', $this->domain), 'https://www.google.com/webmasters/tools/home?hl=en', 'http://www.bing.com/toolbox/webmasters/'/*, 'http://about.ask.com/en/docs/about/webmasters.shtml#22'*/),
-						'h5'	=> __('<em>Now when you post something new to your blog, you can <em>ping</em> those search engines to tell them your blog just got updated. Pinging could be less effective than you think it is but you should enable such feature anyway.</em>', $this->domain)
-					),
-					'input'		=> array(
-					),
-					'checkbox'	=> array(
-						'cb1' => array(__('Selected SE below will be pinged when you publish new posts.', $this->domain) => 'enable_ping'),
-						'cb2' => array(__('No additional load is needed so enabling this is recommended.', $this->domain) => 'enable_log'),
-						'cb3' => array(__('Minor errors will be printed on screen. Also, when debug is on, no caching is used, useful when you develop new modules.', $this->domain) => 'enable_debug'),
-						'cb4' => array(__('Google', $this->domain) => 'enable_ping_google'),
-						'cb6' => array(__('Bing', $this->domain) => 'enable_ping_bing')
-						//'cb7' => array(__('Ask.com', $this->domain) => 'enable_ping_ask')
-					),
-					'container'	=> array(
-						'h4' => sprintf(__('After you activate this plugin, all sitemaps should be available right away. The next step is to submit the sitemapindex to major search engines. You only need the <strong>sitemapindex</strong> and nothing else, those search engines will automatically recognize other included sitemaps. You can read a small <a href="%s">How-to</a> if you are interested.', $this->domain), 'http://help.yahoo.com/l/us/yahoo/smallbusiness/store/promote/sitemap/sitemap-06.html'),
-						'h3' => $this->get_logs(),
-						'h2' => $this->get_logs(true)
-					)
-				);
-
-				// Add a clear log button - @since 1.1.0
-				if (!$this->is_normal_admin())
-					add_filter('bwp_option_submit_button', array($this, 'add_clear_log_button'));
-
-				// Get the options
-				$options = $bwp_option_page->get_options(array('enable_ping', 'enable_ping_google', 'enable_ping_bing', /*'enable_ping_ask',*/ 'enable_log', 'enable_debug'), $this->options);
-
-				// Get option from the database
-				$options = $bwp_option_page->get_db_options($page, $options);
-				$option_ignore = array('input_update_services');
-				$option_formats = array();
-				// [WPMS Compatible]
-				$option_super_admin = $this->site_options;
-			}
-			else if ($page == BWP_GXS_OPTION_GENERATOR)
-			{
-				$bwp_option_page->set_current_tab(2);
-
-				//add_filter('bwp_ad_showable', function() { return false;});
-
-				$form = array(
-					'items'			=> array('input', 'select', 'select', 'select', 'checkbox', 'checkbox', 'input', 'checkbox', 'checkbox', 'checkbox', 'checkbox', 'heading', 'checkbox', 'checkbox', 'checkbox', 'section', 'section', 'section', 'heading', 'input', 'input', 'heading', 'checkbox', 'checkbox', 'input', 'input'),
-					'item_labels'	=> array
-					(
-						__('Output no more than', $this->domain),
+						__('Sitemap contents', $this->domain),
+						__('<strong>Enable</strong> following sitemaps', $this->domain),
+						__('For post-based sitemaps, <strong>disable</strong> following post types:', $this->domain),
+						__('For taxonomy-based sitemaps, <strong>disable</strong> following taxonomies:', $this->domain),
+						__('Item limits', $this->domain),
+						__('Global limit', $this->domain),
+						__('Split <strong>post-based</strong> sitemaps', $this->domain),
+						__('Split limit', $this->domain),
+						__('Default values & Formatting', $this->domain),
 						__('Default change frequency', $this->domain),
 						__('Default priority', $this->domain),
 						__('Minimum priority', $this->domain),
-						__('Use GMT for Last Modified date?', $this->domain),
-						__('Style your sitemaps with an XSLT stylesheet?', $this->domain),
+						__('Use GMT for Last Modified date', $this->domain),
+						__('Compress sitemaps', $this->domain),
+						__('Look and Feel', $this->domain),
+						__('Make sitemaps look pretty', $this->domain),
 						__('Custom XSLT stylesheet URL', $this->domain),
-						__('Show build stats in sitemaps?', $this->domain),
-						__('Enable credit?', $this->domain),
-						__('Enable Gzip?', $this->domain),
-						__('Clean unexpected output before sitemap generation?', $this->domain),
-						__('Sitemap Index Options', $this->domain),
-						__('Automatically split post-based sitemaps into smaller sitemaps?', $this->domain),
-						__('Add sitemapindex to individual blog\'s virtual robots.txt?', $this->domain),
-						__('Add sitemapindex from all blogs within network to primary blog\'s virtual robots.txt?', $this->domain),
-						__('In sitemapindex, include', $this->domain),
-						__('Exclude following post types:', $this->domain),
-						__('Exclude following taxonomies:', $this->domain),
-						__('Module Options', $this->domain),
-						__('Alternate module directory', $this->domain),
-						__('Get no more than', $this->domain),
-						__('Caching Options', $this->domain),
-						__('Enable caching?', $this->domain),
-						__('Enable auto cache re-generation?', $this->domain),
+						__('Enable build stats', $this->domain),
+						__('Enable credit', $this->domain),
+						__('Virtual robots.txt', $this->domain),
+						__('Add a sitemapindex entry to each blog\'s robots.txt', $this->domain),
+						__('For a multi-site installation, add sitemapindex entries from all blogs to primary blog\'s robots.txt', $this->domain),
+						__('Ping search engines', $this->domain),
+						__('Enable pinging', $this->domain),
+						__('Search engines to ping', $this->domain),
+						__('Caching', $this->domain),
+						__('Enable caching', $this->domain),
+						__('Enable auto cache re-generation', $this->domain),
 						__('Cached sitemaps will last for', $this->domain),
-						__('Cached sitemaps are stored in (auto detected)', $this->domain)
+						__('Cache directory', $this->domain),
+						__('Sitemap modules', $this->domain),
+						__('Database query limit', $this->domain),
+						__('Custom module directory', $this->domain),
+						__('Logging & Debugging', $this->domain),
+						__('Enable logging', $this->domain),
+						__('Enable debug mode', $this->domain)
 					),
-					'item_names'	=> array('input_item_limit', 'select_default_freq', 'select_default_pri', 'select_min_pri', 'cb14', 'cb10', 'input_custom_xslt', 'cb3', 'cb6', 'cb4', 'cb15', 'h5', 'cb12', 'cb11', 'cb5', 'sec1', 'sec2', 'sec3', 'h4', 'input_alt_module_dir', 'input_sql_limit', 'h3', 'cb1', 'cb2', 'input_cache_age', 'input_cache_dir'),
-					'heading'			=> array(
-						'h3'	=> __('<em>Cache your sitemaps for better performance.</em>', $this->domain),
-						'h4'	=> sprintf(__('<em>This plugin uses modules to build sitemap data so it is recommended that you extend this plugin using modules rather than hooks. Some of the settings below only affect modules extending the base module class. Read more about using modules <a href="%s#using-modules">here</a>.</em>', $this->domain), $this->plugin_url),
-						'h5'	=> __('<em>Here you can change some settings that affect the default Sitemap Index file.</em>', $this->domain)
+					'item_names' => array(
+						'heading_submit',
+						'heading_contents',
+						'sec_index',
+						'sec_post',
+						'sec_tax',
+						'heading_limit',
+						'input_item_limit',
+						'cb_enable_split',
+						'input_split_limit_post',
+						'heading_format',
+						'select_default_freq',
+						'select_default_pri',
+						'select_min_pri',
+						'cb14',
+						'cb_enable_gzip',
+						'heading_look',
+						'cb10',
+						'input_custom_xslt',
+						'cb3',
+						'cb6',
+						'heading_robot',
+						'cb_index_to_blog',
+						'cb_index_to_primary',
+						'heading_ping',
+						'cb_ping',
+						'cb_ping_list',
+						'heading_cache',
+						'cb1',
+						'cb2',
+						'input_cache_age',
+						'input_cache_dir',
+						'heading_module',
+						'input_sql_limit',
+						'input_alt_module_dir',
+						'heading_debug',
+						'cb_log',
+						'cb_debug'
 					),
-					'sec1' => array(
+					'heading' => array(
+						'heading_submit' => '',
+						'heading_contents' => '<em>'
+							. __('Choose what to show in your sitemaps.', $this->domain)
+							. '</em>',
+						'heading_limit' => '<em>'
+							. __('Limit the number of items to output in one sitemap. ', $this->domain)
+							. sprintf(__('Avoid setting too high limits that your server '
+								. 'can not handle. In such case, you might encounter white page error '
+								. 'due to timeout or memory issue. '
+								. 'Refer to this plugin\'s <a target="_blank" href="%s">FAQ section</a> for more info.', $this->domain),
+								$this->plugin_url . 'faq/')
+							. '</em>',
+						'heading_format' => '<em>'
+							. __('Customize default values and some formating for your sitemaps. '
+							. 'Default values are only used when valid ones can not '
+							. 'be calculated.', $this->domain)
+							. '</em>',
+						'heading_look' => '<em>'
+							. __('Customize the look and feel of your sitemaps. '
+							. 'Note that an XSLT stylesheet will NOT be used '
+							. 'for the Google News Sitemap module '
+							. 'regardless of any setting in this section.', $this->domain)
+							. '</em>',
+						'heading_robot' => '<em>'
+							. sprintf(__('WordPress generates a <a href="%s" target="_blank">virtual robots.txt</a> '
+								. 'file for your site by default. '
+								. 'You can add links to sitemapindex files generated by this plugin '
+								. 'to that robots.txt file using settings below.', $this->domain),
+								home_url('robots.txt'))
+							. '</em>',
+						'heading_ping' => '<em>'
+							. __('Whenever you post something new to your blog, '
+							. 'you can <em>ping</em> search engines with your sitemapindex '
+							. 'to tell them your blog just got updated.', $this->domain)
+							. '</em>',
+						'heading_cache' => '<em>'
+							. __('Cache your sitemaps for better performance.', $this->domain)
+							. '</em>',
+						'heading_module' => '<em>'
+							. sprintf(__('Extend this plugin using customizable modules. '
+								. 'More info <a href="%s#using-modules">here</a>.', $this->domain),
+								$this->plugin_url)
+							. '</em>',
+						'heading_control' => __('<em>Here you can change some settings that affect the default Sitemap Index file.</em>', $this->domain),
+						'heading_debug' => __('', $this->domain)
+					),
+					'sec_index' => array(
+						array('checkbox', 'name' => 'cb17'),
 						array('checkbox', 'name' => 'cb7'),
-						//array('checkbox', 'name' => 'cb8'),
 						array('checkbox', 'name' => 'cb9'),
-						array('checkbox', 'name' => 'cb13'),
 						array('checkbox', 'name' => 'cb16'),
-						array('checkbox', 'name' => 'cb17')
+						array('checkbox', 'name' => 'cb13')
 					),
-					'sec2' => array(),
-					'sec3' => array(),
+					'sec_post' => array(),
+					'sec_tax' => array(),
+					'cb_ping_list' => array(
+						array('checkbox', 'name' => 'cb_ping_google'),
+						array('checkbox', 'name' => 'cb_ping_bing')
+					),
 					'select' => array(
 						'select_time_type' => array(
 							__('second(s)', $this->domain) => 1,
@@ -809,44 +868,102 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 					),
 					'post' => array(
 						'select_default_freq' => sprintf('<a href="%s" target="_blank">' . __('read more', $this->domain) . '</a>', 'http://sitemaps.org/protocol.php#xmlTagDefinitions'),
-						'select_default_pri' => sprintf('<a href="%s" target="_blank">' . __('read more', $this->domain) . '</a>', 'http://sitemaps.org/protocol.php#xmlTagDefinitions'),
-						'select_min_pri' => sprintf('<a href="%s" target="_blank">' . __('read more', $this->domain) . '</a>', 'http://sitemaps.org/protocol.php#xmlTagDefinitions')
+						'select_default_pri'  => sprintf('<a href="%s" target="_blank">' . __('read more', $this->domain) . '</a>', 'http://sitemaps.org/protocol.php#xmlTagDefinitions'),
+						'select_min_pri'      => sprintf('<a href="%s" target="_blank">' . __('read more', $this->domain) . '</a>', 'http://sitemaps.org/protocol.php#xmlTagDefinitions')
 					),
-					'checkbox'	=> array(
-						'cb1' => array(__('your sitemaps are generated and then cached to reduce unnecessary work.', $this->domain) => 'enable_cache'),
-						'cb2' => array(__('when a cached sitemap expires, this plugin will try to generate the cache again. If you disable this, remember to manually flush the cache once in a while.', $this->domain) . ' <input type="submit" class="button-secondary action" name="flush_cache" value="' . __('Flush the cache', $this->domain) . '" />' => 'enable_cache_auto_gen'),
-						'cb3' => array(__('tell you useful information such as build time, memory usage, SQL queries, etc.', $this->domain) => 'enable_stats'),
-						'cb4' => array(__('make your sitemaps ~ 70% smaller. <strong>Important:</strong> If you see an error after enabling this, it\'s very likely that you have gzip active on your server already.', $this->domain) => 'enable_gzip'),
-						'cb15' => array(__('only disable this when sitemaps appear in either blank page or plain text.', $this->domain) => 'enable_php_clean'),
-						'cb5' => array(sprintf(__("If you have like 50 blogs, 50 <code>Sitemap: http://example.com/sitemapindex.xml</code> entries will be added to your primary blog's robots.txt, i.e. <code>%s</code>.", $this->domain), get_site_option('home') . '/robots.txt') => 'enable_global_robots'),
-						'cb7' => array(__("taxonomy archives' sitemaps, including custom taxonomies.", $this->domain) => 'enable_sitemap_taxonomy'),
-						//'cb8' => array(__("tag archives' sitemap.", $this->domain) => 'enable_sitemap_tag'),
-						'cb9' => array(__("date archives' sitemaps.", $this->domain) => 'enable_sitemap_date'),
-						'cb13' => array(__("external pages' sitemap. This allows you to add links to pages that do not belong to WordPress to the sitemap.", $this->domain) => 'enable_sitemap_external'),
-						'cb6' => array(__('some copyrighted info is also added to your sitemaps. Thanks!', $this->domain) => 'enable_credit'),
-						'cb10' => array(__('This will load the default style sheet provided by this plugin. You can set a custom style sheet below or filter the <code>bwp_gxs_xslt</code> hook.', $this->domain) => 'enable_xslt'),
-						'cb11' => array(sprintf(__('If you\'re on a Multi-site installation with Sub-domain enabled, each site will have its own robots.txt, sites in sub-directory will not. Please read the <a href="%s#toc-robots" target="_blank">documentation</a> for more info.', $this->domain), $this->plugin_url) => 'enable_robots'),
-						'cb12' => array(__('e.g. post1.xml, post2.xml, etc. And each sitemap will contain', $this->domain) => 'enable_sitemap_split_post'),
-						'cb14' => array(__('If you disable this, make sure you also use <code>date_default_timezone_set</code> to correctly set up a timezone for your application.', $this->domain) => 'enable_gmt'),
-						'cb16' => array(__('author archives\' sitemap.', $this->domain) => 'enable_sitemap_author'),
-						'cb17' => array(__('site\'s home URL sitemap. For a multi-site installation of WordPress, this sitemap will list all domains within your network, not just the main blog. This also supports WPMU Domain Mapping plugin.', $this->domain) => 'enable_sitemap_site')
+					'checkbox' => array(
+						'cb1'                 => array(__('Your sitemaps are generated and then cached to reduce unnecessary work.', $this->domain) => 'enable_cache'),
+						'cb2'                 => array(__('Re-generate sitemap cache when expired. If you disable this, remember to manually flush the cache once in a while.', $this->domain) => 'enable_cache_auto_gen'),
+						'cb3'                 => array(__('print useful information such as build time, memory usage, SQL queries, etc.', $this->domain) => 'enable_stats'),
+						'cb_enable_gzip'      => array(__('Use gzip to make sitemaps ~70% smaller. If you see an error after enabling this, it\'s very likely that you have gzip active on your server already.', $this->domain) => 'enable_gzip'),
+						'cb_index_to_primary' => array(sprintf(__('If you have like 50 blogs, 50 sitemapindex entries will be added to your primary blog\'s <a href="%s" target="_blank">robots.txt</a>.', $this->domain), get_site_option('home') . '/robots.txt') => 'enable_global_robots'),
+						'cb7'                 => array(__("Taxonomy (including custom taxonomies).", $this->domain) => 'enable_sitemap_taxonomy'),
+						'cb9'                 => array(__("Date archives.", $this->domain) => 'enable_sitemap_date'),
+						'cb16'                => array(__('Author archives.', $this->domain) => 'enable_sitemap_author'),
+						'cb13'                => array(sprintf(__('External pages. More info <a href="%s#external_sitemap" target="_blank">here</a>.', $this->domain), $this->plugin_url) => 'enable_sitemap_external'),
+						'cb6'                 => array(__('some copyrighted info is also added to your sitemaps. Thanks!', $this->domain) => 'enable_credit'),
+						'cb10'                => array(__('A default XSLT stylesheet will be used. You can set a custom style sheet below or filter the <code>bwp_gxs_xslt</code> hook.', $this->domain) => 'enable_xslt'),
+						'cb_index_to_blog'    => array(sprintf(__('If you\'re on a Multi-site installation with Sub-domain enabled, each site will have its own robots.txt, sites in sub-directory will not. Please read the <a href="%s#toc-robots" target="_blank">documentation</a> for more info.', $this->domain), $this->plugin_url) => 'enable_robots'),
+						'cb_enable_split'     => array(__('Sitemaps like <code>post.xml</code> are split into <code>post_part1.xml</code>, <code>post_part2.xml</code>, etc. when limit reached.', $this->domain) => 'enable_sitemap_split_post'),
+						'cb14'                => array(__('If you disable this, make sure you also use <code>date_default_timezone_set</code> to correctly set up a timezone for your application.', $this->domain) => 'enable_gmt'),
+						'cb17'                => array(__('Site Address. For a multi-site installation of WordPress, this sitemap will list all domains within your network, not just the main blog.', $this->domain) => 'enable_sitemap_site'),
+						'cb_ping'             => array(__('Selected search engines below will be pinged when you publish new posts.', $this->domain) => 'enable_ping'),
+						'cb_ping_google'      => array(__('Google', $this->domain) => 'enable_ping_google'),
+						'cb_ping_bing'        => array(__('Bing', $this->domain) => 'enable_ping_bing'),
+						'cb_log'              => array(sprintf(__('No additional load is needed so enabling this is highly recommended. You can check the log <a href="%s">here</a>.', $this->domain), $this->get_admin_page(BWP_GXS_STATS)) => 'enable_log'),
+						'cb_debug'            => array(__('Minor errors will be printed on screen. Also, when debug is on, no caching is used, useful when you develop new modules.', $this->domain) => 'enable_debug'),
 					),
-					'input'	=> array(
-						'input_item_limit' => array('size' => 5, 'label' => __('item(s) in one sitemap. You can not go over 50,000.', $this->domain)),
-						'input_split_limit_post' => array('size' => 5, 'label' => __('item(s). Again , you can not go over 50,000.', $this->domain)),
-						'input_alt_module_dir' => array('size' => 91, 'label' => __('Input a full path to the directory where you put your own modules (e.g. <code>/home/mysite/public_html/gxs-modules/</code>), you can also override a built-in module by having a module with the same filename in this directory. A filter is also available if you would like to use PHP instead.', $this->domain)),
-						'input_cache_dir' => array('size' => 91, 'disabled' => ' disabled="disabled"', 'label' => __('The cache directory must be writable (i.e. CHMOD to 755 or 777).', $this->domain)),
-						'input_sql_limit' => array('size' => 5, 'label' => __('item(s) in one SQL query. This helps you avoid running too heavy queries.', $this->domain)),
-						'input_oldest' => array('size' => 3, 'label' => '&mdash;'),
-						'input_cache_age' => array('size' => 5, 'label' => '&mdash;'),
-						'input_custom_xslt' => array('size' => 56, 'label' => __('expected to be an absolute URL, e.g. <code>http://example.com/my-stylesheet.xsl</code>. You must also have a style sheet for the sitemapindex that can be accessed through the above URL, e.g. <code>my-stylesheet.xsl</code> and <code>my-stylesheetindex.xsl</code>). Please leave blank if you do not wish to use.', $this->domain))
+					'input' => array(
+						'input_item_limit' => array(
+							'size' => 5,
+							'label' => __('Maximum is <strong>50,000</strong>. This setting is applied to all sitemaps.', $this->domain)
+						),
+						'input_split_limit_post' => array(
+							'size' => 5,
+							'label' => __('Maximum is <strong>50,000</strong>. Set to 0 to use the Global limit.', $this->domain)
+						),
+						'input_custom_xslt' => array(
+							'size' => 91,
+							'label' => '<br />'
+								. __('expected to be an absolute URL, '
+								. 'e.g. <code>http://example.com/my-stylesheet.xsl</code>. '
+								. 'You must also have a style sheet for the sitemapindex '
+								. 'that can be accessed through the above URL, '
+								. 'e.g. <code>my-stylesheet.xsl</code> and '
+								. '<code>my-stylesheetindex.xsl</code>. '
+								. 'Leave blank to use provided stylesheet.', $this->domain)
+						),
+						'input_alt_module_dir' => array(
+							'size' => 91,
+							'label' => '<br />'
+								. __('Expect an absolute path to the directory where you put your custom modules '
+								. '(e.g. <code>/home/mysite/public_html/gxs-modules/</code>). '
+								. 'Override a built-in module by having a module with the same filename in specified directory.', $this->domain)
+						),
+						'input_cache_dir' => array(
+							'size' => 91,
+							'disabled' => ' disabled="disabled"',
+							'label' => '<br />' . __('This directory must be writable (i.e. CHMOD to 755 or 777).', $this->domain)
+						),
+						'input_sql_limit' => array(
+							'size' => 5,
+							'label' => __('Only get this many items when querying from Database. '
+								. 'This is to make sure we are not running too heavy queries.', $this->domain)
+						),
+						'input_oldest' => array(
+							'size' => 3,
+							'label' => '&mdash;'
+						),
+						'input_cache_age' => array(
+							'size' => 5,
+							'label' => '&mdash;'
+						)
 					),
 					'inline_fields' => array(
-						'input_cache_age' => array('select_time_type' => 'select'),
-						'cb12' => array('input_split_limit_post' => 'input')
+						'input_cache_age' => array('select_time_type' => 'select')
+					),
+					'inline' => array(
+						'enable_cache_auto_gen' =>  '<br />'
+							. ' <input type="submit" class="button-secondary action" name="flush_cache" '
+							. 'value="' . __('Flush the cache', $this->domain) . '" />'
 					),
 					'container' => array(
-						'input_item_limit' => sprintf(__('<em><strong>Note:</strong> If you encounter white page problem, please refer to the <a target="_blank" href="%s">FAQ section</a> to know how to change this limit appropriately to make this plugin work. Also note that, for post-based sitemaps, this option will be overridden by the limit you set in the Sitemap Index Options below.</em>', $this->domain), $this->plugin_url . 'faq/')
+						'heading_submit' => array(
+							$this->get_logs(true),
+							'<em>'
+							. sprintf(__('Submit your <a href="%s" target="_blank">sitemapindex</a> '
+								. 'to major search engines like <a href="%s" target="_blank">Google</a>, '
+								. '<a href="%s" target="_blank">Bing</a>.', $this->domain),
+								$this->options['input_sitemap_url'],
+								'https://www.google.com/webmasters/tools/home?hl=en',
+								'http://www.bing.com/toolbox/webmasters/')
+							. ' '
+							. sprintf(__('Only the sitemapindex needs to be submitted '
+								. 'as search engines will automatically recognize other included sitemaps. '
+								. 'More info can be found <a href="%s">here</a>.', $this->domain),
+								'https://support.google.com/webmasters/answer/75712?hl=en&ref_topic=4581190')
+							. '</em>'
+						)
 					)
 				);
 
@@ -855,7 +972,41 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 				$form['select']['select_default_freq'] = $changefreq;
 
 				// Get the options
-				$options = $bwp_option_page->get_options(array('input_item_limit', 'input_split_limit_post', 'input_alt_module_dir', 'input_cache_dir', 'input_sql_limit', 'input_cache_age', 'input_custom_xslt', 'input_exclude_post_type', 'input_exclude_taxonomy', 'enable_gmt', 'enable_robots', 'enable_xslt', 'enable_cache', 'enable_cache_auto_gen', 'enable_stats', 'enable_credit', 'enable_sitemap_split_post', 'enable_global_robots', 'enable_sitemap_date', 'enable_sitemap_taxonomy', 'enable_sitemap_external', 'enable_sitemap_author', 'enable_sitemap_site', 'enable_gzip', 'enable_php_clean', 'select_time_type', 'select_default_freq', 'select_default_pri', 'select_min_pri'), $this->options);
+				$options = $bwp_option_page->get_options(array(
+					'input_item_limit',
+					'input_split_limit_post',
+					'input_alt_module_dir',
+					'input_cache_dir',
+					'input_sql_limit',
+					'input_cache_age',
+					'input_custom_xslt',
+					'input_exclude_post_type',
+					'input_exclude_taxonomy',
+					'enable_gmt',
+					'enable_robots',
+					'enable_xslt',
+					'enable_cache',
+					'enable_cache_auto_gen',
+					'enable_stats',
+					'enable_credit',
+					'enable_sitemap_split_post',
+					'enable_global_robots',
+					'enable_sitemap_date',
+					'enable_sitemap_taxonomy',
+					'enable_sitemap_external',
+					'enable_sitemap_author',
+					'enable_sitemap_site',
+					'enable_gzip',
+					'enable_ping',
+					'enable_ping_google',
+					'enable_ping_bing',
+					'enable_log',
+					'enable_debug',
+					'select_time_type',
+					'select_default_freq',
+					'select_default_pri',
+					'select_min_pri'
+				), $this->options);
 
 				// Get option from the database
 				$options = $bwp_option_page->get_db_options($page, $options);
@@ -889,7 +1040,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 					if ('attachment' == $post_type->name)
 						continue;
 					$key = 'ept_' . $post_type->name;
-					$form['sec2'][] = array('checkbox', 'name' => $key);
+					$form['sec_post'][] = array('checkbox', 'name' => $key);
 					$form['checkbox'][$key] = array(__($post_type->label) => $key);
 					if (in_array($post_type->name, $exclude_options['post_types']))
 						$dynamic_options[$key] = 'yes';
@@ -901,7 +1052,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 					if ('post_format' == $taxonomy->name)
 						continue;
 					$key = 'etax_' . $taxonomy->name;
-					$form['sec3'][] = array('checkbox', 'name' => $key);
+					$form['sec_tax'][] = array('checkbox', 'name' => $key);
 					$form['checkbox'][$key] = array(__($taxonomy->label) => $key);
 					if (in_array($taxonomy->name, $exclude_options['taxonomies']))
 						$dynamic_options[$key] = 'yes';
@@ -909,14 +1060,25 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 						$dynamic_options[$key] = '';
 				}
 
-				$option_formats = array('input_item_limit' => 'int', 'input_split_limit_post' => 'int', 'input_sql_limit' => 'int', 'input_cache_age' => 'int', 'select_time_type' => 'int');
-				$option_ignore = array('input_cache_dir', 'input_exclude_post_type', 'input_exclude_taxonomy');
+				$option_formats = array(
+					'input_item_limit'       => 'int',
+					'input_split_limit_post' => 'int',
+					'input_sql_limit'        => 'int',
+					'input_cache_age'        => 'int',
+					'select_time_type'       => 'int'
+				);
+				$option_ignore = array(
+					'input_cache_dir',
+					'input_exclude_post_type',
+					'input_exclude_taxonomy'
+				);
+
 				// [WPMS Compatible]
 				$option_super_admin = $this->site_options;
 			}
-			else if ($page == BWP_GXS_GOOGLE_NEWS)
+			elseif ($page == BWP_GXS_GOOGLE_NEWS)
 			{
-				$bwp_option_page->set_current_tab(3);
+				$bwp_option_page->set_current_tab(2);
 
 				// Save news categories settings
 				if (isset($_POST['submit_bwp_gxs_google_news']))
@@ -1019,6 +1181,67 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 				$options['input_news_genres'] = $this->options['input_news_genres'];
 				$option_ignore = array('select_news_cats', 'input_news_genres');
 				$option_formats = array();
+				$option_super_admin = $this->site_options;
+			}
+			elseif ($page == BWP_GXS_STATS)
+			{
+				$bwp_option_page->set_current_tab(3);
+
+				/* add_filter('bwp_info_showable', function() { return false;}); */
+				/* add_filter('bwp_ad_showable', function() { return false;}); */
+
+				// Clear logs = @since 1.1.0
+				if (isset($_POST['clear_log']) && !$this->is_normal_admin())
+				{
+					check_admin_referer($page);
+					$this->logs = array('log' => array(), 'sitemap' => array());
+					$this->commit_logs();
+					$this->add_notice('<strong>' . __('Notice', $this->domain) . ':</strong> ' . __("All logs have been cleared successfully!", $this->domain));
+				}
+
+				$form = array(
+					'items' => array(
+						'heading',
+					),
+					'item_labels' => array
+					(
+						__('Sitemap Generator\'s Log', $this->domain),
+					),
+					'item_names' => array(
+						'h3',
+					),
+					'heading' => array(
+						'h3' => '<em>'
+						. __('Below are details on how your sitemaps are generated '
+						. 'including <span style="color: #999999;">notices</span>, '
+						. '<span style="color: #FF0000;">errors</span> and '
+						. '<span style="color: #009900;">success messages</span>.', $this->domain)
+						. '</em>',
+					),
+					'container' => array(
+						'h3' => $this->get_logs(),
+					)
+				);
+
+				// Add a clear log button - @since 1.1.0
+				if (!$this->is_normal_admin())
+					add_filter('bwp_option_submit_button', array($this, 'add_clear_log_button'));
+
+				// Get the options
+				$options = $bwp_option_page->get_options(array(
+					'enable_ping',
+					'enable_ping_google',
+					'enable_ping_bing',
+					'enable_log',
+					'enable_debug'
+				), $this->options);
+
+				// Get option from the database
+				$options = $bwp_option_page->get_db_options($page, $options);
+				$option_ignore = array('input_update_services');
+				$option_formats = array();
+
+				// [WPMS Compatible]
 				$option_super_admin = $this->site_options;
 			}
 		}
@@ -1286,9 +1509,9 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 		if (!$logs || !is_array($logs) || 0 == sizeof($logs))
 		{
 			return $sitemap
-				? sprintf(__('Nothing here... yet! Try submitting your '
-					. '<a href="%s">sitemapindex</a> first!', $this->domain),
-					$this->options['input_sitemap_url'])
+				? '<em>' . __('It appears that no sitemap has been generated yet, '
+					. 'or you have recently cleared the sitemap log.', $this->domain)
+					. '</em>'
 				: __('No log yet!', $this->domain);
 		}
 

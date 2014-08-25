@@ -218,8 +218,12 @@ class BWP_FRAMEWORK_IMPROVED {
 
 	public function show_donation()
 	{
-		$showable = apply_filters('bwp_donation_showable', true);
-		$ad_showable = apply_filters('bwp_ad_showable', true);
+		$info_showable     = apply_filters('bwp_info_showable', true);
+		$donation_showable = apply_filters('bwp_donation_showable', true);
+		$ad_showable       = apply_filters('bwp_ad_showable', true);
+
+		if (true == $info_showable || (self::is_multisite() && is_super_admin()))
+		{
 ?>
 <div id="bwp-info-place">
 <div id="bwp-donation" style="margin-bottom: 0px;">
@@ -229,7 +233,7 @@ class BWP_FRAMEWORK_IMPROVED {
 </small>
 <br />
 <?php
-		if (true == $showable || ($this->is_multisite() && is_super_admin()))
+		if (true == $donation_showable || (self::is_multisite() && is_super_admin()))
 		{
 ?>
 <small><?php _e('You can buy me some special coffees if you appreciate my work, thank you!', $this->plugin_dkey); ?></small>
@@ -290,6 +294,7 @@ class BWP_FRAMEWORK_IMPROVED {
 ?>
 </div>
 <?php
+		}
 	}
 
 	public function show_version()
@@ -421,7 +426,7 @@ class BWP_FRAMEWORK_IMPROVED {
 				$options = array_merge($options, $db_option);
 			unset($db_option);
 			// Also check for global options if in Multi-site
-			if ($this->is_multisite())
+			if (self::is_multisite())
 			{
 				$db_option = get_site_option($option);
 				if ($db_option && is_array($db_option))
