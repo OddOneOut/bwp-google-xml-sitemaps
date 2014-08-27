@@ -1,3 +1,2 @@
 <?php
-	// White page
-?>
+// silence

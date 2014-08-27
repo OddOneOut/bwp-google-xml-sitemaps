@@ -212,7 +212,7 @@ class BWP_OPTION_PAGE {
 				$pre_html_field = 'select_multi' == $type
 					? '%pre%<select id="' . $name . '" name="' . $name . '[]" multiple>' . "\n"
 					: '%pre%<select id="' . $name . '" name="' . $name . '">' . "\n";
-				$html_field = '<option %selected%value="%value%" />%option%</option>';
+				$html_field = '<option %selected%value="%value%">%option%</option>';
 				$post_html_field = '</select>%post%' . $br;
 			break;
 
@@ -306,18 +306,24 @@ class BWP_OPTION_PAGE {
 							&& (in_array($value, $this->form_options[$name])
 								|| array_key_exists($value, $this->form_options[$name]))))
 				) {
+					$item_br = $type == 'select' || $type == 'select_multi' ? "\n" : $br;
+
 					$return_html .= str_replace(
 						array('%value%', '%name%', '%label%', '%option%', '%checked%', '%selected%', '%pre%', '%post%'),
 						array($value, $value, $key, $key, $checked, $selected, $pre, $post),
 						$html_field
-					) . $br;
+					) . $item_br;
 				}
 				else
+				{
+					$item_br = $type == 'select' || $type == 'select_multi' ? "\n" : $br;
+
 					$return_html .= str_replace(
 						array('%value%', '%name%', '%label%', '%option%', '%checked%', '%selected%', '%pre%', '%post%'),
 						array($value, $value, $key, $key, '', '', $pre, $post),
 						$html_field
-					) . $br;
+					) . $item_br;
+				}
 			}
 		}
 		else
@@ -325,12 +331,15 @@ class BWP_OPTION_PAGE {
 			foreach ($array_search as &$keyword)
 			{
 				$array_replace[$keyword] = '';
+
 				if (!empty($data[$keyword]))
 				{
 					$array_replace[$keyword] = $data[$keyword];
 				}
+
 				$keyword = '%' . $keyword . '%';
 			}
+
 			$return_html = str_replace($array_search, $array_replace, $html_field) . $br;
 		}
 

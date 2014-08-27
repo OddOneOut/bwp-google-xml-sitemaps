@@ -69,12 +69,13 @@ class BWP_GXS_CACHE
 			return false;
 		}
 
+		$lastmod = $this->main->format_header_time($last_modified);
 		$expires = $this->main->format_header_time($last_modified + $this->cache_time);
 		$etag    = md5($expires . $this->cache_file);
 
 		// build cached sitemap's headers for later use
 		$this->cache_headers = array(
-			'lastmod' => $this->main->format_header_time($last_modified),
+			'lastmod' => $lastmod,
 			'expires' => $expires,
 			'etag'    => $etag
 		);
