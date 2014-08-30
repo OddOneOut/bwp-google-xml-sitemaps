@@ -29,10 +29,11 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE
 		global $wpdb, $bwp_gxs, $post;
 
 		$latest_post_query = '
-			SELECT * FROM ' . $wpdb->posts . "
-				WHERE post_status = 'publish'
-					AND post_type = 'post'
-					AND comment_count > 2" . '
+			SELECT *
+			FROM ' . $wpdb->posts . "
+			WHERE post_status = 'publish'
+				AND post_type = 'post'
+				AND comment_count > 2" . '
 			ORDER BY comment_count, post_modified DESC';
 
 		// Use $this->get_results instead of $wpdb->get_results, remember to
@@ -44,7 +45,7 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE
 		// there is nothing to loop through anymore we return false so the
 		// cycling can stop.
 		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
-			return false;
+ 			return false;
 
 		$using_permalinks = $this->using_permalinks();
 

@@ -37,7 +37,10 @@ class BWP_GXS_MODULE_AUTHOR extends BWP_GXS_MODULE
 				ON wp_p.post_author = wp_u.ID' . "
 			WHERE wp_p.post_status = 'publish'
 				AND wp_um.meta_key = '" . $wpdb->prefix . "capabilities'" . '
-			GROUP BY wp_u.ID, wp_u.user_nicename, wp_um.meta_value
+			GROUP BY
+				wp_u.ID,
+				wp_u.user_nicename,
+				wp_um.meta_value
 			ORDER BY lastmod DESC';
 
 		$authors = $this->get_results($author_sql);

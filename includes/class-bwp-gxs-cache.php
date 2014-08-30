@@ -127,7 +127,7 @@ class BWP_GXS_CACHE
 		$this->module_name  = $module_name;
 		$this->sitemap_name = $sitemap_name;
 
-		$this->cache_file = bwp_gxs_get_filename($module_name);
+		$this->cache_file = bwp_gxs_get_filename($sitemap_name);
 
 		if (!@is_readable($this->cache_file))
 			return false;

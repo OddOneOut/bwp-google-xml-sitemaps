@@ -26,16 +26,21 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE
 		$requested = $this->requested;
 
 		$latest_post_query = '
-			SELECT MAX(wposts.post_modified) as post_modified, MAX(wposts.comment_count) as comment_count, wptax.term_id FROM ' . $wpdb->term_relationships . ' wprel
-				INNER JOIN ' . $wpdb->posts . ' wposts
-					ON wprel.object_id = wposts.ID
-				INNER JOIN ' . $wpdb->term_taxonomy . ' wptax
-					ON wprel.term_taxonomy_id = wptax.term_taxonomy_id' . "
-				WHERE wposts.post_status = 'publish'" . '
-					AND wptax.taxonomy = %s
-					AND wptax.count > 0
-			GROUP BY wptax.term_id
-			ORDER BY wptax.term_id DESC';
+			SELECT
+				MAX(p.post_modified) as post_modified,
+				MAX(p.post_modified_gmt) as post_modified_gmt,
+				MAX(p.comment_count) as comment_count,
+				tt.term_id
+			FROM ' . $wpdb->term_relationships . ' tr
+			INNER JOIN ' . $wpdb->posts . ' p
+				ON tr.object_id = p.ID
+			INNER JOIN ' . $wpdb->term_taxonomy . ' tt
+				ON tr.term_taxonomy_id = tt.term_taxonomy_id' . "
+			WHERE p.post_status = 'publish'" . '
+				AND tt.taxonomy = %s
+				AND tt.count > 0
+			GROUP BY tt.term_id
+			ORDER BY tt.term_id DESC';
 
 		$latest_posts = $this->get_results($wpdb->prepare($latest_post_query, $requested));
 
@@ -44,10 +49,11 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE
 
 		$term_query = '
 			SELECT t.*, tt.*
-			FROM ' . $wpdb->terms  . ' AS t
-			INNER JOIN ' . $wpdb->term_taxonomy . ' AS tt
+			FROM ' . $wpdb->terms  . ' as t
+			INNER JOIN ' . $wpdb->term_taxonomy . ' as tt
 				ON t.term_id = tt.term_id
-			WHERE tt.taxonomy = %s AND tt.count > 0
+			WHERE tt.taxonomy = %s
+				AND tt.count > 0
 			ORDER BY t.term_id DESC';
 
 		$terms = $this->get_results($wpdb->prepare($term_query, $requested));

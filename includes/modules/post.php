@@ -78,14 +78,14 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 		{
 			$latest_post_query = '
 				SELECT * FROM ' . $wpdb->term_relationships . ' wprel
-					INNER JOIN ' . $wpdb->posts . ' wposts
-						ON wprel.object_id = wposts.ID' . "
-						AND wposts.post_status = 'publish'" . '
-					INNER JOIN ' . $wpdb->term_taxonomy . ' wptax
-						ON wprel.term_taxonomy_id = wptax.term_taxonomy_id' . "
-						AND wptax.taxonomy = 'category'" . '
-					, ' . $wpdb->terms . ' wpterms
-					WHERE wptax.term_id = wpterms.term_id '
+				INNER JOIN ' . $wpdb->posts . ' wposts
+					ON wprel.object_id = wposts.ID' . "
+					AND wposts.post_status = 'publish'" . '
+				INNER JOIN ' . $wpdb->term_taxonomy . ' wptax
+					ON wprel.term_taxonomy_id = wptax.term_taxonomy_id' . "
+					AND wptax.taxonomy = 'category'" . '
+				, ' . $wpdb->terms . ' wpterms
+				WHERE wptax.term_id = wpterms.term_id '
 					. "$sql_where" . '
 				GROUP BY wposts.ID
 				ORDER BY wposts.post_modified DESC';
@@ -94,7 +94,8 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 		{
 			$latest_post_query = '
 				SELECT * FROM ' . $wpdb->posts . " wposts
-					WHERE wposts.post_status = 'publish' AND wposts.post_type = %s $sql_where" . '
+				WHERE wposts.post_status = 'publish'
+					AND wposts.post_type = %s $sql_where" . '
 				ORDER BY wposts.post_modified DESC';
 		}
 

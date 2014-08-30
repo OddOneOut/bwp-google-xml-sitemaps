@@ -186,44 +186,104 @@ class BWP_GXS_MODULE
 		return apply_filters('bwp_gxs_priority_score', $score, $item, $freq);
 	}
 
-
 	/**
 	 * Get last modified date from post object
 	 *
 	 * Sometimes post_modified is not set due to improper data import into
-	 * database, we will have to use post_date. If post_data is invalid too,
+	 * database, we will have to use post_date. If post_date is invalid too,
 	 * we're out of luck.
+	 *
+	 * By default lastmod is in GMT so `post_date_gmt` and `post_modified_gmt`
+	 * will be used. If local time is used `post_date` and `post_modified`
+	 * will be used instead. Because modified times can come from various
+	 * sources and not all sources have a GMT equivalent, we expect other
+	 * modified times to be in local time and will be converted to GMT using
+	 * `gmt_offset`.
 	 *
 	 * @since 1.2.4
 	 * @access protected
 	 */
 	protected function get_lastmod($post)
 	{
-		if (isset($post->post_modified))
+		global $bwp_gxs;
+
+		$lastmod  = '';
+
+		// handle GMT using `post_date_gmt`, `post_modified_gmt` and
+		// `gmt_offset` if `date_default_timezone_set` function does exist
+		$need_gmt = $bwp_gxs->options['enable_gmt'] == 'yes'
+			&& function_exists('date_default_timezone_set')
+			? true : false;
+
+		$post_modified_field = $need_gmt ? 'post_modified_gmt' : 'post_modified';
+		$post_date_field     = $need_gmt ? 'post_date_gmt' : 'post_date';
+
+		if (isset($post->lastmod))
 		{
-			$last_mod = strtotime($post->post_modified);
+			// lastmod is expected to be in local time
+			$lastmod = strtotime($post->lastmod);
+			$lastmod = $need_gmt ? $lastmod - get_option('gmt_offset') * 3600 : $lastmod;
 		}
-		elseif (isset($post->lastmod))
+		elseif (isset($post->$post_modified_field))
 		{
-			$last_mod = strtotime($post->lastmod);
+			$lastmod = strtotime($post->$post_modified_field);
 		}
 
-		$post_date = isset($post->post_date) ? strtotime($post->post_date) : '';
-		$last_mod  = empty($last_mod) ? $post_date : $last_mod;
+		$post_date = isset($post->$post_date_field) ? strtotime($post->$post_date_field) : '';
 
-		return !empty($last_mod) ? $this->format_lastmod($last_mod) : '';
+		$lastmod  = empty($lastmod) || $lastmod < 0 ? $post_date : $lastmod;
+		$lastmod  = empty($lastmod) || $lastmod < 0 ? '' : $lastmod;
+
+		return !empty($lastmod) ? $this->format_lastmod($lastmod, false) : '';
 	}
 
-	protected function format_lastmod($lastmod)
+	protected function format_lastmod($lastmod, $expect_local = true)
 	{
 		global $bwp_gxs;
 
-		$lastmod = $lastmod - get_option('gmt_offset') * 3600;
+		$need_gmt   = $bwp_gxs->options['enable_gmt'] == 'yes' ? true : false;
+		$gmt_offset = (float) get_option('gmt_offset');
 
-		if ('yes' == $bwp_gxs->options['enable_gmt'])
-			return gmdate('c', (int) $lastmod);
-		else
-			return date('c', (int) $lastmod);
+		if ($lastmod < 0)
+			return '';
+
+		if (!function_exists('date_default_timezone_set'))
+		{
+			// prior to PHP 5.1.0 this function is not available, so we will
+			// have to reply on date functions entirely, and the incoming
+			// `$lastmod` is the original datetime value without any modifications
+			// from `gmt_offset` and/or WordPress's GMT datetime fields
+			return $need_gmt ? gmdate('Y-m-d\TH:i:s\Z', (int) $lastmod) : date('c', (int) $lastmod);
+		}
+
+		// lastmod is expected to be in local time, make it GMT/UTC if needed
+		$lastmod = $expect_local && $need_gmt ? $lastmod - $gmt_offset * 3600 : $lastmod;
+
+		// WordPress uses 'UTC' as its timezone for date function but other
+		// plugins might change this so it's best to set to 'UTC' here and
+		// assing the current timezone back later on. This is to ensure that
+		// the `date` function does not manage timezone on its own.
+		$current_timezone = date_default_timezone_get();
+		date_default_timezone_set('UTC');
+
+		$date = date('c', (int) $lastmod);
+
+		if ($need_gmt)
+		{
+			// use GMT/UTC for sitemap
+			return str_replace('+00:00', 'Z', $date);
+		}
+
+		// calculate the UTC designator, e.g. '+07:00'
+		$sign = $gmt_offset > 0 ? '+' : '-';
+
+		$gmt_offset = abs($gmt_offset);
+
+		$hour   = intval($gmt_offset);
+		$minute = $gmt_offset - $hour;
+		$minute = $minute * 60;
+
+		return str_replace('+00:00', $sign . sprintf('%02d:%02d', $hour, $minute), $date);
 	}
 
 	protected function post_type_uses($post_type, $taxonomy_object)
@@ -476,7 +536,8 @@ class BWP_GXS_MODULE
 	/**
 	 * Always call this function when you query for something.
 	 *
-	 * $query_str should be already escaped using either $wpdb->escape() or $wpdb->prepare().
+	 * $query_str should be already escaped using either $wpdb->escape() or
+	 * $wpdb->prepare().
 	 */
 	protected function get_results($query_str)
 	{
@@ -486,8 +547,8 @@ class BWP_GXS_MODULE
 		$end   = (int) $bwp_gxs->options['input_sql_limit'];
 		$limit = $this->limit;
 
-		// If we exceed the actual limit, limit $end to the correct limit -
-		// @since 1.1.5
+		// @since 1.1.5 if we exceed the actual limit, limit $end to the
+		// correct limit
 		if ($this->url_sofar + $end > $limit)
 			$end = $limit - $this->url_sofar;
 
@@ -544,7 +605,9 @@ class BWP_GXS_MODULE
 			: $split_limit;
 
 		// if this is a Google News sitemap, limit is 1000
-		$this->limit = 'news' == $this->type
+		// @see https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines
+		// so use 1000 if current limit is set higher
+		$this->limit = 'news' == $this->type && $this->limit > 1000
 			? 1000 : $this->limit;
 
 		$this->offset = !empty($this->part)
@@ -579,7 +642,7 @@ class BWP_GXS_MODULE
 
 	public function set_current_time()
 	{
-		$this->now = (int) time();
+		$this->now = current_time('timestamp');
 	}
 
 	public function set_sort_column($sort_column)

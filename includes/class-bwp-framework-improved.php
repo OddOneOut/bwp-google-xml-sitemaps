@@ -4,8 +4,8 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE VERSION 3.0 OR LATER
  */
 
-class BWP_FRAMEWORK_IMPROVED {
-
+class BWP_FRAMEWORK_IMPROVED
+{
 	/**
 	 * Database related data
 	 */

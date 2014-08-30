@@ -11,7 +11,7 @@
 						font-family: Verdana, Arial, Helvetica, sans-serif;
 						font-size: 12px;
 					}
-					
+
 					#header, #footer {
 						background-color: #F0F7FC;
 						border: 1px #50A6E0 solid;
@@ -20,11 +20,11 @@
 						margin: 10px 0px;
 						line-height: 1.7;
 					}
-					
+
 					#header a, #footer a {
 						color: #2266bb;
 					}
-					
+
 					#footer {
 						margin-top: 15px;
 					}
@@ -32,17 +32,17 @@
 					table {
 						width: 100%;
 					}
-					
+
 					th {
 						text-align: left;
 						border-bottom: 1px solid #aaaaaa;
 						padding-bottom: 10px; padding-left: 5px;
 					}
-					
+
 					tr.odd {
 						background-color: #f7f7f7;
 					}
-					
+
 					td {
 						padding: 5px;
 						margin: 0px;
@@ -53,7 +53,7 @@
 				<h1>XML Sitemap</h1>
 				<div id="header">
 					<p>
-						This sitemap was created using <a href="http://betterwp.net/wordpress-plugins/google-xml-sitemaps/" title="Better WordPress Google XML Sitemaps">Better WordPress Google XML Sitemaps</a>, a WordPress plugin that has support for sitemapindex and Multi-site blogs, you can also build custom sitemaps if you want.
+						This sitemap was created using <a href="http://betterwp.net/wordpress-plugins/google-xml-sitemaps/" title="Better WordPress Google XML Sitemaps">Better WordPress Google XML Sitemaps</a>, a WordPress plugin that has support for Sitemapindex, Google News sitemap, and Multi-site.
 					</p>
 				</div>
 				<div id="content">
@@ -62,8 +62,8 @@
 							<th style="width: 60%;">Location</th>
 							<th>Priority</th>
 							<th>Change Frequency</th>
-							<th>Last Modified (GMT)</th>
-						</tr>						
+							<th>Last Modified</th>
+						</tr>
 						<xsl:for-each select="sitemap:urlset/sitemap:url">
 							<tr>
 								<xsl:if test="position() mod 2 != 0">
@@ -91,7 +91,7 @@
 					</table>
 				</div>
 				<div id="footer">
-					This plugin is (c) 2012 <a href="http://profiles.wordpress.org/users/OddOneOut/">Khang Minh</a> and is licensed under GPLv3.
+					This plugin is (c) 2014 <a href="http://profiles.wordpress.org/users/OddOneOut/">Khang Minh</a> and is licensed under GPLv3.
 				</div>
 			</body>
 		</html>

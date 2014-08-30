@@ -24,29 +24,29 @@ class BWP_GXS_MODULE_ARCHIVE extends BWP_GXS_MODULE
 		{
 			$latest_post_query = '
 				SELECT
-					YEAR(post_date) AS year,
+					YEAR(post_date) as year,
 					MONTH(post_date) as month,
-					COUNT(ID) as posts,
-					comment_count,
-					post_date,
-					post_modified
+					MAX(post_modified) as post_modified,
+					MAX(post_modified_gmt) as post_modified_gmt,
+					MAX(comment_count) as comment_count
 				FROM ' . $wpdb->posts . "
-				WHERE post_status = 'publish' AND post_type <> 'page'" . '
-				GROUP BY YEAR(post_date), MONTH(post_date)
+				WHERE post_status = 'publish'
+					AND post_type = 'post'" . '
+				GROUP BY year, month
 				ORDER BY post_modified DESC';
 		}
 		else
 		{
 			$latest_post_query = '
 				SELECT
-					YEAR(post_date) AS year,
-					COUNT(ID) as posts,
-					comment_count,
-					post_date,
-					post_modified
+					YEAR(post_date) as year,
+					MAX(post_modified) as post_modified,
+					MAX(post_modified_gmt) as post_modified_gmt,
+					MAX(comment_count) as comment_count
 				FROM ' . $wpdb->posts . "
-				WHERE post_status = 'publish' AND post_type <> 'page'" . '
-				GROUP BY YEAR(post_date)
+				WHERE post_status = 'publish'
+					AND post_type <> 'page'" . '
+				GROUP BY year
 				ORDER BY post_modified DESC';
 		}
 

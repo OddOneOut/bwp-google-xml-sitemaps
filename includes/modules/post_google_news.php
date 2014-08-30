@@ -18,8 +18,8 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 	 */
 	private static function process_posts($posts, $news_cats, $news_cat_action)
 	{
-		// This $post array surely contains duplicate posts (fortunately they are already sorted)
-		// let's group 'em
+		// This $post array surely contains duplicate posts (fortunately they
+		// are already sorted) let's group 'em
 		$ord_num = 0;
 
 		$excluded_cats = 'inc' == $news_cat_action ? array() : explode(',', $news_cats);
@@ -100,33 +100,50 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 		$news_cats       = $bwp_gxs->options['select_news_cats'];
 		$news_cat_action = $bwp_gxs->options['select_news_cat_action'];
 
+		if ($news_cat_action == 'inc' && empty($news_cats))
+		{
+			// if we have to look for news post in certain categories, but
+			// news category list is empty, nothing to do. This should stop the
+			// SQL cycling btw.
+			return false;
+		}
+
 		$cat_query = ' AND wpterms.term_id NOT IN (' . $news_cats . ')';
-		$cat_query = 'inc' == $news_cat_action
+		$cat_query = $news_cat_action == 'inc'
 			? str_replace('NOT IN', 'IN', $cat_query) : $cat_query;
-		$cat_query = 'inc' != $news_cat_action && 'yes' == $bwp_gxs->options['enable_news_multicat']
+		$cat_query = $news_cat_action != 'inc'
+			&& $bwp_gxs->options['enable_news_multicat'] == 'yes'
 			? '' : $cat_query;
 
-		$group_by = empty($bwp_gxs->options['enable_news_multicat']) ? ' GROUP BY wposts.ID' : '';
+		$group_by = empty($bwp_gxs->options['enable_news_multicat'])
+			? ' GROUP BY wposts.ID' : '';
 
 		$latest_post_query = '
-				SELECT * FROM ' . $wpdb->term_relationships . ' wprel
-				INNER JOIN ' . $wpdb->posts . ' wposts
-					ON wprel.object_id = wposts.ID' . "
-					AND wposts.post_status = 'publish'" . '
-				INNER JOIN ' . $wpdb->term_taxonomy . ' wptax
-					ON wprel.term_taxonomy_id = wptax.term_taxonomy_id' . "
-					AND wptax.taxonomy = 'category'" . '
-				, ' . $wpdb->terms . ' wpterms
-				WHERE wptax.term_id = wpterms.term_id
-					AND wposts.post_date > %s' .
-					$cat_query . $group_by . '
-				ORDER BY wposts.post_date DESC';
+			SELECT *
+			FROM ' . $wpdb->term_relationships . ' wprel
+			INNER JOIN ' . $wpdb->posts . ' wposts
+				ON wprel.object_id = wposts.ID' . "
+				AND wposts.post_status = 'publish'" . '
+			INNER JOIN ' . $wpdb->term_taxonomy . ' wptax
+				ON wprel.term_taxonomy_id = wptax.term_taxonomy_id' . "
+				AND wptax.taxonomy = 'category'" . '
+			, ' . $wpdb->terms . ' wpterms
+			WHERE wptax.term_id = wpterms.term_id
+				AND wposts.post_date > %s' .
+				$cat_query . $group_by . '
+			ORDER BY wposts.post_date DESC';
 
 		$latest_posts = $this->get_results($wpdb->prepare($latest_post_query, $time));
 
-		// if Multi-cat mode is enabled we will need to process fetched posts
 		if ('yes' == $bwp_gxs->options['enable_news_multicat'])
+		{
+			// if Multi-cat mode is enabled we will need to process fetched posts
 			$latest_posts = self::process_posts($latest_posts, $news_cats, $news_cat_action);
+		}
+
+		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
+			// stop SQL cycling
+			return false;
 
 		$using_permalinks = $this->using_permalinks();
 
@@ -136,8 +153,6 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 		{
 			$post = $latest_posts[$i];
 
-			// init your $data with the previous item's data. This makes sure
-			// no item is mal-formed.
 			$data = array();
 
 			// @since 1.1.0 - get permalink independently, as we don't need
@@ -149,9 +164,9 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 			$data['language'] = $lang;
 
-			// multi-cat support for genres
 			if (isset($post->terms))
 			{
+				// multi-cat support for genres
 				$genres_cache_key = md5(implode('|', $post->terms));
 
 				if (!isset($genres_cache[$genres_cache_key])
@@ -182,15 +197,20 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 					: '';
 			}
 
-			$data['pub_date'] = $this->format_lastmod(strtotime($post->post_date));
+			$data['pub_date'] = $bwp_gxs->options['enable_gmt']
+				? $this->format_lastmod(strtotime($post->post_date_gmt), false)
+				: $this->format_lastmod(strtotime($post->post_date));
+
 			$data['title']    = $post->post_title;
 
 			// multi-cat support for news categories as keywords
 			if ('cat' == $bwp_gxs->options['select_news_keyword_type'] && isset($post->term_names))
 			{
 				$keywords = array();
+
 				foreach ($post->term_names as $term_name)
 					$keywords[] = (!empty($keywords_map[$term_name])) ? trim($keywords_map[$term_name]) : $term_name;
+
 				$keywords = implode(', ', $keywords);
 			}
 			else if ('tag' == $bwp_gxs->options['select_news_keyword_type'])
@@ -222,5 +242,9 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 			$this->data[] = $data;
 		}
+
+		// always return true if we can get here, otherwise you're stuck in a
+		// SQL cycling loop
+		return true;
 	}
 }
