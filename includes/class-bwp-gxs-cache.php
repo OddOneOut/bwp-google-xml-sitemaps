@@ -69,8 +69,8 @@ class BWP_GXS_CACHE
 			return false;
 		}
 
-		$lastmod = $this->main->format_header_time($last_modified);
-		$expires = $this->main->format_header_time($last_modified + $this->cache_time);
+		$lastmod = bwp_gxs_format_header_time($last_modified);
+		$expires = bwp_gxs_format_header_time($last_modified + $this->cache_time);
 		$etag    = md5($expires . $this->cache_file);
 
 		// build cached sitemap's headers for later use
@@ -114,7 +114,7 @@ class BWP_GXS_CACHE
 	/**
 	 * Gets current cache status for the requested sitemap
 	 *
-	 * @since BWP GXS 1.2.4
+	 * @since BWP GXS 1.3.0
 	 * @access public
 	 * @return bool|string false if cache is invalid
 	 *                     '304' if http cache can be used

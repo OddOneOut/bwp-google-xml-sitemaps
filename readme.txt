@@ -4,7 +4,8 @@ Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#contribu
 Tags: xml sitemaps, xml sitemap, google xml sitemaps, sitemapindex, sitemap, sitemaps, seo, bing, google, msn, ask, multi-site, multisite
 Requires at least: 3.0
 Tested up to: 3.9.1
-Stable tag: 1.2.3
+Stable tag: 1.3.0
+License: GPLv3 or later
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex, Multi-site and Google News sitemap.
 
@@ -12,13 +13,13 @@ The first WordPress XML Sitemap plugin that comes with comprehensive support for
 
 With BWP GXS you will no longer have to worry about the 50,000 URL limit or the time it takes for a sitemap to be generated. This plugin is fast, consumes much less resource and can be extended via your very own modules (yes, no hooks needed!). Here's a [demo](http://betterwp.net/sitemapindex.xml) of the sitemapindex if you are interested.
 
-**===New in 1.2.0!===**
+**Google News Sitemap Support (since 1.2.0)**
 
-The long-awaited BWP GXS 1.2.0 has finally been released with a new and very powerful feature: **Google News Sitemap creation**! All you have to do is click on the newly added tab (**News sitemap**), enable the module, choose some news categories as well as their genres and you're ready to go. Your news sitemap can also be used to ping Search Engines individually if you want. And of course, whenever you publish a new post in a news category, all selected Search Engines will be pinged!
+Add a [Google News sitemap](https://support.google.com/news/publisher/answer/75717?hl=en&ref_topic=4359874) to your sitemapindex easily. News sitemap can be used to ping search engines individually if you want. And of course, whenever you publish a new post in a news category, all selected search engines will be pinged.
 
 **Sitemapindex Support**
 
-What's so great about a sitemapindex you might say? Sitemapindex, as its name suggests, is one kind of sitemaps that allows  you to group multiple sitemaps files inside it. Sitemapindex, therefore, gives you many benefits, such as: possibility to bypass the 50,000 URL limit (you can have 10 custom sitemaps, each has 10000 URLs), or possibility to make the generation time much faster (because each sitemap is requested separately and is built by its own module), etc.
+Sitemapindex, as its name suggests, is one kind of sitemaps that allows  you to group multiple sitemaps files inside it. Sitemapindex, therefore, gives you many benefits, such as: possibility to bypass the 50,000 URL limit (you can have 10 custom sitemaps, each has 10000 URLs), or possibility to make the generation time much faster (because each sitemap is requested separately and is built by its own module), etc.
 
 **Splitting post-based sitemaps (since 1.1.0)**
 
@@ -32,11 +33,17 @@ Each website within your network will have its own sitemapindex and sitemaps. Fo
 
 The unrivaled flexibility this plugin offers is the ability to define your custom sitemaps using modules. Each module is a actually .php file that tell BWP Google XML Sitemap how to build a sitemap file. You can extend default modules or create completely new ones. This plugin also comes with a convenient base class for developing modules with easy to use and thoroughly documented API. Since modules can be defined by you, there's no limitation what a sitemap can have (for example you can bypass the 50,000 URL limit, as stated above). There's one limitation, though: your imagination ;) . Oh, did I mention that you can even use module to create another sitemapindex?
 
-**Detailed Log and Debugging mode**
+**Detailed Sitemap Log and Debug**
 
-Developing modules needs debugging and this plugin makes that so easy for any developers. There are two kinds of logs: sitemap log and build log. Sitemap log tells you what sitemaps you have and when they were last requested/updated while build log tells you what's going on when a particular sitemap is built. The debug mode helps you trace errors in modules conveniently!
+Developing modules needs debugging and this plugin makes that so easy for any developers.
+
+There are two kinds of logs: sitemap item log and sitemap generation log. Sitemap item log tells you what and when sitemaps are generated while sitemap generation log tells you how they are generated.
+
+As of version 1.3.0 there are two debug modes, namely "Debug" and "Debug extra", read more [here](http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#sitemap_log_debug) to know how to make the most out of them.
 
 **For a complete feature list, please visit this [plugin's official page](http://betterwp.net/wordpress-plugins/google-xml-sitemaps/)**
+
+Please don't forget to rate this plugin [5 shining stars](http://wordpress.org/support/view/plugin-reviews/bwp-google-xml-sitemaps?filter=5) if you like it, thanks!
 
 **Important Notes**
 
@@ -44,7 +51,9 @@ If you have any problem using this plugin, refer to the [FAQ section](http://bet
 
 **Get in touch**
 
-* I'm available at [BetterWP.net](http://betterwp.net) and you can also follow me on [Twitter](http://twitter.com/0dd0ne0ut).
+* Support is provided via [BetterWP.net Community](http://betterwp.net/community/).
+* Follow and contribute to development via [Github](https://github.com/OddOneOut/Better-WordPress-Google-XML-Sitemaps).
+* You can also follow me on [Twitter](http://twitter.com/0dd0ne0ut).
 * Check out [latest WordPress Tips and Ideas](http://feeds.feedburner.com/BetterWPnet) from BetterWP.net.
 
 **Languages**
@@ -53,6 +62,7 @@ If you have any problem using this plugin, refer to the [FAQ section](http://bet
 * Malaysian (ms_MY) - Thanks to [d4rkcry3r](http://d4rkcry3r.com)!
 * Traditional Chinese (zh_TW) - Thanks to Richer Yang!
 * Romanian (ro_RO) - Thanks to Luke Tyler!
+* Spanish (es_ES) - Thanks to Ruben Hernandez - http://usitility.es
 
 Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using-poedit/) this plugin!
 
@@ -68,89 +78,7 @@ Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using
 
 == Frequently Asked Questions ==
 
-**Q1: I got white pages and/or 'Content Encoding Error' error?**
-
-1. PHP error messages from other plugins or from this plugin itself can cause this issue, especially when you have `WP_DEBUG` set to true (try commenting out this line in your `wp-config.php` file: `define(WP_DEBUG, true);`). Refer to the second question to know how to trace the actual errors.
-
-2. BWP GXS runs out of memory or reaches maximum execution time. This often happens when you try to build large sitemaps. I've tried to optimize this plugin a lot since the first version, but if you are using a lot of memory eating plugins on your website, it is very hard for BWP GXS to build huge sitemaps (containing thousands of items). Anyway, to resolve this issue, try decreasing the three limit options in the Generator tab: max number of items per sitemap (first option), max number of items per split sitemap (first option in Sitemap Index Options) and max items to get in one SQL query (second option in Module Options). You might try the following presets (in the same order as above):
-	* 1000, 1000, 100 (for sites with low memory limit like 32MB)
-	* 5000, 5000, 500 (for sites with lots of posts, tags, categories, etc.)
-	* 5000, 5000, 2500 (if you have problem with max execution time)
-
-	Also, you can try the tips mentioned in [this post of mine](http://betterwp.net/6-wordpress-memory-usage/).
-
-3. A caching plugin is interfering. Tell that caching plugin to ignore `.xml` file. For example, if you use WP Super Cache, on the Advanced Tab, scroll to the 'Accepted Filenames & Rejected URIs' section, and then in the first textarea, type in `\.xml`. Now save the changes and flush the all caches. See if that works for you.
-
-**Q2: I've tried the tips mentioned in Question #1, but still got white pages / plain text sitemaps?**
-
-It's very likely that you're enabling this option: 'Clean unexpected output before sitemap generation', try disabling it and your sitemaps will show up as expected.
-
-**Q3: I got the error 'Content Encoding Error', what should I do?**
-
-If you are enabling this plugin's debug mode and/or WP_DEBUG, this error is very normal because the module you use might print errors on pages, thus corrupting your xml sitemaps. To view the actual errors without being greeted with the 'Content Encoding Error', please follow these steps:
-
-1. Enable this plugin's debug mode if you haven't done so.
-2. Open the file `class-bwp-simple-gxs.php` inside `bwp-google-xml-sitemaps/includes/` and look for this function: `output_sitemap()`.
-3. Place an `exit;` right after the opening bracket, like so:
-<pre><code>
-function output_sitemap()
-{
-	exit;
-</code></pre>
-4. Refresh the sitemaps with problems.
-5. Kindly report the errors you see by commenting or through the [contact form](http://betterwp.net/contact/). Thanks!
-
-Note that, however, some error messages will never show up. In such case, you might want to locate the `error_log` file within your WordPress installation's root directory and read its contents for the error messages.
-
-**Q4: I got an 'Error loading stylesheet' error, what should I do?**
-
-As of version 1.1.0 it is almost impossible for such error to show up, but if you set the site url and the home url differently (one with `www` and one isn't), you will see this error. Just choose to disable stylesheet in Generator tab or change your site / home URL settings.
-
-**Q5: I got a HTTP parse error when I submit sitemap to Google Webmaster Tools, what should I do?**
-
-Please first see the answer to the first question, if it didn't work, and you are using a cache plugin such as W3 Total Cache, it is possible that such plugin wrongly assigns HTTP status headers to my sitemaps.
-
-For example, in W3 Total Cache 0.9.2.2 or possibly older, go to **Performance -> Browser Cache**, and then go to '404 error exception list' in the 'General' option block, and find this line:
-
-<pre><code>sitemap(_index|[0-9]+)?\.xml(\.gz)?</code></pre>
-
-OR this line:
-
-<pre><code>sitemap\.xml(\.gz)?</code></pre>
-
-and change it to:
-
-<pre><code>(sitemapindex|[a-z0-9_-]+)\.xml</code></pre>
-
-Save the changes and then tell W3TC to auto-install the rewrite rules to your `.htaccess` file.
-
-BWP GXS's sitemaps will now have correct HTTP status headers.
-
-**Q6: When I visit `http://example.com/sitemapindex.xml` , WordPress returns a 404 page. What should I do?**
-
-This might be caused by unflushed rewrite rules, which should have been flushed when you activate this plugin. You can try flushing them manually by visiting Settings -> Permalinks and then clicking Save Changes.
-
-**Q7: When I visit any sitemap, a plain (no theme) 404 error page appears, what's the problem?**
-
-You are possibly using some caching plugins that redirect all non-existent pages to 404 error page. Sitemaps produced by this plugin are virtual sitemaps so they will all be redirected. Just open the .htaccess file and change the `sitemap\.xml` part to something like `[a-z0-9-_]+\.xml` and you're fine.
-
-**Q8: I choose not to display certain sitemaps but the sitemapindex still displays the them?**
-
-What you see is actually a cached version of the sitemapindex. You can wait for it to be refreshed automatically or simply choose to 'Flush the Cache'.
-
-**Q9: BWP GXS tells me that 'Requested module not found or not allowed', what should I do?**
-
-This depends on specific situations and your current settings. Basically this means that the module you're trying to access has not been registered with BWP GXS or that module has been disabled but the cached sitemapindex still displays it  (which is related to the question above). For a list of default modules (or sitemaps), please read this section.
-
-**Q10: Is there anyway to rename sitemapindex.xml to sitemap.xml?**
-
-You don't have to. A visit to `http://example.com/sitemap.xml` will show you the same sitemapindex. This is done to make BWP GXS more compatible with blogs that have lots of real `robots.txt`. Please note that you must remove any real sitemap.xml file in your website's root for this feature to work.
-
-**Q11: The custom sitemapindex I create seems to be nested inside the default sitemapindex, is that a bug or something?**
-
-That's the default behaviour of this plugin and I plan to improve it in future versions. Don't worry, though, you might see a red X next to your sitemapindex's name in Google's Webmaster Tools but that's only because you haven't submitted your custom sitemapindex. If you submit it separately, the error will go away :).
-
-[Check plugin news and ask questions](http://betterwp.net/topic/google-xml-sitemaps/).
+[Visit this link for the complete FAQ](http://betterwp.net/wordpress-plugins/google-xml-sitemaps/faq/)
 
 == Screenshots ==
 
@@ -161,6 +89,53 @@ That's the default behaviour of this plugin and I plan to improve it in future v
 5. Google News Sitemap
 
 == Changelog ==
+
+= 1.3.0 =
+* **New features**
+    * Added a new setting to control which post types can be used to ping search engines
+    * Added a ping limit setting
+    * Added a "Save changes and Flush cache" button
+
+* **Enhancements**
+    * Plugin's admin areas have been re-organized to be easier to use.
+    * Updated all sitemap modules with easier to use APIs.
+    * Last modified dates are now more properly handled.
+    * Error log has been refined to be more friendly and useful.
+    * Post types that do not have any post should not be listed in `sitemapindex.xml` by default.
+    * Posts that are password-protected should not be listed in sitemap files.
+    * Be more selective when pinging search engines, this is to avoid double pinging when using plugin like Snitch.
+    * Replaced the "Clean PHP errors" function with a "Debug extra" mode that can be used to easily debug "Content Encoding error" and similar errors, more info about "Debug extra" [here](http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#sitemap_log_debug).
+    * When debug or debug extra is on, `no-cache` headers are sent to ensure a proper debugging environment.
+    * Caching is now disabled by default to avoid confusion when setting up the sitemapindex.
+    * Cache directory can now be edited via:
+        * Plugin's admin area: *BWP Sitemaps >> XML Sitemaps >> Caching*
+        * PHP Constant: e.g. `define('BWP_GXS_CACHE_DIR', 'path/to/cache/directory');`
+        * Filters: use `bwp_gxs_cache_dir`
+    * Added `bwp_gxs_excluded_posts` filter hook to let users exclude posts using an array of IDs instead of an SQL string. This is meant to replace `bwp_gxs_post_where` filter hook when using to exclude certain posts. More info [here](http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#exclude_items).
+    * Added `bwp_gxs_excluded_terms` filter hook as a taxonomy-equivalent to `bwp_gxs_excluded_posts`, this works the same as (and deprecates) `bwp_gxs_term_exclude`.
+    * Added `bwp_gxs_sitemap_lastmod` filter hook to let users modify last modified dates of sitemaps inside a sitemapindex programmatically when needed.
+    * Ping settings can now be set per blog instead of site-wise.
+    * Added a Spanish translation - Thanks to Ruben!
+    * Added more News languages:
+        * Hebrew (he)
+        * Traditional Chinese (zh-tw)
+        * Arabic (ar)
+        * Hindi (hi)
+        * Japanese (ja)
+    * Other enhancements.
+
+* **Bugfixes**:
+    * Fixed an issue that might cause an extraneous split part to appear.
+    * Fixed an issue that might cause "Invalid last modified date" error
+    * Fixed an issue that might cause the sitemapindex to use the regular XSLT stylesheet
+    * Sitemapindex should now respect excluded posts when splitting post-based sitemaps
+    * Other bugfixes.
+
+**Important Update Note**:
+    * if you're using custom modules make sure that you re-read the [documentation](http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#module_api) for updated info about the module API.
+    * When the sitemapindex is generated for the first time, you won't see any <em>Last modified date</em> for any child sitemaps because none of them have been generated yet. This is expected and adhered to the <a href="http://www.sitemaps.org/protocol.html#sitemapIndexTagDefinitions">official sitemap protocol</a>.
+
+**Next major version (1.4.0) will have Image and Video sitemap support, so make sure you [stay alerted](http://feeds.feedburner.com/BetterWPnet)!**
 
 = 1.2.3 =
 * Temporary fix for unexpected character that appears on every page.

@@ -9,21 +9,23 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE
 {
 	public function __construct()
 	{
-		// @since 1.2.4 this method is empty
+		// @since 1.3.0 this is left blank
 	}
 
 	protected function generate_data()
 	{
-		global $wpdb, $bwp_gxs, $post;
+		global $wpdb, $post;
 
 		$sql_where = apply_filters('bwp_gxs_post_where', '', 'page');
+		$sql_where = str_replace('wposts', 'p', $sql_where);
 
 		$latest_post_query = '
 			SELECT *
-			FROM ' . $wpdb->posts . " wposts
-			WHERE wposts.post_status = 'publish'
-				AND wposts.post_type = 'page' $sql_where" . '
-			ORDER BY wposts.post_modified DESC';
+			FROM ' . $wpdb->posts . " p
+			WHERE p.post_status = 'publish'
+				AND p.post_password = ''
+				AND p.post_type = 'page' $sql_where" . '
+			ORDER BY p.post_modified DESC';
 
 		$latest_posts = $this->get_results($latest_post_query);
 
@@ -40,7 +42,9 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE
 			$data = $this->init_data($data);
 
 			if ($using_permalinks && empty($post->post_name))
+			{
 				$data['location'] = '';
+			}
 			else
 			{
 				wp_cache_add($post->ID, $post, 'posts');

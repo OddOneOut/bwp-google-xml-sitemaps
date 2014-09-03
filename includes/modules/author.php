@@ -9,7 +9,7 @@ class BWP_GXS_MODULE_AUTHOR extends BWP_GXS_MODULE
 {
 	public function __construct()
 	{
-		// @since 1.2.4 this method is empty
+		// @since 1.3.0 this method is empty
 	}
 
 	protected function generate_data()
@@ -26,21 +26,21 @@ class BWP_GXS_MODULE_AUTHOR extends BWP_GXS_MODULE
 
 		$author_sql = '
 			SELECT
-				wp_u.ID,
-				wp_u.user_nicename,
-				MAX(wp_p.post_modified) as lastmod,
-				wp_um.meta_value as role
-			FROM ' . $wpdb->users . ' wp_u
-			INNER JOIN ' . $wpdb->usermeta . ' wp_um
-				ON wp_um.user_id = wp_u.ID
-			INNER JOIN ' . $wpdb->posts . ' wp_p
-				ON wp_p.post_author = wp_u.ID' . "
-			WHERE wp_p.post_status = 'publish'
-				AND wp_um.meta_key = '" . $wpdb->prefix . "capabilities'" . '
+				u.ID,
+				u.user_nicename,
+				MAX(p.post_modified) as lastmod,
+				um.meta_value as role
+			FROM ' . $wpdb->users . ' u
+			INNER JOIN ' . $wpdb->usermeta . ' um
+				ON um.user_id = u.ID
+			INNER JOIN ' . $wpdb->posts . ' p
+				ON p.post_author = u.ID' . "
+			WHERE p.post_status = 'publish'
+				AND um.meta_key = '" . $wpdb->prefix . "capabilities'" . '
 			GROUP BY
-				wp_u.ID,
-				wp_u.user_nicename,
-				wp_um.meta_value
+				u.ID,
+				u.user_nicename,
+				um.meta_value
 			ORDER BY lastmod DESC';
 
 		$authors = $this->get_results($author_sql);

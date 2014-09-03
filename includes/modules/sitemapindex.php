@@ -25,7 +25,7 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 	 *
 	 * @since 1.3.0
 	 */
-	private function _get_sitemap_lastmod($module_name, $sitemap_name)
+	private function _get_sitemap_lastmod($sitemap_name)
 	{
 		if (!empty($this->sitemap_logs[$sitemap_name]))
 		{
@@ -62,14 +62,33 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 
 		if ('yes' == $bwp_gxs->options['enable_sitemap_split_post'])
 		{
+			// @since 1.3.0 build a list of post IDs that we need to exclude so
+			// that we can correctly split post-based sitemaps
+			$excluded_posts = array();
+			$post_types     = get_post_types(array('public' => true));
+
+			foreach ($post_types as $post_type_name)
+			{
+				$excluded_posts = array_merge(
+					$excluded_posts,
+					apply_filters('bwp_gxs_excluded_posts', array(), $post_type_name)
+				);
+			}
+
+			$exclude_post_sql = sizeof($excluded_posts) > 0
+				? ' AND p.ID NOT IN (' . implode(',', $excluded_posts) . ') '
+				: '';
+
 			// we need to split post-based sitemaps
 			$post_count_query = '
 				SELECT
-					COUNT(ID) as total,
-					post_type
-				FROM ' . $wpdb->posts . "
-					WHERE post_status = 'publish'" . '
-				GROUP BY post_type
+					COUNT(p.ID) as total,
+					p.post_type
+				FROM ' . $wpdb->posts . " p
+				WHERE p.post_status = 'publish'
+					$exclude_post_sql
+					AND p.post_password = ''" . '
+				GROUP BY p.post_type
 			';
 
 			$post_counts = $wpdb->get_results($post_count_query);
@@ -90,10 +109,10 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 			$module_name  = $item['module_name'];
 			$sitemap_name = $module_name;
 
-			$data             = $this->init_data($data);
-			$data['location'] = $this->get_xml_link($module_name);
-
 			$passed = false; // whether this item's data has already been passed back
+
+			$data             = $this->init_data($data);
+			$data['location'] = $this->get_sitemap_url($module_name);
 
 			$custom_modules = array(
 				'post_google_news',
@@ -136,9 +155,9 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 						{
 							// append part number to sitemap name
 							$sitemap_name = $module_name . '_part' . $i;
-							$data['location'] = $this->get_xml_link($sitemap_name);
+							$data['location'] = $this->get_sitemap_url($sitemap_name);
 
-							$lastmod = $this->_get_sitemap_lastmod($module_name, $sitemap_name);
+							$lastmod = $this->_get_sitemap_lastmod($sitemap_name);
 							$data['lastmod'] = $lastmod ? $this->format_lastmod($lastmod) : '';
 							$data['lastmod'] = apply_filters('bwp_gxs_sitemap_lastmod', $data['lastmod'], $lastmod, $item, $i);
 
@@ -155,7 +174,7 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 				// only do this if data has not been passed back already
 				// @since 1.3.0 use the correct mechanism to determine last
 				// modified date for a sitemap file.
-				$lastmod = $this->_get_sitemap_lastmod($module_name, $sitemap_name);
+				$lastmod = $this->_get_sitemap_lastmod($sitemap_name);
 
 				$data['lastmod'] = $lastmod ? $this->format_lastmod($lastmod) : '';
 				$data['lastmod'] = apply_filters('bwp_gxs_sitemap_lastmod', $data['lastmod'], $lastmod, $item, 0);

@@ -9,7 +9,7 @@ class BWP_GXS_MODULE_PAGE_EXTERNAL extends BWP_GXS_MODULE
 {
 	public function __construct()
 	{
-		// @since 1.2.4 this method is empty
+		// @since 1.3.0 this method is empty
 	}
 
 	protected function build_data()

@@ -12,3 +12,8 @@ function bwp_gxs_get_filename($sitemap_name)
 
 	return trailingslashit($bwp_gxs->cache_directory) . $filename;
 }
+
+function bwp_gxs_format_header_time($time)
+{
+	return gmdate('D, d M Y H:i:s \G\M\T', (int) $time);
+}

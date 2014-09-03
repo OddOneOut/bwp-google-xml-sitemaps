@@ -8,7 +8,7 @@ class BWP_GXS_MODULE_SITE extends BWP_GXS_MODULE
 {
 	public function __construct()
 	{
-		// @since 1.2.4 this method is empty
+		// @since 1.3.0 this method is empty
 	}
 
 	protected function generate_data()
@@ -17,7 +17,7 @@ class BWP_GXS_MODULE_SITE extends BWP_GXS_MODULE
 
 		if (!BWP_SIMPLE_GXS::is_multisite()
 			|| BWP_SIMPLE_GXS::is_subdomain_install()
-			|| (!empty($blog_id) && $blog_id < 1)
+			|| (!empty($blog_id) && $blog_id > 1)
 		) {
 			// if this is not a multisite installation,
 			// OR a subdomain multisite installation,
@@ -28,7 +28,9 @@ class BWP_GXS_MODULE_SITE extends BWP_GXS_MODULE
 					post_modified, post_modified_gmt
 				FROM ' . $wpdb->posts . "
 				WHERE post_status = 'publish'
-				ORDER BY post_modified DESC"
+					AND post_password = ''
+				ORDER BY post_modified DESC
+				LIMIT 1"
 			);
 
 			$data = array();
@@ -45,24 +47,28 @@ class BWP_GXS_MODULE_SITE extends BWP_GXS_MODULE
 
 			$this->data[] = $data;
 
+			// no SQL cycling needed
 			return false;
 		}
 		else if (isset($blog_id) && 1 == $blog_id)
 		{
 			if (!empty($wpdb->dmtable))
 			{
-				// if domain mapping is active
+				// if domain mapping is active, we only get blogs that don't
+				// have their domains mapped as this sitemap can only contains
+				// links on the same domain @see http://www.sitemaps.org/protocol.html#locdef
 				$blog_sql = '
 					SELECT
-						b.*,
-						dm.domain as mapped_domain
+						b.*
 					FROM ' . $wpdb->blogs . ' b
 					LEFT JOIN ' . $wpdb->dmtable . ' dm
 						ON b.blog_id = dm.blog_id
 						AND dm.active = 1
 					WHERE b.public = 1
 						AND b.spam = 0
-						AND b.deleted = 0';
+						AND b.deleted = 0' . "
+						AND (b.blog_id = 1 OR b.path <> '/')" . '
+						AND dm.id is NULL';
 			}
 			else
 			{
@@ -71,7 +77,8 @@ class BWP_GXS_MODULE_SITE extends BWP_GXS_MODULE
 					FROM ' . $wpdb->blogs . '
 					WHERE public = 1
 						AND spam = 0
-						AND deleted = 0';
+						AND deleted = 0' . "
+						AND (blog_id = 1 OR path <> '/')";
 			}
 
 			$blogs = $this->get_results($blog_sql);
@@ -84,14 +91,6 @@ class BWP_GXS_MODULE_SITE extends BWP_GXS_MODULE
 			for ($i = 0; $i < sizeof($blogs); $i++)
 			{
 				$blog = $blogs[$i];
-
-				if (!empty($blog->mapped_domain))
-				{
-					// if this blog's domain is mapped it should not belong to
-					// this sitemap as this sitemap can only contains links on
-					// the same domain @see http://www.sitemaps.org/protocol.html#locdef
-					continue;
-				}
 
 				$data = $this->init_data($data);
 

@@ -9,12 +9,7 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE
 {
 	public function __construct()
 	{
-		global $bwp_gxs;
-
-		// set module data
-		$this->set_module_data($bwp_gxs->module_data);
-
-		// @since 1.2.4 use ::set_sort_column to set the appropriate column to
+		// @since 1.3.0 use ::set_sort_column to set the appropriate column to
 		// sort data by
 		$this->set_sort_column('lastmod');
 	}
@@ -25,6 +20,7 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE
 
 		$requested = $this->requested;
 
+		// @since 1.3.0 do not fetch posts that are password-protected
 		$latest_post_query = '
 			SELECT
 				MAX(p.post_modified) as post_modified,
@@ -36,7 +32,8 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE
 				ON tr.object_id = p.ID
 			INNER JOIN ' . $wpdb->term_taxonomy . ' tt
 				ON tr.term_taxonomy_id = tt.term_taxonomy_id' . "
-			WHERE p.post_status = 'publish'" . '
+			WHERE p.post_status = 'publish'
+				AND p.post_password = ''" . '
 				AND tt.taxonomy = %s
 				AND tt.count > 0
 			GROUP BY tt.term_id
@@ -62,7 +59,10 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE
 			return false;
 
 		// can be something like array('cat1', 'cat2', 'cat3')
-		$exclude_terms = (array) apply_filters('bwp_gxs_term_exclude', array(''), $requested);
+		// @deprecated 1.3.0
+		$exclude_terms = (array) apply_filters('bwp_gxs_term_exclude', array(), $requested);
+		// @since 1.3.0 use `bwp_gxs_excluded_terms` instead
+		$exclude_terms = (array) apply_filters('bwp_gxs_excluded_terms', $exclude_terms, $requested);
 
 		// build an array with term_id as key
 		$term2post = array();

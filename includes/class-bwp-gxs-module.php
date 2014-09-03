@@ -64,7 +64,7 @@ class BWP_GXS_MODULE
 	/**
 	 * Column to sort sitemap items by
 	 *
-	 * @since BWP GXS 1.2.4
+	 * @since 1.3.0
 	 * @var string
 	 */
 	public $sort_column = false;
@@ -82,7 +82,7 @@ class BWP_GXS_MODULE
 			$this->set_current_time();
 
 		$data['location'] = '';
-		$data['lastmod']  = ''; // @since 1.2.4 no more assumption of last mod
+		$data['lastmod']  = ''; // @since 1.3.0 no more assumption of last mod
 
 		if (empty($pre_data) || sizeof($pre_data) == 0)
 			return $data;
@@ -93,24 +93,19 @@ class BWP_GXS_MODULE
 		return $data;
 	}
 
+	/**
+	 * @deprecated 1.3.0 in favor of ::get_sitemap_url
+	 */
 	protected function get_xml_link($slug)
+	{
+		return $this->get_sitemap_url($slug);
+	}
+
+	protected function get_sitemap_url($slug)
 	{
 		global $bwp_gxs;
 
-		if (!$bwp_gxs->use_permalink)
-		{
-			return home_url() . '/?' . $bwp_gxs->query_var_non_perma . '=' . $slug;
-		}
-		else
-		{
-			$permalink = get_option('permalink_structure');
-
-			// If user is using index.php in their permalink structure, we will
-			// have to include it also
-			$indexphp = strpos($permalink, 'index.php') === false ? '' : '/index.php';
-
-			return home_url() . $indexphp . '/' . $slug . '.xml';
-		}
+		return $bwp_gxs->get_sitemap_url($slug);
 	}
 
 	/**
@@ -200,7 +195,7 @@ class BWP_GXS_MODULE
 	 * modified times to be in local time and will be converted to GMT using
 	 * `gmt_offset`.
 	 *
-	 * @since 1.2.4
+	 * @since 1.3.0
 	 * @access protected
 	 */
 	protected function get_lastmod($post)
@@ -445,7 +440,10 @@ class BWP_GXS_MODULE
 		if (!isset($post) || !is_object($post))
 			return '';
 
-		$custom_post_types = get_post_types(array('_builtin' => false));
+		$custom_post_types = get_post_types(array(
+			'_builtin' => false,
+			'public'   => true
+		));
 
 		if (!isset($this->post_type))
 			$this->post_type = get_post_type_object($post->post_type);
@@ -584,6 +582,20 @@ class BWP_GXS_MODULE
 		return $query;
 	}
 
+	/**
+	 * Init any properties that are used in building data
+	 *
+	 * This must be called after module has been set and right before building
+	 * actual sitemap data
+	 *
+	 * @since 1.3.0
+	 * @access protected
+	 */
+	protected function init_properties()
+	{
+		// intentionally left blank
+	}
+
 	protected function generate_data()
 	{
 		return false;
@@ -593,7 +605,7 @@ class BWP_GXS_MODULE
 	{
 		global $bwp_gxs;
 
-		// @since 1.2.4 for post-based sitemaps, when splitting is enabled use
+		// @since 1.3.0 for post-based sitemaps, when splitting is enabled use
 		// global limit if split limit is empty
 		$split_limit = empty($bwp_gxs->options['input_split_limit_post'])
 			? $bwp_gxs->options['input_item_limit']
@@ -629,13 +641,15 @@ class BWP_GXS_MODULE
 	 * custom modules, this function must check whether data has already been
 	 * generated.
 	 *
-	 * @since BWP GXS 1.2.4
+	 * @since 1.3.0
 	 * @access public
 	 */
 	public function build_sitemap_data()
 	{
 		if (sizeof($this->data) > 0)
 			return true;
+
+		$this->init_properties();
 
 		$this->build_data();
 	}

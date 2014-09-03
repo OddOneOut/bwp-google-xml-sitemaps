@@ -9,9 +9,7 @@ class BWP_GXS_MODULE_ARCHIVE extends BWP_GXS_MODULE
 {
 	public function __construct()
 	{
-		global $bwp_gxs;
-
-		$this->set_module_data($bwp_gxs->module_data);
+		// @since 1.3.0 this is left blank
 	}
 
 	protected function generate_data()
@@ -31,6 +29,7 @@ class BWP_GXS_MODULE_ARCHIVE extends BWP_GXS_MODULE
 					MAX(comment_count) as comment_count
 				FROM ' . $wpdb->posts . "
 				WHERE post_status = 'publish'
+					AND post_password = ''
 					AND post_type = 'post'" . '
 				GROUP BY year, month
 				ORDER BY post_modified DESC';
@@ -45,6 +44,7 @@ class BWP_GXS_MODULE_ARCHIVE extends BWP_GXS_MODULE
 					MAX(comment_count) as comment_count
 				FROM ' . $wpdb->posts . "
 				WHERE post_status = 'publish'
+					AND post_password = ''
 					AND post_type <> 'page'" . '
 				GROUP BY year
 				ORDER BY post_modified DESC';

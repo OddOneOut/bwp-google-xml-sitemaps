@@ -703,7 +703,7 @@ class BWP_FRAMEWORK_IMPROVED
 		return false;
 	}
 
-	protected static function is_normal_admin()
+	public static function is_normal_admin()
 	{
 		if (self::is_multisite() && !is_super_admin())
 			return true;
@@ -727,6 +727,7 @@ class BWP_FRAMEWORK_IMPROVED
 		) {
 			return true;
 		}
+
 		return false;
 	}
 }

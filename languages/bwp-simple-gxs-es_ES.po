@@ -1,0 +1,1035 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BWP Google XML Sitemaps\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-03 20:10+0700\n"
+"PO-Revision-Date: 2013-11-04 15:26+0100\n"
+"Last-Translator: ruben <info@usitility.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Language: ES_es\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/class-bwp-framework.php:177
+#, php-format
+msgid ""
+"%s requires WordPress <strong>%s</strong> or higher and PHP <strong>%s</"
+"strong> or higher. The plugin will not function until you update your "
+"software. Please deactivate this plugin."
+msgstr ""
+"%s requiere WordPress <strong>%s</strong> o superior y PHP <strong>%s</"
+"strong> o superior. El plugin no funcionará hasta que no actualices tu "
+"software. Por favor, desactiva el plugin."
+
+#: includes/class-bwp-framework.php:188
+msgid "Development Log"
+msgstr "Log de Desarrollo"
+
+#: includes/class-bwp-framework.php:188
+msgid "Frequently Asked Questions"
+msgstr "Preguntas Más Frecuentes"
+
+#: includes/class-bwp-framework.php:188
+msgid "FAQ"
+msgstr "Preguntas frecuentes"
+
+#: includes/class-bwp-framework.php:188
+msgid "Got a problem? Send me a feedback!"
+msgstr "¿Tienes algún problema? !Mánda un comentario!"
+
+#: includes/class-bwp-framework.php:188
+msgid "Contact"
+msgstr "Contacto"
+
+#: includes/class-bwp-framework.php:195
+msgid ""
+"You can buy me some special coffees if you appreciate my work, thank you!"
+msgstr ""
+"Puedes comprarme algñun cafe especial si aprecias mi trabajo, !Gracias!"
+
+#: includes/class-bwp-framework.php:209
+msgid "Donate to "
+msgstr "Donar a"
+
+#: includes/class-bwp-framework.php:211
+msgid "One cup $5.00"
+msgstr "Una taza $5.00"
+
+#: includes/class-bwp-framework.php:212
+msgid "Two cups $10.00"
+msgstr "Dos tazas $10"
+
+#: includes/class-bwp-framework.php:213
+msgid "Five cups! $25.00"
+msgstr "Cinco tazas! $25"
+
+#: includes/class-bwp-framework.php:214
+msgid "One LL-cup!!! $50.00"
+msgstr "Una Taza ExtraGrande!!! $50"
+
+#: includes/class-bwp-framework.php:215
+msgid "... or any amount!"
+msgstr "... o cualquier cantidad!"
+
+#: includes/class-bwp-framework.php:230
+msgid "Latest updates from BetterWP.net!"
+msgstr "¡Ultimas actualizaciones de BetterWP.net!"
+
+#: includes/class-bwp-framework.php:231
+msgid "Follow me on Twitter!"
+msgstr "¡Sígueme en Twitter!"
+
+#: includes/class-bwp-framework.php:240
+#, php-format
+msgid "You are using version %s!"
+msgstr "Estás usando la versión %s!"
+
+#: includes/class-bwp-framework.php:385
+msgid "Settings"
+msgstr "Configuración"
+
+#: includes/class-bwp-gxs-cache.php:34
+#, php-format
+msgid "Cache directory (\"%s\") does not exist or is not writable."
+msgstr "El directorio (\"%s\") no existe o no se puede escribir en él."
+
+#: includes/class-bwp-gxs-cache.php:56
+#, php-format
+msgid ""
+"Cache file for module <em>%s</em> is not found and will be built right away."
+msgstr ""
+"Fichero Caché para el módulo <em>%s</em> no ha sido encontrado y será "
+"generado de inmediato."
+
+#: includes/class-bwp-gxs-cache.php:108 includes/class-bwp-simple-gxs.php:1341
+#, php-format
+msgid "Successfully served a cached version of <em>%s.xml</em>."
+msgstr ""
+"Se ha servido satisfactoriamente una versión cacheada de <em>%s.xml</em>."
+
+#: includes/class-bwp-simple-gxs.php:141 includes/class-bwp-simple-gxs.php:347
+#: includes/class-bwp-simple-gxs.php:354
+msgid "Sitemap Statistics"
+msgstr "Estadísticas de Sitemap"
+
+#: includes/class-bwp-simple-gxs.php:142 includes/class-bwp-simple-gxs.php:348
+#: includes/class-bwp-simple-gxs.php:355
+msgid "Sitemap Generator"
+msgstr "Generador de Sitemap"
+
+#: includes/class-bwp-simple-gxs.php:143 includes/class-bwp-simple-gxs.php:349
+#: includes/class-bwp-simple-gxs.php:356
+msgid "News Sitemap"
+msgstr "Nuevo Sitemap"
+
+#: includes/class-bwp-simple-gxs.php:174
+#, php-format
+msgid ""
+"This sitemap was originally generated in %s second(s) (Memory usage: %s) - "
+"%s queries - %s URL(s) listed"
+msgstr ""
+"Este sitemap fue originalmente generado en %s segundo(s) (Uso de Memoria: "
+"%s) - %s consultas - %s URL(s) listadas"
+
+#: includes/class-bwp-simple-gxs.php:347 includes/class-bwp-simple-gxs.php:354
+msgid "BWP Google XML Sitemaps Statistics"
+msgstr "BWP Google XML Sitemaps Estadísticas"
+
+#: includes/class-bwp-simple-gxs.php:348 includes/class-bwp-simple-gxs.php:355
+msgid "BWP Google XML Sitemaps Generator"
+msgstr "BWP Google XML Sitemaps Generador"
+
+#: includes/class-bwp-simple-gxs.php:349 includes/class-bwp-simple-gxs.php:356
+msgid "BWP Google News XML Sitemap"
+msgstr "BWP Google  Sitemap de Noticias XML"
+
+#: includes/class-bwp-simple-gxs.php:353
+msgid "BWP Google XML Sitemaps"
+msgstr "BWP Google XML Sitemaps"
+
+#: includes/class-bwp-simple-gxs.php:368
+msgid "You do not have sufficient permissions to access this page."
+msgstr "No tienes permisos suficientes para acceder a esta página."
+
+#: includes/class-bwp-simple-gxs.php:389 includes/class-bwp-simple-gxs.php:736
+#: includes/class-bwp-simple-gxs.php:738
+msgid "Notice"
+msgstr "Noticia"
+
+#: includes/class-bwp-simple-gxs.php:389
+msgid "All logs have been cleared successfully!"
+msgstr "Todos los logs se han limpiado con éxito!"
+
+#: includes/class-bwp-simple-gxs.php:396
+msgid "What are Sitemaps?"
+msgstr "¿Qué son los Sitemap?"
+
+#: includes/class-bwp-simple-gxs.php:397
+msgid "Your sitemaps"
+msgstr "Tus sitemaps"
+
+#: includes/class-bwp-simple-gxs.php:398
+msgid "Submit your sitemaps"
+msgstr "Envía tus sitemaps"
+
+#: includes/class-bwp-simple-gxs.php:399
+msgid "Pinging search engines"
+msgstr "Motores de búsqueda"
+
+#: includes/class-bwp-simple-gxs.php:400
+msgid "Enable pinging functionality?"
+msgstr "¿Activar funcionalidad de ping?"
+
+#: includes/class-bwp-simple-gxs.php:401
+msgid "Enable pinging individual SE"
+msgstr "Activar ping a MB individuales"
+
+#: includes/class-bwp-simple-gxs.php:402
+msgid "Sitemap Generator's Log"
+msgstr "Log de Sitemap Generator"
+
+#: includes/class-bwp-simple-gxs.php:403
+msgid "Enable logging?"
+msgstr "¿Habilitar registro?"
+
+#: includes/class-bwp-simple-gxs.php:404
+msgid "Enable debugging?"
+msgstr "¿Habilitar la Depuración?"
+
+#: includes/class-bwp-simple-gxs.php:413
+msgid ""
+"In its simplest form, a Sitemap is an XML file that lists URLs for a site "
+"along with additional metadata about each URL (when it was last updated, how "
+"often it usually changes, and how important it is, relative to other URLs in "
+"the site) so that search engines can more intelligently crawl the site "
+"&mdash; <em>http://www.sitemaps.org/</em>"
+msgstr ""
+"En su forma más sencilla, un Sitemap es un fichero XML que lista URLs de un "
+"sitio junto con metadatos adicionales sobre cada URL (cuando fue la última "
+"actualización, con que frecuencia cambia, y cuan importante es en relación "
+"con otras URLs del sitio) por lo que los motores de búsqueda pueden rastrear "
+"de forma más inteligente el sitio &mdash; <em>http://www.sitemaps.org/</em>"
+
+#: includes/class-bwp-simple-gxs.php:413
+msgid ""
+"This plugin helps you generate both Sitemap Index files as well as normal "
+"Sitemap files. A Sitemap Index, as its name suggests, is one kind of "
+"sitemaps that allows you to group multiple sitemap files inside it."
+msgstr ""
+"Este plugin te ayuda a generar tanto ficheros Index de Sitemap como ficheros "
+"normales de Sitemap. Un Index de Sitemap es un tipo de sitemap que te "
+"permite agrupar múltiples ficheros sitemap dentro de él."
+
+#: includes/class-bwp-simple-gxs.php:414
+msgid "<em>Basic information about all your sitemaps.</em>"
+msgstr "<em>Información básica sobre todos tus sitemaps.</em>"
+
+#: includes/class-bwp-simple-gxs.php:415
+msgid ""
+"<em>More detailed information about how your sitemaps are generated "
+"including <span style=\"color: #999999;\">notices</span>, <span style="
+"\"color: #FF0000;\">errors</span> and <span style=\"color: #009900;"
+"\">success messages</span>.</em>"
+msgstr ""
+"<em>Más información detallada sobre como tus sitemaps han sido generados "
+"incluyendo <span style=\"color: #999999;\">noticias</span>, <span style="
+"\"color: #FF0000;\">errores</span> and <span style=\"color: #009900;"
+"\">mensajes satisfactorios</span>.</em>"
+
+#: includes/class-bwp-simple-gxs.php:416
+#, php-format
+msgid ""
+"<em>Submit your sitemapindex to major search engines like <a href=\"%s\" "
+"target=\"_blank\">Google</a>, <a href=\"%s\" target=\"_blank\">Bing</a> or "
+"<a href=\"%s\" target=\"_blank\">Ask</a>.</em>"
+msgstr ""
+"<em>Enviar tu sitemapindex a los principales motores de búsqueda como <a "
+"href=\"%s\" target=\"_blank\">Google</a>, <a href=\"%s\" target=\"_blank"
+"\">Bing</a> o <a href=\"%s\" target=\"_blank\">Ask</a>.</em>"
+
+#: includes/class-bwp-simple-gxs.php:417
+msgid ""
+"<em>Now when you post something new to your blog, you can <em>ping</em> "
+"those search engines to tell them your blog just got updated. Pinging could "
+"be less effective than you think it is but you should enable such feature "
+"anyway.</em>"
+msgstr ""
+"<em>Ahora, cada vez que escribas algo nuevo en tu blog, podraás hacer "
+"<em>ping</em> a los motores de búsqueda e informarles de que tu blog ha sido "
+"actualizado. Hacer Ping puede ser menos efectivo de lo que piensas, pero aun "
+"así deberías habilitar esta característica.</em>"
+
+#: includes/class-bwp-simple-gxs.php:422
+msgid "Selected SE below will be pinged when you publish new posts."
+msgstr ""
+"Lo MB seleccionados abajo serán informados (Ping) cuando publiques nuevas "
+"entradas."
+
+#: includes/class-bwp-simple-gxs.php:423
+msgid "No additional load is needed so enabling this is recommended."
+msgstr ""
+"\"Sin carga adicional\" es necesario, por lo que habilitarlo está recomendado"
+
+#: includes/class-bwp-simple-gxs.php:424
+msgid ""
+"Minor errors will be printed on screen. Also, when debug is on, no caching "
+"is used, useful when you develop new modules."
+msgstr ""
+"Pequeños errores serán mostrados en pantalla. También, si la depuración "
+"(debug) está activa, no se usará la caché, lo cual es útil cuando "
+"desarrollas nuevos módulos."
+
+#: includes/class-bwp-simple-gxs.php:425
+msgid "Google"
+msgstr "Google"
+
+#: includes/class-bwp-simple-gxs.php:426
+msgid "Bing"
+msgstr "Bing"
+
+#: includes/class-bwp-simple-gxs.php:427
+msgid "Ask.com"
+msgstr "Ask.com"
+
+#: includes/class-bwp-simple-gxs.php:430
+#, php-format
+msgid ""
+"After you activate this plugin, all sitemaps should be available right away. "
+"The next step is to submit the sitemapindex to major search engines. You "
+"only need the <strong>sitemapindex</strong> and nothing else, those search "
+"engines will automatically recognize other included sitemaps. You can read a "
+"small <a href=\"%s\">How-to</a> if you are interested."
+msgstr ""
+"Después de activar este plugin, todos los sitemaps estarán disponibles de "
+"inmediato. El siguiente paso es enviar el sitemapindex a los principales "
+"motores de búsqueda. Solo necesitas el <strong>sitemapindex</strong> y nada "
+"más, los motores de búsqueda reconocerán los sitemaps incluidos dentro de "
+"él. Puedes leer un pequeño <a href=\"%s\">Manual</a> si estás interesado."
+
+#: includes/class-bwp-simple-gxs.php:458
+msgid "Output no more than"
+msgstr "Mostrar no más de"
+
+#: includes/class-bwp-simple-gxs.php:459
+msgid "Default change frequency"
+msgstr "Frecuencia de cambio por defecto"
+
+#: includes/class-bwp-simple-gxs.php:460
+msgid "Default priority"
+msgstr "Prioridad por defecto"
+
+#: includes/class-bwp-simple-gxs.php:461
+msgid "Minimum priority"
+msgstr "Prioridad mínima"
+
+#: includes/class-bwp-simple-gxs.php:462
+msgid "Use GMT for Last Modified date?"
+msgstr "¿Usar GMT para la Última Fecha de modificación?"
+
+#: includes/class-bwp-simple-gxs.php:463
+msgid "Style your sitemaps with an XSLT stylesheet?"
+msgstr "¿Dar estilo a tus sitemaps con una hoja de estilos XSLT?"
+
+#: includes/class-bwp-simple-gxs.php:464
+msgid "Custom XSLT stylesheet URL"
+msgstr "URL para la hoja de estilo XSLT"
+
+#: includes/class-bwp-simple-gxs.php:465
+msgid "Show build stats in sitemaps?"
+msgstr "¿Ver las estadísticas de construcción en los sitemaps?"
+
+#: includes/class-bwp-simple-gxs.php:466
+msgid "Enable credit?"
+msgstr "¿Activar crédito?"
+
+#: includes/class-bwp-simple-gxs.php:467
+msgid "Enable Gzip?"
+msgstr "¿Activar Gzip?"
+
+#: includes/class-bwp-simple-gxs.php:468
+msgid "Clean unexpected output before sitemap generation?"
+msgstr "¿Limpiar la salida inesperada antes de que se genere el sitemap?"
+
+#: includes/class-bwp-simple-gxs.php:469
+msgid "Sitemap Index Options"
+msgstr "Opciones del Index Sitemap"
+
+#: includes/class-bwp-simple-gxs.php:470
+msgid "Automatically split post-based sitemaps into smaller sitemaps?"
+msgstr ""
+"¿Dividir automáticamente los sitemaps de entradas en sitemaps más pequeños?"
+
+#: includes/class-bwp-simple-gxs.php:471
+msgid "Add sitemapindex to individual blog's virtual robots.txt?"
+msgstr ""
+"¿Añadir sitemapindex al fichero robots.txt de los blog virtuales "
+"individuales?"
+
+#: includes/class-bwp-simple-gxs.php:472
+msgid ""
+"Add sitemapindex from all blogs within network to primary blog's virtual "
+"robots.txt?"
+msgstr ""
+"¿Añadir sitemapindex de todos los blogs pertenecientes a la red, al fichero "
+"robots.txt del blog virtual primario?"
+
+#: includes/class-bwp-simple-gxs.php:473
+msgid "In sitemapindex, include"
+msgstr "En sitemapindex, incluir"
+
+#: includes/class-bwp-simple-gxs.php:474
+msgid "Exclude following post types:"
+msgstr "Excluir los siguientes tipos de entradas:"
+
+#: includes/class-bwp-simple-gxs.php:475
+msgid "Exclude following taxonomies:"
+msgstr "Excluir las siguientes taxonomías:"
+
+#: includes/class-bwp-simple-gxs.php:476
+msgid "Module Options"
+msgstr "Opciones del Módulo"
+
+#: includes/class-bwp-simple-gxs.php:477
+msgid "Alternate module directory"
+msgstr "Directorio alternativo del módulo"
+
+#: includes/class-bwp-simple-gxs.php:478
+msgid "Get no more than"
+msgstr "No recibir más de"
+
+#: includes/class-bwp-simple-gxs.php:479
+msgid "Caching Options"
+msgstr "Opciones de Caché"
+
+#: includes/class-bwp-simple-gxs.php:480
+msgid "Enable caching?"
+msgstr "¿Habilitar caché?"
+
+#: includes/class-bwp-simple-gxs.php:481
+msgid "Enable auto cache re-generation?"
+msgstr "¿Habilitar auto regeneración de la caché?"
+
+#: includes/class-bwp-simple-gxs.php:482
+msgid "Cached sitemaps will last for"
+msgstr "El sitemap estará en caché durante"
+
+#: includes/class-bwp-simple-gxs.php:483
+msgid "Cached sitemaps are stored in (auto detected)"
+msgstr "Lo sitemap cacheados serán almacenados en (autodetectados)"
+
+#: includes/class-bwp-simple-gxs.php:487
+msgid "<em>Cache your sitemaps for better performance.</em>"
+msgstr "<em>Cachea tu sitemap para un mejor rendimiento.</em>"
+
+#: includes/class-bwp-simple-gxs.php:488
+#, php-format
+msgid ""
+"<em>This plugin uses modules to build sitemap data so it is recommended that "
+"you extend this plugin using modules rather than hooks. Some of the settings "
+"below only affect modules extending the base module class. Read more about "
+"using modules <a href=\"%s#using-modules\">here</a>.</em>"
+msgstr ""
+"<em>Este plugin hace uso de módulos para construir los datos del sitemap, "
+"por lo que es recomendable que extiendas este plugin haciendo uso de módulos "
+"y no de ganchos (hooks). Algunas de las configuraciones de abajo solo "
+"afectan a los módulos que han extendido de la clase básica módulo. Lee más "
+"sobre el uso de módulos <a href=\"%s#using-modules\">aquí</a>.</em>"
+
+#: includes/class-bwp-simple-gxs.php:489
+msgid ""
+"<em>Here you can change some settings that affect the default Sitemap Index "
+"file.</em>"
+msgstr ""
+"<em>Aquí puedes cambiar algunas configuraciones que afectan al fichero por "
+"defecto Sitemap Index.</em>"
+
+#: includes/class-bwp-simple-gxs.php:503 includes/class-bwp-simple-gxs.php:509
+msgid "second(s)"
+msgstr "segundo(s)"
+
+#: includes/class-bwp-simple-gxs.php:504 includes/class-bwp-simple-gxs.php:510
+msgid "minute(s)"
+msgstr "minuto(s)"
+
+#: includes/class-bwp-simple-gxs.php:505 includes/class-bwp-simple-gxs.php:511
+msgid "hour(s)"
+msgstr "hora(s)"
+
+#: includes/class-bwp-simple-gxs.php:506 includes/class-bwp-simple-gxs.php:512
+msgid "day(s)"
+msgstr "día(s)"
+
+#: includes/class-bwp-simple-gxs.php:519 includes/class-bwp-simple-gxs.php:520
+#: includes/class-bwp-simple-gxs.php:521
+msgid "read more"
+msgstr "Leer más"
+
+#: includes/class-bwp-simple-gxs.php:524
+msgid "your sitemaps are generated and then cached to reduce unnecessary work."
+msgstr ""
+"tu sitemaps han sido generados y cacheados para reducir el trabajo "
+"innecesario."
+
+#: includes/class-bwp-simple-gxs.php:525
+msgid ""
+"when a cached sitemap expires, this plugin will try to generate the cache "
+"again. If you disable this, remember to manually flush the cache once in a "
+"while."
+msgstr ""
+"cuando la caché de un sitemap caduca, este plugin intentará generar la caché "
+"de nuevo. Si desactivas esto, recuerda el limpiar la caché manualmente de "
+"vez en cuando."
+
+#: includes/class-bwp-simple-gxs.php:525
+msgid "Flush the cache"
+msgstr "Vaciar la caché"
+
+#: includes/class-bwp-simple-gxs.php:526
+msgid ""
+"tell you useful information such as build time, memory usage, SQL queries, "
+"etc."
+msgstr ""
+"te muestra información útil como tiempo de construcción, uso de memoria, "
+"consultas SQL, etc."
+
+#: includes/class-bwp-simple-gxs.php:527
+#, php-format
+msgid ""
+"make your sitemaps ~ 70% smaller. <strong>Important:</strong> If you see an "
+"error after enabling this, it's very likely that you have gzip active on "
+"your server already."
+msgstr ""
+"reduce tu sitemap ~  70%  más pequeño. <strong>Importante:</strong> si ves "
+"un error después de activar esto, es muy probable que ya tengas activado "
+"gzip en tu servidor."
+
+#: includes/class-bwp-simple-gxs.php:528
+msgid ""
+"only disable this when sitemaps appear in either blank page or plain text."
+msgstr ""
+"solo deshabiliat esto cuando los sitemaps aparecen en blanco o con texto "
+"plano."
+
+#: includes/class-bwp-simple-gxs.php:529
+#, php-format
+msgid ""
+"If you have like 50 blogs, 50 <code>Sitemap: http://example.com/sitemapindex."
+"xml</code> entries will be added to your primary blog's robots.txt, i.e. "
+"<code>%s</code>."
+msgstr ""
+"Si te gusta 50 blogs, 50 entradas <code>Sitemap: http://ejemplo.com/"
+"sitemapindex.xml</code> serán agregadas al fichero robots.txt de tu blog "
+"principal, ej: <code>%s</code>."
+
+#: includes/class-bwp-simple-gxs.php:530
+msgid "taxonomy archives' sitemaps, including custom taxonomies."
+msgstr ""
+"sitemap de los archivos de taxonomía, incluyendo taxonomías personalizadas."
+
+#: includes/class-bwp-simple-gxs.php:532
+msgid "date archives' sitemaps."
+msgstr "Archivos de datos de los sitemaps."
+
+#: includes/class-bwp-simple-gxs.php:533
+msgid ""
+"external pages' sitemap. This allows you to add links to pages that do not "
+"belong to WordPress to the sitemap."
+msgstr ""
+"sitemap de páginas externas. Esto permite agregar enlaces ha páginas que no "
+"pertenecen al sitemap de WordPress."
+
+#: includes/class-bwp-simple-gxs.php:534
+msgid "some copyrighted info is also added to your sitemaps. Thanks!"
+msgstr ""
+"alguna información relativa al copyright será agregara a tus sitemaps. "
+"¡Gracias!"
+
+#: includes/class-bwp-simple-gxs.php:535
+msgid ""
+"This will load the default style sheet provided by this plugin. You can set "
+"a custom style sheet below or filter the <code>bwp_gxs_xslt</code> hook."
+msgstr ""
+"Esto cargará la hoja de estilos por defecto de este plugin. Podrás usar una "
+"hoja de estilos personalizada más abajo o usar el gancho (hook) "
+"<code>bwp_gxs_xslt</code>."
+
+#: includes/class-bwp-simple-gxs.php:536
+#, php-format
+msgid ""
+"If you're on a Multi-site installation with Sub-domain enabled, each site "
+"will have its own robots.txt, sites in sub-directory will not. Please read "
+"the <a href=\"%s#toc-robots\" target=\"_blank\">documentation</a> for more "
+"info."
+msgstr ""
+"Si estás usando una instalación de Multi-Sitio con subdominios activados, "
+"cada sitio tendrá su robots.txt, mientras que los sitios en subdirectorios "
+"no lo tendrán. Por favor lee la <a href=\"%s#toc-robots\" target=\"_blank"
+"\">documentación</a> para más información."
+
+#: includes/class-bwp-simple-gxs.php:537
+msgid "e.g. post1.xml, post2.xml, etc. And each sitemap will contain"
+msgstr "ej: post1.xml, post2.xml, etc. Y cada sitemap contendrá"
+
+#: includes/class-bwp-simple-gxs.php:538
+msgid ""
+"If you disable this, make sure you also use <code>date_default_timezone_set</"
+"code> to correctly set up a timezone for your application."
+msgstr ""
+"Si desactivas esto, asegúrate de que usas <code>date_default_timezone_set</"
+"code> para configurar correctamente la zona horaria de tu aplicación."
+
+#: includes/class-bwp-simple-gxs.php:539
+msgid "author archives' sitemap."
+msgstr "archivos de autor de sitemap"
+
+#: includes/class-bwp-simple-gxs.php:540
+msgid ""
+"site's home URL sitemap. For a multi-site installation of WordPress, this "
+"sitemap will list all domains within your network, not just the main blog. "
+"This also supports WPMU Domain Mapping plugin."
+msgstr ""
+"URL del sitemap principal. Para instalaciones multi-sitio de WordPress, este "
+"sitemap listará todos los dominios dentro de tu red, no solo el blog "
+"principal. Esto también soporta el plugin WPMU Domain Mapping."
+
+#: includes/class-bwp-simple-gxs.php:543
+msgid "item(s) in one sitemap. You can not go over 50,000."
+msgstr "item(s) en un sitemap. No pueden ser más de 50.000."
+
+#: includes/class-bwp-simple-gxs.php:544
+msgid "item(s). Again , you can not go over 50,000."
+msgstr "item(s). De nuevo, no pueden ser más de 50.000."
+
+#: includes/class-bwp-simple-gxs.php:545
+msgid ""
+"Input a full path to the directory where you put your own modules (e.g. "
+"<code>/home/mysite/public_html/gxs-modules/</code>), you can also override a "
+"built-in module by having a module with the same filename in this directory. "
+"A filter is also available if you would like to use PHP instead."
+msgstr ""
+"Introduce la ruta completa del directorio donde están tus módulos, (ej: "
+"<code>/home/misitio/public_html/gxs-modules/</code>), también puedes "
+"sobreescribir un modulo pre-construido, poniendo en este directorio un "
+"fichero con el mismo nombre del modulo original. Puedes utilizar un filtro "
+"si quieres usar PHP en su lugar."
+
+#: includes/class-bwp-simple-gxs.php:546
+msgid "The cache directory must be writable (i.e. CHMOD to 755 or 777)."
+msgstr ""
+"El directorio caché debe tener permisos de escritura (ej: CHMOD 755 o 777)."
+
+#: includes/class-bwp-simple-gxs.php:547
+msgid ""
+"item(s) in one SQL query. This helps you avoid running too heavy queries."
+msgstr ""
+"item(s) en una consulta SQL. Esto te ayuda a evitar consultas demasiado "
+"pesadas."
+
+#: includes/class-bwp-simple-gxs.php:550
+msgid ""
+"expected to be an absolute URL, e.g. <code>http://example.com/my-stylesheet."
+"xsl</code>. You must also have a style sheet for the sitemapindex that can "
+"be accessed through the above URL, e.g. <code>my-stylesheet.xsl</code> and "
+"<code>my-stylesheetindex.xsl</code>). Please leave blank if you do not wish "
+"to use."
+msgstr ""
+"se esperaba una URL absoluta, ej: <code>http://ejemplo.com/mi-stylesheet."
+"xsl</code>. Debes tener una hoja de estilos para el sitemapindex que sea "
+"accesible mediante la URL anterior, ej: <code>mi-stylesheet.xsl</code> y "
+"<code>mi-stylesheetindex.xsl</code>). Por favor, déjalo en blanco si no lo "
+"quieres usar."
+
+#: includes/class-bwp-simple-gxs.php:557
+#, php-format
+msgid ""
+"<em><strong>Note:</strong> If you encounter white page problem, please refer "
+"to the <a target=\"_blank\" href=\"%s\">FAQ section</a> to know how to "
+"change this limit appropriately to make this plugin work. Also note that, "
+"for post-based sitemaps, this option will be overridden by the limit you set "
+"in the Sitemap Index Options below.</em>"
+msgstr ""
+"<em><strong>Nota:</strong> Si encuentras un problema de página en blanco, "
+"por favor visita <a target=\"_blank\" href=\"%s\">sección de preguntas "
+"frecuente</a> para saber como cambiar adecuadamente este límite para hacer "
+"que el plugin funcione. Ten en cuenta, que para los sitemaps basados en "
+"post, esta opción será sobreescrita por el limite introducido en la casilla "
+"de más abajo de Opciones de Sitemap Index</em>"
+
+#: includes/class-bwp-simple-gxs.php:659
+msgid "What is a Google News Sitemap?"
+msgstr "¿Qué es un Sitemap de Noticias Google?"
+
+#: includes/class-bwp-simple-gxs.php:660
+msgid "Enable this module?"
+msgstr "¿Activar este módulo?"
+
+#: includes/class-bwp-simple-gxs.php:661
+msgid "Enable Multi-category Mode?"
+msgstr "¿Habilitar el Modo Multi-categoriía?"
+
+#: includes/class-bwp-simple-gxs.php:662
+msgid "Ping Search Engines when you publish a news article?"
+msgstr ""
+"¿Hacer ping a los Motores de Búsqueda cuando publiques un nuevo artículo?"
+
+#: includes/class-bwp-simple-gxs.php:663
+msgid "Use keywords in News Sitemap?"
+msgstr "¿Utilizar palabras claves en los Sitemap de Noticias?"
+
+#: includes/class-bwp-simple-gxs.php:664
+msgid "News Sitemap's language"
+msgstr "Idioma del Sitemap de Noticias"
+
+#: includes/class-bwp-simple-gxs.php:665
+msgid "News Categories"
+msgstr "Categorías de Noticias"
+
+#: includes/class-bwp-simple-gxs.php:666
+msgid "This module will"
+msgstr "Este módulo hará"
+
+#: includes/class-bwp-simple-gxs.php:670
+msgid ""
+"A Google News Sitemap is a file that allows you to control which content you "
+"submit to Google News. By creating and submitting a Google News Sitemap, "
+"you're able to help Google News discover and crawl your site's articles "
+"&mdash; <em>http://support.google.com/</em>"
+msgstr ""
+"Un Sitemap de Noticias Google es un fichero que te permite controlar que "
+"contenido envías a Goole Noticias. Creando y enviando un Sitemap de Noticias "
+"Google, podrás ayudar a Google Noticias a que descubra y rastree los "
+"artículos de tu sitio &mdash; <em>http://support.google.com/</em>"
+
+#: includes/class-bwp-simple-gxs.php:671
+msgid ""
+"<em>Below you will be able to choose what categories to use (or not use) in "
+"the news sitemap. You can also assign genres to a specific category.</em>"
+msgstr ""
+"<em>Abajo podrás elegir que categorías usar (o no usar) e el sitemap de "
+"noticias. También podrás asignar géneros a una categoría específica.</em>"
+
+#: includes/class-bwp-simple-gxs.php:674
+msgid "below selected categories in the news sitemap."
+msgstr "categorías seleccionadas más abajo en el sitemap de noticias."
+
+#: includes/class-bwp-simple-gxs.php:679
+msgid "English"
+msgstr "Inglés"
+
+#: includes/class-bwp-simple-gxs.php:680
+msgid "French"
+msgstr "Francés"
+
+#: includes/class-bwp-simple-gxs.php:681
+msgid "Spanish"
+msgstr "Español"
+
+#: includes/class-bwp-simple-gxs.php:682
+msgid "German"
+msgstr "Alemán"
+
+#: includes/class-bwp-simple-gxs.php:683
+msgid "Portuguese"
+msgstr "Portugués"
+
+#: includes/class-bwp-simple-gxs.php:684
+msgid "Polish"
+msgstr "Polaco"
+
+#: includes/class-bwp-simple-gxs.php:685
+msgid "Norwegian"
+msgstr "Noruego"
+
+#: includes/class-bwp-simple-gxs.php:686
+msgid "Dutch"
+msgstr "Holandés"
+
+#: includes/class-bwp-simple-gxs.php:687
+msgid "Italian"
+msgstr "Italiano"
+
+#: includes/class-bwp-simple-gxs.php:688
+msgid "Vietnamese"
+msgstr "Vietnamita "
+
+#: includes/class-bwp-simple-gxs.php:689
+msgid "Simplified Chinese"
+msgstr "Chino simplificado"
+
+#: includes/class-bwp-simple-gxs.php:692
+msgid "include"
+msgstr "Incluir"
+
+#: includes/class-bwp-simple-gxs.php:693
+msgid "exclude"
+msgstr "excluir"
+
+#: includes/class-bwp-simple-gxs.php:696
+msgid "news categories"
+msgstr "categorías de noticias"
+
+#: includes/class-bwp-simple-gxs.php:697
+msgid "news tags"
+msgstr "etiquetas de noticias"
+
+#: includes/class-bwp-simple-gxs.php:703
+msgid ""
+"A new <code>post_google_news.xml</code> sitemap will be added to the main "
+"<code>sitemapindex.xml</code>."
+msgstr ""
+"Un nuevo <code>post_google_news.xml</code> sitemap se agregará al fichero "
+"<code>sitemapindex.xml</code>."
+
+#: includes/class-bwp-simple-gxs.php:704
+msgid "Keywords are derived from"
+msgstr "Las palabras claves derivan de"
+
+#: includes/class-bwp-simple-gxs.php:705
+msgid ""
+"This ping works separately from the sitemapindex ping, and only occurs when "
+"you publish an article in one of the news categories set below."
+msgstr ""
+"Este ping funciona separadamente del sitemapindex ping, y se ejecuta "
+"únicamente cuando publicas un artículo en una de las categorías de noticias "
+"seleccionadas abajo."
+
+#: includes/class-bwp-simple-gxs.php:706
+msgid ""
+"This mode is meant for News Blogs that have posts assigned to more than one "
+"categories. It is an advanced feature and should only be enabled if you do "
+"have similar blogs."
+msgstr ""
+"Este modo es para los Blogs de Noticias que tiene posts asignados a más de "
+"una categoría. Esta es una opción avanzada y solo debe ser activada si "
+"tienes un blog similar."
+
+#: includes/class-bwp-simple-gxs.php:712
+msgid ""
+". Do <strong>NOT</strong> use news tags if your news sitemap contains a lot "
+"of posts as it can be very inefficient to do so. This will be improved in "
+"future versions."
+msgstr ""
+". <strong>NO</strong> uses tags de noticias si tu sitemap de noticias "
+"contiene muchos posts, ya que esto puede ser muy ineficiente. Esto se "
+"mejorará en versiones futuras."
+
+#: includes/class-bwp-simple-gxs.php:736
+#, php-format
+msgid "<strong>%d</strong> cached sitemaps have been flushed successfully!"
+msgstr ""
+"<strong>%d</strong> los sitemaps cacheados han sido borrados correctamente!"
+
+#: includes/class-bwp-simple-gxs.php:738
+msgid ""
+"Could not delete any cached sitemaps. Please manually check the cache "
+"directory."
+msgstr ""
+"No se ha podido borrar ningún sitemap cacheado. Por favor, comprueba "
+"manualmente el directorio caché."
+
+#: includes/class-bwp-simple-gxs.php:787
+msgid "All options have been saved."
+msgstr "Todas las opciones han sido guardadas."
+
+#: includes/class-bwp-simple-gxs.php:809
+msgid "Warning"
+msgstr "Aviso"
+
+#: includes/class-bwp-simple-gxs.php:809
+msgid ""
+"Cache directory does not exist or is not writable. Please read more about "
+"directory permission <a href='http://www.zzee.com/solutions/unix-permissions."
+"shtml'>here</a> (Unix)."
+msgstr ""
+"El directorio caché no existe o no tiene permisos de escritura. Lee más "
+"acerca de los permisos de directorio <a href='http://www.zzee.com/solutions/"
+"unix-permissions.shtml'>aquí</a> (Unix)."
+
+#: includes/class-bwp-simple-gxs.php:820
+msgid "Clear All Logs"
+msgstr "Limpiar todos los registros"
+
+#: includes/class-bwp-simple-gxs.php:874
+msgid "(Debug is on)"
+msgstr "(Debug está activado)"
+
+#: includes/class-bwp-simple-gxs.php:887
+msgid "<strong>BWP Google XML Sitemaps Error:</strong> "
+msgstr "<strong>BWP Google XML Sitemaps Error:</strong> "
+
+#: includes/class-bwp-simple-gxs.php:887
+msgid "BWP Google XML Sitemaps Error"
+msgstr "BWP Google XML Sitemaps Error"
+
+#: includes/class-bwp-simple-gxs.php:910
+#, php-format
+msgid ""
+"Nothing here... yet! Try submitting your <a href=\"%s\">sitemapindex</a> "
+"first!"
+msgstr ""
+"Nada por aquí... de momento! Primero intenta enviar tu <a href=\"%s"
+"\">sitemapindex</a>!"
+
+#: includes/class-bwp-simple-gxs.php:910
+msgid "No log yet!"
+msgstr "Aún no hay log"
+
+#: includes/class-bwp-simple-gxs.php:921
+#, php-format
+msgid ""
+"<a href=\"%s\" target=\"_blank\">%s</a> has been successfully built on "
+"<strong>%s</strong>."
+msgstr ""
+"<a href=\"%s\" target=\"_blank\">%s</a> ha sido construido "
+"satisfactoriamente <strong>%s</strong>."
+
+#: includes/class-bwp-simple-gxs.php:932 includes/class-bwp-simple-gxs.php:949
+msgid "M j, Y : H:i:s"
+msgstr "j M, Y : H:i:s"
+
+#: includes/class-bwp-simple-gxs.php:1018
+msgid "Category's name"
+msgstr "Nombre de la categoría"
+
+#: includes/class-bwp-simple-gxs.php:1018
+#, php-format
+msgid ""
+"<span>Genres used for this category</span> (more info <a href=\"%s\" target="
+"\"_blank\">here</a>)"
+msgstr ""
+"<span>Géneros usados para esta categoría</span> (más informaciín <a href=\"%s"
+"\" target=\"_blank\">aquí</a>)"
+
+#: includes/class-bwp-simple-gxs.php:1309
+#, php-format
+msgid "Requested module (<em>%s</em>) not found or not allowed."
+msgstr "Modulo requerido (<em>%s</em>) no encontrado o no permitido."
+
+#: includes/class-bwp-simple-gxs.php:1368
+#: includes/class-bwp-simple-gxs.php:1389
+#, php-format
+msgid "Loaded a custom sub-module file: <strong>%s</strong>."
+msgstr "Cargado un fichero personalizado de sub-modulo: <strong>%s</strong>."
+
+#: includes/class-bwp-simple-gxs.php:1377
+#, php-format
+msgid ""
+"Mapped sub-module file: <strong>%s</strong> is not available in both default "
+"and custom module directory. The plugin will now try loading the requested "
+"sub-module instead."
+msgstr ""
+"Fichero Mapeado de sub-modulo: <strong>%s</strong> no está disponible en el "
+"directorio default ni en el de modulos personalizados. El plugin va a "
+"intentar cargar el sub-modulo requerido en su lugar."
+
+#: includes/class-bwp-simple-gxs.php:1397
+#, php-format
+msgid ""
+"Sub-module file: <strong>%s</strong> is not available in both default and "
+"custom module directory. The plugin will now try loading the parent module "
+"instead."
+msgstr ""
+"Fichero Sub-módulo: <strong>%s</strong> no está disponible en el directorio "
+"default ni en el de modulos personalizados. El plugin va a intentar cargar "
+"el módulo padre en su lugar."
+
+#: includes/class-bwp-simple-gxs.php:1411
+#, php-format
+msgid "Loaded a custom module file: <strong>%s</strong>."
+msgstr "Cargado un fichero de módulo personalizado: <strong>%s</strong>."
+
+#: includes/class-bwp-simple-gxs.php:1417
+#, php-format
+msgid ""
+"Could not load module file: <strong>%s</strong> in both default and custom "
+"module directory. Please recheck if that module file exists."
+msgstr ""
+"No se puede cargar el fichero del módulo: <strong>%s</strong> en el "
+"directorio default ni en el de módulos personalizados. Por favor, comprueba "
+"que este módulo existe."
+
+#: includes/class-bwp-simple-gxs.php:1437
+#, php-format
+msgid ""
+"There is no class named <strong>%s</strong> in the module file <strong>%s</"
+"strong>."
+msgstr ""
+"No existe una clase llamada <strong>%s</strong> en el fichero del módulo "
+"<strong>%s</strong>."
+
+#: includes/class-bwp-simple-gxs.php:1446
+#, php-format
+msgid "Loaded a custom sitemapindex module file: <strong>%s</strong>."
+msgstr ""
+"Cargado un fichero personalizado de módulo sitemapindex: <strong>%s</strong>."
+
+#: includes/class-bwp-simple-gxs.php:1469
+#, php-format
+msgid "Successfully generated <em>%s.xml</em> using module <em>%s</em>."
+msgstr ""
+"Se ha generado satisfactoriamente <em>%s.xml</em> usando el módulo <em>%s</"
+"em>."
+
+#: includes/class-bwp-simple-gxs.php:1500
+msgid ""
+"<strong>BWP Google XML Sitemap Message:</strong> Unexpected output (most of "
+"the time PHP errors) is preventing BWP GXS from showing any sitemap "
+"contents. Try disabling <code>WP_DEBUG</code> or this plugin's debug mode, "
+"whichever is on. All unexpected outputs should be shown just above this "
+"message. If you don't see any, contact me and I might be able to help."
+msgstr ""
+"<strong>Mensaje de BWP Google XML Sitemap:</strong> Una salida inesperada "
+"(normalmente por errores PHP) está evitando que BWP GXS muestre el contenido "
+"del sitemap, Intenta desactivando <code>WP_DEBUG</code> o el modo debug de "
+"este plugin, si es que está activo. Todos las salidas inesperadas serán "
+"mostradas justo debajo de este mensaje. Si no ves ninguna, contacta conmigo "
+"y te echaré una mano."
+
+#: includes/class-bwp-simple-gxs.php:1630
+msgid "Unknown response code from search engines. Ping failed."
+msgstr ""
+"Código de respuesta desconocido de los motores de búsqueda. Fallo al hacer "
+"Ping."
+
+#: includes/class-bwp-simple-gxs.php:1632
+#, php-format
+msgid "Pinged %s with %s successfully!"
+msgstr "Se ha hecho Ping %s con %s satisfactoriamente!"
+
+#: includes/class-bwp-simple-gxs.php:1637
+#, php-format
+msgid "Error %s from %s"
+msgstr "Error %s desde %s"
+
+#: includes/class-bwp-simple-gxs.php:1642
+#, php-format
+msgid "Ping limit for today to %s has been reached, sorry!"
+msgstr "El limite de Ping para hoy de %s ha sido alcanzado, lo sentimos!"
+
+#: includes/class-bwp-simple-gxs.php:1670
+#, php-format
+msgid ""
+"<em>%s.xml</em> does not have any item. You can fix this easily by excluding "
+"any post types / terms you do not use in <em>Sitemap Generator</em> tab "
+"within your admin area. If you still see this error, consider checking the "
+"module that generates this sitemap (<em>%s.php</em>)."
+msgstr ""
+"<em>%s.xml</em> no contiene ningún item. Puedes solucionar esto fácilmente "
+"excluyendo cualquier tipo de post / término que no uses en la pestaña de "
+"<em>Sitemap Generator</em> dentro del área de administración. Si continuar "
+"viendo este error, considera revisar el módulo que genera este sitemap (<em>"
+"%s.php</em>)."
+
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:80
+msgid "Plugin Configurations"
+msgstr "Configuraciones de Plugin"
+
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:398
+msgid "Save Changes"
+msgstr "Guardar cambios"

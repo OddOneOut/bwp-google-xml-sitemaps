@@ -108,7 +108,7 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 			return false;
 		}
 
-		$cat_query = ' AND wpterms.term_id NOT IN (' . $news_cats . ')';
+		$cat_query = ' AND t.term_id NOT IN (' . $news_cats . ')';
 		$cat_query = $news_cat_action == 'inc'
 			? str_replace('NOT IN', 'IN', $cat_query) : $cat_query;
 		$cat_query = $news_cat_action != 'inc'
@@ -116,22 +116,23 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 			? '' : $cat_query;
 
 		$group_by = empty($bwp_gxs->options['enable_news_multicat'])
-			? ' GROUP BY wposts.ID' : '';
+			? ' GROUP BY p.ID' : '';
 
 		$latest_post_query = '
 			SELECT *
-			FROM ' . $wpdb->term_relationships . ' wprel
-			INNER JOIN ' . $wpdb->posts . ' wposts
-				ON wprel.object_id = wposts.ID' . "
-				AND wposts.post_status = 'publish'" . '
-			INNER JOIN ' . $wpdb->term_taxonomy . ' wptax
-				ON wprel.term_taxonomy_id = wptax.term_taxonomy_id' . "
-				AND wptax.taxonomy = 'category'" . '
-			, ' . $wpdb->terms . ' wpterms
-			WHERE wptax.term_id = wpterms.term_id
-				AND wposts.post_date > %s' .
+			FROM ' . $wpdb->term_relationships . ' tr
+			INNER JOIN ' . $wpdb->posts . ' p
+				ON tr.object_id = p.ID' . "
+				AND p.post_status = 'publish'
+				AND p.post_password = ''" . '
+			INNER JOIN ' . $wpdb->term_taxonomy . ' tt
+				ON tr.term_taxonomy_id = tt.term_taxonomy_id' . "
+				AND tt.taxonomy = 'category'" . '
+			, ' . $wpdb->terms . ' t
+			WHERE tt.term_id = t.term_id
+				AND p.post_date > %s' .
 				$cat_query . $group_by . '
-			ORDER BY wposts.post_date DESC';
+			ORDER BY p.post_date DESC';
 
 		$latest_posts = $this->get_results($wpdb->prepare($latest_post_query, $time));
 
@@ -142,7 +143,6 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 		}
 
 		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
-			// stop SQL cycling
 			return false;
 
 		$using_permalinks = $this->using_permalinks();

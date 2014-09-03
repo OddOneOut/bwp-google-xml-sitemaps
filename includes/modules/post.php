@@ -11,11 +11,9 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 {
 	public function __construct()
 	{
-		global $bwp_gxs;
-
 		// $this->set_current_time() should always be called, it will allow you
 		// to use $this->now (the current Unix Timestamp).
-		// @since 1.2.4 this is called from main class
+		// @since 1.3.0 this is called from main class
 		/* $this->set_current_time(); */
 
 		// $this->module_data hold four things, but you only need to take
@@ -27,7 +25,7 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 		// you must name your class BWP_GXS_MODULE_TAXONOMY_CATEGORY and save
 		// the file as taxonomy_category.php (same goes for taxonomy_post_tag.php).
 		// If no custom post type is requested, use the default post type
-		// @since 1.2.4 module_data is set using $this->set_module_data
+		// @since 1.3.0 this is set in main class
 		/* $this->requested = !empty($this->module_data['sub_module']) */
 		/* 	? $this->module_data['sub_module'] : 'post'; */
 
@@ -36,20 +34,20 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 		// greater than 0, for example 2, or 3 it means that we are building
 		// part 2, or part 3 of that large sitemap, and we will have to modify
 		// our SQL query accordingly - @since BWP GXS 1.1.0
-		// @since 1.2.4 module_data is set using $this->set_module_data
+		// @since 1.3.0 this is set in main class
 		/* $this->part = $bwp_gxs->module_data['module_part']; */
 
-		// @since 1.2.4 set module data using simple method
-		$this->set_module_data($bwp_gxs->module_data);
-
-		// get the permalink structure in use
+		// properties that are not dependent on module data can be initiated here,
+		// otherwise must be initiated using ::init_module_properties method
 		$this->perma_struct = get_option('permalink_structure');
 
-		// See if the current post_type is a hierarchical one or not
-		$this->post_type = get_post_type_object($this->requested);
-
-		// @since 1.2.4 no need to manually call this
+		// @since 1.3.0 no need to manually call this anymore
 		/* $this->build_data(); */
+	}
+
+	protected function init_module_properties()
+	{
+		$this->post_type = get_post_type_object($this->requested);
 	}
 
 	/**
@@ -67,36 +65,52 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 
 		$requested = $this->requested;
 
-		// Can be something like: ` AND wposts.ID NOT IN (1,2,3,4) `
-		$sql_where = apply_filters('bwp_gxs_post_where', '', $requested);
+		// @since 1.3.0 use a different filter hook that expects an array instead
+		$excluded_posts   = apply_filters('bwp_gxs_excluded_posts', array(), $requested);
+		$exclude_post_sql = sizeof($excluded_posts) > 0
+			? ' AND p.ID NOT IN (' . implode(',', $excluded_posts) . ') '
+			: '';
 
-		// A standard custom query to fetch posts from database, sorted by their lastmod
-		// You can use any type of queries for your modules
-		// If $requested is 'post' and this site uses %category% in permalink structure,
-		// we will have to use a complex SQL query so this plugin can scale up to millions of posts.
+		// @since 1.3.0 this should be used to add other things to the SQL
+		// instead of excluding posts
+		$sql_where = apply_filters('bwp_gxs_post_where', '', $requested);
+		$sql_where = str_replace('wposts', 'p', $sql_where); // @since 1.3.0 use a different alias for post table
+
 		if ('post' == $requested && strpos($this->perma_struct, '%category%') !== false)
 		{
+			// If $requested is 'post' and this site uses %category% in
+			// permalink structure, we will have to use a complex SQL query so
+			// this plugin can scale up to millions of posts.
+			// @since 1.3.0 do not fetch posts that are password-protected
 			$latest_post_query = '
-				SELECT * FROM ' . $wpdb->term_relationships . ' wprel
-				INNER JOIN ' . $wpdb->posts . ' wposts
-					ON wprel.object_id = wposts.ID' . "
-					AND wposts.post_status = 'publish'" . '
-				INNER JOIN ' . $wpdb->term_taxonomy . ' wptax
-					ON wprel.term_taxonomy_id = wptax.term_taxonomy_id' . "
-					AND wptax.taxonomy = 'category'" . '
-				, ' . $wpdb->terms . ' wpterms
-				WHERE wptax.term_id = wpterms.term_id '
+				SELECT *
+				FROM ' . $wpdb->term_relationships . ' tr
+				INNER JOIN ' . $wpdb->posts . ' p
+					ON tr.object_id = p.ID' . "
+					AND p.post_status = 'publish'
+					AND p.post_password = ''" . '
+				INNER JOIN ' . $wpdb->term_taxonomy . ' tt
+					ON tr.term_taxonomy_id = tt.term_taxonomy_id' . "
+					AND tt.taxonomy = 'category'" . '
+				, ' . $wpdb->terms . ' t
+				WHERE tt.term_id = t.term_id '
+					. "$exclude_post_sql"
 					. "$sql_where" . '
-				GROUP BY wposts.ID
-				ORDER BY wposts.post_modified DESC';
+				GROUP BY p.ID
+				ORDER BY p.post_modified DESC';
 		}
 		else
 		{
+			// @since 1.3.0 do not fetch posts that are password-protected
 			$latest_post_query = '
-				SELECT * FROM ' . $wpdb->posts . " wposts
-				WHERE wposts.post_status = 'publish'
-					AND wposts.post_type = %s $sql_where" . '
-				ORDER BY wposts.post_modified DESC';
+				SELECT *
+				FROM ' . $wpdb->posts . " p
+				WHERE p.post_status = 'publish'
+					AND p.post_password = ''
+					AND p.post_type = %s
+					$exclude_post_sql
+					$sql_where" . '
+				ORDER BY p.post_modified DESC';
 		}
 
 		// Use $this->get_results instead of $wpdb->get_results, remember to

@@ -15,6 +15,11 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE
 		$this->perma_struct = get_option('permalink_structure');
 	}
 
+	protected function init_module_properties()
+	{
+		$this->post_type = get_post_type_object($this->requested);
+	}
+
 	/**
 	 * This is the main function that generates our data.
 	 *
@@ -49,7 +54,7 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE
 
 		$using_permalinks = $this->using_permalinks();
 
-		// Always init your $data
+		// always init your $data
 		$data = array();
 
 		for ($i = 0; $i < sizeof($latest_posts); $i++)
