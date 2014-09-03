@@ -82,11 +82,9 @@ Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using
 
 == Screenshots ==
 
-1. A sample Sitemap Index this plugin produces. Large post-based sitemap was split into two parts.
-2. A Custom Post Type Sitemap
-3. An External Pages' Sitemap
-4. The Configuration Page
-5. Google News Sitemap
+1. A sample Sitemap Index this plugin produces. Large post-based sitemaps are split into smaller parts.
+2. A custom post type sitemap
+3. An external pages sitemap
 
 == Changelog ==
 
@@ -132,8 +130,9 @@ Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using
     * Other bugfixes.
 
 **Important Update Note**:
-    * if you're using custom modules make sure that you re-read the [documentation](http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#module_api) for updated info about the module API.
-    * When the sitemapindex is generated for the first time, you won't see any <em>Last modified date</em> for any child sitemaps because none of them have been generated yet. This is expected and adhered to the <a href="http://www.sitemaps.org/protocol.html#sitemapIndexTagDefinitions">official sitemap protocol</a>.
+
+* if you're using custom modules make sure that you re-read the [documentation](http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#module_api) for updated info about the module API.
+* When the sitemapindex is generated for the first time, you won't see any <em>Last modified date</em> for any child sitemaps because none of them have been generated yet. This is expected and adhered to the <a href="http://www.sitemaps.org/protocol.html#sitemapIndexTagDefinitions">official sitemap protocol</a>.
 
 **Next major version (1.4.0) will have Image and Video sitemap support, so make sure you [stay alerted](http://feeds.feedburner.com/BetterWPnet)!**
 

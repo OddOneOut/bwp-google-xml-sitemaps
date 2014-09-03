@@ -1703,7 +1703,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 			'&nbsp; <input type="submit" class="button-secondary action" name="save_flush_cache" '
 			. 'value="' . __('Save Changes and Flush Cache', $this->domain) . '" />'
 			. '&nbsp; <input type="submit" class="button-secondary action" name="flush_cache" '
-			. 'value="' . __('Flush Cache', $this->domain) . '" />',
+			. 'value="' . __('Flush Cache', $this->domain) . '" /></p>',
 			$button
 		);
 
