@@ -730,7 +730,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 
 	public function upgrade_plugin($from, $to)
 	{
-		if (version_compare($from, '1.3.0', '<'))
+		if (!$from || version_compare($from, '1.3.0', '<'))
 		{
 			// @since 1.3.0 default values of cache directory is empty
 			$options = get_option(BWP_GXS_OPTION_GENERATOR);
@@ -1494,7 +1494,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 				if ($this->_is_log_empty || 'yes' != $this->options['enable_log'])
 				{
 					// no log is found, or logging is disabled, hide sidebar to save space
-					add_filter('bwp_info_showable', function() { return false;});
+					add_filter('bwp_info_showable', create_function('', 'return "";'));
 				}
 
 				$form = array(
