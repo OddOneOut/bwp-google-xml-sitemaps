@@ -3,8 +3,8 @@ Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#contributions
 Tags: xml sitemaps, xml sitemap, google xml sitemaps, sitemapindex, sitemap, sitemaps, sitemap.xml, seo, bing, google, msn, ask, google news, news sitemap, google news sitemap
 Requires at least: 3.0
-Tested up to: 3.9.1
-Stable tag: 1.3.0
+Tested up to: 4.0
+Stable tag: 1.3.1
 License: GPLv3 or later
 
 The first WordPress XML Sitemap plugin that comes with comprehensive support for Sitemapindex, Multi-site and Google News sitemap.
@@ -87,6 +87,12 @@ Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using
 3. An external pages sitemap
 
 == Changelog ==
+
+= 1.3.1 =
+    * Marked as WordPress 4.0 compatible.
+    * Added `bwp_gxs_excluded_posts` filter hook to page sitemap module. It should be possible to use an array of page ids to exclude certain pages from the page sitemap.
+    * Added a `News name` setting (in *XML Sitemaps >> Google News Sitemap*).
+    * Other minor fixes and enhancements.
 
 = 1.3.0 =
 * **New features**

@@ -210,7 +210,7 @@ class BWP_FRAMEWORK_IMPROVED
 		echo '<div class="error"><p>' . sprintf(
 			__('%s requires WordPress <strong>%s</strong> or higher '
 			. 'and PHP <strong>%s</strong> or higher. '
-			. 'The plugin will not protected function until you update your software. '
+			. 'The plugin will not function until you update your software. '
 			. 'Please deactivate this plugin.', $this->plugin_dkey),
 			$this->plugin_title, $this->wp_ver, $this->php_ver)
 		. '</p></div>';

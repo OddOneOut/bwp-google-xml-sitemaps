@@ -273,7 +273,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 	/**
 	 * Constructor
 	 */
-	public function __construct($version = '1.3.0')
+	public function __construct($version = '1.3.1')
 	{
 		// Plugin's title
 		$this->plugin_title = 'Better WordPress Google XML Sitemaps';
@@ -319,6 +319,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 			'select_news_keyword_type'     => 'cat',
 			'select_news_cat_action'       => 'inc',
 			'select_news_cats'             => '',
+			'input_news_name'              => '', // @since 1.3.1
 			'input_news_genres'            => array(),
 			// End of Google news options
 			'input_exclude_post_type'      => '',
@@ -482,8 +483,11 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 		if ($this->is_admin_page())
 			wp_enqueue_style('bwp-gxs-admin', BWP_GXS_CSS . '/bwp-simple-gxs.css');
 
-		if ($this->is_admin_page(BWP_GXS_OPTION_GENERATOR))
-			wp_enqueue_script('bwp-gxs-setting', BWP_GXS_JS . '/bwp-gxs.js');
+		if ($this->is_admin_page(BWP_GXS_OPTION_GENERATOR)
+			|| $this->is_admin_page(BWP_GXS_GOOGLE_NEWS)
+		) {
+			wp_enqueue_script('bwp-gxs-setting', BWP_GXS_JS . '/bwp-gxs.js', array(), $this->plugin_ver);
+		}
 	}
 
 	public function insert_query_vars($vars)
@@ -1357,11 +1361,12 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 					'items' => array(
 						'heading',
 						'checkbox',
+						'input',
+						'select',
 						'checkbox',
 						'select',
 						'checkbox',
 						'checkbox',
-						'select',
 						'heading',
 						'select'
 					),
@@ -1369,22 +1374,24 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 					(
 						__('Add Google News Sitemap to your sitemapindex', $this->domain),
 						__('Enable news sitemap', $this->domain),
+						__('News name', $this->domain),
+						__('News language', $this->domain),
 						__('Enable keywords support', $this->domain),
 						__('Get keywords from', $this->domain),
 						__('Enable multi-category support', $this->domain),
 						__('Ping search engines when a news article is published', $this->domain),
-						__('News sitemap\'s language', $this->domain),
 						__('News categories', $this->domain),
 						__('The Google News sitemap will', $this->domain)
 					),
 					'item_names' => array(
 						'h1',
 						'cb1',
+						'input_news_name',
+						'select_news_lang',
 						'cb2',
 						'select_news_keyword_type',
 						'cb4',
 						'cb3',
-						'select_news_lang',
 						'h2',
 						'select_news_cat_action'
 					),
@@ -1438,6 +1445,11 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 						)
 					),
 					'input' => array(
+						'input_news_name' => array(
+							'size'  => 70,
+							'label' => '<br />' . __('Set a different name for your news sitemap. '
+								. 'By default, your Site Title is used.', $this->domain)
+						),
 					),
 					'checkbox' => array(
 						'cb1' => array(sprintf(__('A <code>post_google_news.xml</code> sitemap will be added to the main <a href="%s" target="_blank">sitemapindex.xml</a>. It is strongly recommended that you take a look at <a href="%s" target="_blank">Google\'s guidelines</a> before enabling this feature.', $this->domain), $this->sitemap_url, 'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines') => 'enable_news_sitemap'),
@@ -1469,6 +1481,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 					'select_news_keyword_type',
 					'select_news_cat_action',
 					'select_news_cats',
+					'input_news_name',
 					'input_news_genres'
 				), $this->options);
 
@@ -3303,6 +3316,13 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 		if ('yes' == $this->options['enable_credit'])
 			$xml .= $this->_get_credit();
 
+		// @since 1.3.1 news name can be configured from admin area, but can
+		// still be overridden if needed via module or filters
+		$news_name = $this->options['input_news_name'];
+		$news_name = empty($news_name)
+			? apply_filters('bwp_gxs_news_name', htmlspecialchars(get_bloginfo('name')))
+			: $news_name;
+
 		foreach ($urls as &$url)
 		{
 			$url['location'] = !empty($url['location']) ? $url['location'] : '';
@@ -3311,9 +3331,7 @@ class BWP_SIMPLE_GXS extends BWP_FRAMEWORK_IMPROVED
 				// location is empty or it is not valid for a sitemap
 				continue;
 
-			$url['name']     = !empty($url['name'])
-				? htmlspecialchars($url['name'])
-				: apply_filters('bwp_gxs_news_name', htmlspecialchars(get_bloginfo('name')));
+			$url['name']     = !empty($url['name']) ? htmlspecialchars($url['name']) : $news_name;
 
 			$url['language'] = $this->options['select_news_lang'];
 			$url['genres']   = !empty($url['genres']) ? $url['genres'] : '';

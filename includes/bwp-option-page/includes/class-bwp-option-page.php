@@ -4,8 +4,8 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE VERSION 3.0 OR LATER
  */
 
-class BWP_OPTION_PAGE {
-
+class BWP_OPTION_PAGE
+{
 	/**
 	 * The form
 	 */
@@ -150,7 +150,7 @@ class BWP_OPTION_PAGE {
 		$ids   = array();
 		$names = (array) $names;
 
-		foreach ($this->form_item_names as $key => $name)
+		foreach ($form['item_names'] as $key => $name)
 		{
 			if (in_array($name, $names))
 				$ids[] = $key;
@@ -443,7 +443,7 @@ class BWP_OPTION_PAGE {
 		{
 			case 'section':
 				if (!isset($this->form[$name]) || !is_array($this->form[$name]))
-				return;
+					return;
 
 				$item_label = '<span class="bwp-opton-page-label">'
 					. $this->form_item_labels[$item_key[0]]

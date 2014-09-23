@@ -16,6 +16,14 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE
 	{
 		global $wpdb, $post;
 
+		// @since 1.3.1 use a different filter hook that expects an array instead
+		$excluded_posts   = apply_filters('bwp_gxs_excluded_posts', array(), 'page');
+		$exclude_post_sql = sizeof($excluded_posts) > 0
+			? ' AND p.ID NOT IN (' . implode(',', $excluded_posts) . ') '
+			: '';
+
+		// @since 1.3.1 this should be used to add other things to the SQL
+		// instead of excluding posts
 		$sql_where = apply_filters('bwp_gxs_post_where', '', 'page');
 		$sql_where = str_replace('wposts', 'p', $sql_where);
 
@@ -24,7 +32,9 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE
 			FROM ' . $wpdb->posts . " p
 			WHERE p.post_status = 'publish'
 				AND p.post_password = ''
-				AND p.post_type = 'page' $sql_where" . '
+				AND p.post_type = 'page'"
+				. $exclude_post_sql
+				. $sql_where . '
 			ORDER BY p.post_modified DESC';
 
 		$latest_posts = $this->get_results($latest_post_query);
