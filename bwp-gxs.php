@@ -2,7 +2,7 @@
 /*
 Plugin Name: Better WordPress Google XML Sitemaps
 Plugin URI: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/
-Description: Google XML Sitemaps WordPress plugin that comes with support for sitemap index, multisite WordPress and Google News sitemap.
+Description: Generates XML sitemaps for your WordPress website with ease. This plugin comes with support for sitemap index, multisite WordPress and Google News sitemap. It also provides a powerful and flexible system for any customization need.
 Version: 1.4.0
 Text Domain: bwp-google-xml-sitemaps
 Domain Path: /languages/
