@@ -644,7 +644,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 			$this->xslt = !empty($this->options['input_custom_xslt'])
 				? $this->options['input_custom_xslt']
-				: plugin_dir_url($this->plugin_file) . 'xsl/bwp-sitemap.xsl';
+				: $this->plugin_wp_url . 'assets/xsl/bwp-sitemap.xsl';
 
 			$this->xslt = strcmp($user_host, $blog_host) == 0
 				? $this->xslt
