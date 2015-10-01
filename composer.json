@@ -1,0 +1,31 @@
+{
+    "name": "kdm/bwp-google-xml-sitemaps",
+    "description": "Google XML Sitemaps WordPress plugin that comes with support for sitemap index, multisite WordPress and Google News sitemap.",
+    "homepage": "http://betterwp.net",
+    "license": "GPLv3",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/kminh/bwp-framework"
+        }
+    ],
+    "authors": [
+        {
+            "name": "Khang Minh",
+            "email": "contact@betterwp.net"
+        }
+    ],
+    "require": {
+        "kminh/bwp-framework": "3.0.x-dev"
+    },
+    "autoload": {
+        "classmap": [
+            "includes/"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.4.x-dev"
+        }
+    }
+}

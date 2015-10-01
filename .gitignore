@@ -1,7 +1,8 @@
-*.dat
+cache/*.xml
+cache/*.xml.gz
+vendor/
 *.inc
-cache/
 gxs_*
-/.settings
-/.buildpath
-/.project
+.*
+*.otl
+phpunit.xml

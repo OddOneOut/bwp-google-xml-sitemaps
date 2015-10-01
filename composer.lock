@@ -1,0 +1,67 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "6ef1b9f59cf43e282c03e16ec8d32dfa",
+    "packages": [
+        {
+            "name": "kminh/bwp-framework",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kminh/bwp-framework",
+                "reference": "9a1b7ce497c71503bef0f8815bacf9ea5db7e124"
+            },
+            "require": {
+                "php": "^5.1.2"
+            },
+            "require-dev": {
+                "doctrine/common": "^2.5",
+                "fabpot/goutte": "~1.0",
+                "guzzle/http": "dev-master as 3.9.2",
+                "guzzle/plugin-cache": "^3.9",
+                "guzzle/plugin-cookie": "^3.9",
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "^4.8"
+            },
+            "bin": [
+                "bin/install-wp-tests.sh"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "license": [
+                "GPLv3"
+            ],
+            "authors": [
+                {
+                    "name": "Khang Minh",
+                    "email": "contact@betterwp.net"
+                }
+            ],
+            "description": "Base codes for BWP WordPress Plugins",
+            "homepage": "http://betterwp.net",
+            "time": "2015-10-04 14:17:46"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "kminh/bwp-framework": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

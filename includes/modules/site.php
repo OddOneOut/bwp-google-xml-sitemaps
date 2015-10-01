@@ -15,8 +15,8 @@ class BWP_GXS_MODULE_SITE extends BWP_GXS_MODULE
 	{
 		global $wpdb, $blog_id;
 
-		if (!BWP_SIMPLE_GXS::is_multisite()
-			|| BWP_SIMPLE_GXS::is_subdomain_install()
+		if (!BWP_Sitemaps::is_multisite()
+			|| BWP_Sitemaps::is_subdomain_install()
 			|| (!empty($blog_id) && $blog_id > 1)
 		) {
 			// if this is not a multisite installation,
