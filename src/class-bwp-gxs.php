@@ -283,7 +283,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'enable_cache'                 => '', // @since 1.3.0 off by default
 			'enable_cache_auto_gen'        => 'yes',
 			'enable_gzip'                  => '',
-			'enable_xslt'                  => 'yes',
+			'enable_xslt'                  => '', // @since 1.4.0 off by default
 			'enable_sitemap_date'          => '',
 			'enable_sitemap_taxonomy'      => 'yes',
 			'enable_sitemap_external'      => '',
