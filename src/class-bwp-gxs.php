@@ -877,6 +877,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		return $choices;
 	}
 
+	private function _get_news_languages_as_choices()
+	{
+		$languages = include_once BWP_GXS_PLUGIN_SRC . '/provider/google-news/languages.php';
+
+		// @since 1.4.0 allow filtering news languages
+		return (array) $this->bridge->apply_filters('bwp_gxs_news_languages', $languages);
+	}
+
 	protected function build_option_page()
 	{
 		$page        = $this->get_current_admin_page();
@@ -1371,27 +1379,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'select_news_cat_action' => __('below selected categories in the news sitemap.', $this->domain)
 				),
 				'select' => array(
-					'select_news_lang' => array(
-						/* http://www.loc.gov/standards/iso639-2/php/code_list.php */
-						__('English', $this->domain)               => 'en',
-						__('Arabic', $this->domain)                => 'ar',
-						__('Chinese (simplified)', $this->domain)  => 'zh-cn',
-						__('Chinese (traditional)', $this->domain) => 'zh-tw',
-						__('Dutch', $this->domain)                 => 'nl',
-						__('French', $this->domain)                => 'fr',
-						__('German', $this->domain)                => 'de',
-						__('Hebrew', $this->domain)                => 'he',
-						__('Hindi', $this->domain)                 => 'hi',
-						__('Italian', $this->domain)               => 'it',
-						__('Japanese', $this->domain)              => 'ja',
-						__('Norwegian', $this->domain)             => 'no',
-						__('Portuguese', $this->domain)            => 'pt',
-						__('Polish', $this->domain)                => 'pl',
-						__('Russian', $this->domain)               => 'ru',
-						__('Spanish', $this->domain)               => 'es',
-						__('Turkish', $this->domain)               => 'tr',
-						__('Vietnamese', $this->domain)            => 'vi'
-					),
+					'select_news_lang' => $this->_get_news_languages_as_choices(),
 					'select_news_cat_action' => array(
 						__('include', $this->domain) => 'inc',
 						__('exclude', $this->domain) => 'exc'
