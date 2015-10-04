@@ -201,7 +201,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 *
 	 * @var string
 	 */
-	public $xslt = '', $xslt_index = '';
+	public $xslt, $xslt_index;
 
 	/**
 	 * Holds a sitemap's output
@@ -351,11 +351,11 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		);
 
 		$this->add_option_key('BWP_GXS_OPTION_GENERATOR', 'bwp_gxs_generator',
-			__('XML Sitemaps', $this->domain));
+			$this->bridge->t('XML Sitemaps', $this->domain));
 		$this->add_option_key('BWP_GXS_GOOGLE_NEWS', 'bwp_gxs_google_news',
-			__('Google News Sitemap', $this->domain));
+			$this->bridge->t('Google News Sitemap', $this->domain));
 		$this->add_option_key('BWP_GXS_STATS', 'bwp_gxs_stats',
-			__('Sitemap Log', $this->domain));
+			$this->bridge->t('Sitemap Log', $this->domain));
 
 		if (!defined('BWP_GXS_LOG'))
 		{
@@ -390,7 +390,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'news_keywords'    => "\n\t\t\t" . '<news:keywords>%s</news:keywords>',
 			// Misc
 			'xslt_style'       => '',
-			'stats'            => "\n" . '<!-- ' . __('This sitemap was originally generated in %s second(s) (Memory usage: %s) - %s queries - %s URL(s) listed', $this->domain) . ' -->'
+			'stats'            => "\n" . '<!-- ' . $this->bridge->t('This sitemap was originally generated in %s second(s) (Memory usage: %s) - %s queries - %s URL(s) listed', $this->domain) . ' -->'
 			/*'stats_cached'	=> "\n" . '<!-- ' . __('Served from cache in %s second(s) (Memory usage: %s) - %s queries - %s URL(s) listed', $this->domain) . ' -->'*/
 		);
 
@@ -401,9 +401,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 		// init sitemap log
 		$this->_init_logs();
-
-		// init xslt stylesheet
-		$this->_init_xslt_stylesheet();
 
 		// some stats
 		$this->build_stats['mem'] = memory_get_usage();
@@ -459,17 +456,16 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		$this->_init_module_directories();
 
 		// certain modules can use other modules to build data
-		$module_map       = apply_filters('bwp_gxs_module_mapping', array());
-		$this->module_map = wp_parse_args($module_map, array(
+		$module_map       = $this->bridge->apply_filters('bwp_gxs_module_mapping', array());
+		$this->module_map = $this->bridge->wp_parse_args($module_map, array(
 			'post_format' => 'post_tag'
 		));
 
 		// init urls structure used for xml sitemap files
 		$this->_init_sitemap_urls();
 
-		// @since 1.3.0 allow the use of dynamic xslt stylesheet
-		$this->xslt       = apply_filters('bwp_gxs_xslt', $this->xslt);
-		$this->xslt_index = empty($this->xslt) ? '' : substr_replace($this->xslt, 'index', -4, 0);
+		// init xslt stylesheet
+		$this->_init_xslt_stylesheet();
 	}
 
 	protected function enqueue_media()
@@ -526,7 +522,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	private function _get_default_cache_directory()
 	{
-		return plugin_dir_path($this->plugin_file) . 'cache/';
+		return $this->bridge->plugin_dir_path($this->plugin_file) . 'cache/';
 	}
 
 	/**
@@ -548,7 +544,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		$cache_dir = empty($cache_dir) ? $this->_get_default_cache_directory() : $cache_dir;
 
 		// allow custom cache dirs using filters
-		return apply_filters('bwp_gxs_cache_dir', $cache_dir);
+		return $this->bridge->apply_filters('bwp_gxs_cache_dir', $cache_dir);
 	}
 
 	/**
@@ -560,13 +556,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 */
 	private function _init_module_directories()
 	{
-		$this->module_directory = plugin_dir_path($this->plugin_file) . 'includes/modules/';
+		$this->module_directory = $this->bridge->plugin_dir_path($this->plugin_file) . 'src/modules/';
 
 		$this->custom_module_directory = !empty($this->options['input_alt_module_dir'])
-			? $this->options['input_alt_module_dir']
-			: false;
+			? $this->options['input_alt_module_dir'] : null;
 
-		$this->custom_module_directory = trailingslashit(apply_filters('bwp_gxs_module_dir', $this->custom_module_directory));
+		$this->custom_module_directory = $this->bridge->trailingslashit(
+			$this->bridge->apply_filters('bwp_gxs_module_dir', $this->custom_module_directory)
+		);
 	}
 
 	/**
@@ -597,18 +594,18 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 **/
 	private function _init_sitemap_urls()
 	{
-		$permalink = get_option('permalink_structure');
+		$permalink = $this->bridge->get_option('permalink_structure');
 
 		if (!$permalink)
 		{
 			// do not use friendly sitemap urls
 			$this->use_permalink = false;
 
-			$this->query_var_non_perma = apply_filters('bwp_gxs_query_var_non_perma', 'bwpsitemap');
+			$this->query_var_non_perma = $this->bridge->apply_filters('bwp_gxs_query_var_non_perma', 'bwpsitemap');
 
 			// @todo recheck https
-			$this->sitemap_url        = home_url() . '/?' . $this->query_var_non_perma . '=sitemapindex';
-			$this->sitemap_url_struct = home_url() . '/?' . $this->query_var_non_perma . '=%s';
+			$this->sitemap_url        = $this->bridge->home_url() . '/?' . $this->query_var_non_perma . '=sitemapindex';
+			$this->sitemap_url_struct = $this->bridge->home_url() . '/?' . $this->query_var_non_perma . '=%s';
 		}
 		else
 		{
@@ -617,8 +614,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			// have to include it also
 			$indexphp = strpos($permalink, 'index.php') === false ? '' : '/index.php';
 
-			$this->sitemap_url        = home_url() . $indexphp . '/sitemapindex.xml';
-			$this->sitemap_url_struct = home_url() . $indexphp . '/%s.xml';
+			$this->sitemap_url        = $this->bridge->home_url() . $indexphp . '/sitemapindex.xml';
+			$this->sitemap_url_struct = $this->bridge->home_url() . $indexphp . '/%s.xml';
 		}
 	}
 
@@ -631,25 +628,29 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 **/
 	private function _init_xslt_stylesheet()
 	{
-		if ('yes' == $this->options['enable_xslt'])
-		{
-			// if the host the user is using is different from what we get from
-			// 'home' option, we need to use the host so user won't see a style
-			// sheet error, which is most of the time mistaken as broken
-			// sitemaps - @since 1.1.0
-			$user_host = strtolower($_SERVER['HTTP_HOST']);
+		if ('yes' != $this->options['enable_xslt'])
+			return;
 
-			$blog_home = @parse_url(home_url());
-			$blog_host = strtolower($blog_home['host']);
+		// if the host the user is using is different from what we get from
+		// 'home' option, we need to use the host so user won't see a style
+		// sheet error, which is most of the time mistaken as broken
+		// sitemaps - @since 1.1.0
+		$user_host = strtolower($_SERVER['HTTP_HOST']);
 
-			$this->xslt = !empty($this->options['input_custom_xslt'])
-				? $this->options['input_custom_xslt']
-				: $this->plugin_wp_url . 'assets/xsl/bwp-sitemap.xsl';
+		$blog_home = @parse_url($this->bridge->home_url());
+		$blog_host = strtolower($blog_home['host']);
 
-			$this->xslt = strcmp($user_host, $blog_host) == 0
-				? $this->xslt
-				: str_replace($blog_host, $user_host, $this->xslt);
-		}
+		$this->xslt = !empty($this->options['input_custom_xslt'])
+			? $this->options['input_custom_xslt']
+			: $this->plugin_wp_url . 'assets/xsl/bwp-sitemap.xsl';
+
+		$this->xslt = strcmp($user_host, $blog_host) == 0
+			? $this->xslt
+			: str_replace($blog_host, $user_host, $this->xslt);
+
+		// @since 1.3.0 allow the use of dynamic xslt stylesheet
+		$this->xslt       = $this->bridge->apply_filters('bwp_gxs_xslt', $this->xslt);
+		$this->xslt_index = empty($this->xslt) ? '' : substr_replace($this->xslt, 'index', -4, 0);
 	}
 
 	/**
@@ -674,7 +675,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 */
 	private function _init_logs()
 	{
-		$this->logs = get_option(BWP_GXS_LOG);
+		$this->logs = $this->bridge->get_option(BWP_GXS_LOG);
 
 		if (!$this->logs)
 		{
