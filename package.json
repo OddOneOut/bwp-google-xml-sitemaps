@@ -20,6 +20,7 @@
         "build": "export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:all",
         "build:legacy": "export PHPUNIT_CMD='test:php:legacy' && export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:functional:all",
         "build:php55": "npm run build",
-        "update": "php composer update"
+        "install": "composer install && cd vendor/kminh/bwp-framework && composer install",
+        "update": "composer update"
     }
 }
