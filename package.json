@@ -1,0 +1,25 @@
+{
+    "name": "BWP_Sitemaps",
+    "version": "1.4.0",
+    "config": {
+        "phpunit_suite": ""
+    },
+    "scripts": {
+        "clear:wp:phpunit": "rm -rf ${WP_TMP_DIR-'/tmp'}/wordpress-*",
+        "test:php": "phpunit --stderr --testsuite \"$npm_package_config_phpunit_suite\"",
+        "test:php:legacy": "phpunit --stderr -c phpunit_php52.xml",
+        "test:php:functional": "npm run ${PHPUNIT_CMD-'test:php'} --BWP_Sitemaps:phpunit_suite='functional'",
+        "test:php:functional:3.8": "export WP_VERSION=3.8 && npm run test:php:functional",
+        "test:php:functional:stable": "export WP_VERSION=latest && npm run test:php:functional",
+        "test:php:functional:beta": "echo 'No beta version'",
+        "test:php:functional:all": "npm run test:php:functional:stable && npm run test:php:functional:3.8 && npm run test:php:functional:beta",
+        "test:php:unit": "npm run test:php --BWP_Sitemaps:phpunit_suite='unit'",
+        "test:php:stable": "npm run test:php:unit && npm run test:php:functional:stable",
+        "test:php:all": "npm run test:php:unit && npm run test:php:functional:all",
+        "test": "npm run test:php:stable",
+        "build": "export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:all",
+        "build:legacy": "export PHPUNIT_CMD='test:php:legacy' && export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:functional:all",
+        "build:php55": "npm run build",
+        "update": "php composer update"
+    }
+}

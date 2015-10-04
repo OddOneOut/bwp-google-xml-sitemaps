@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6ef1b9f59cf43e282c03e16ec8d32dfa",
+    "hash": "b77a7e46b4f07836305dae122b3e3a83",
     "packages": [
         {
             "name": "kminh/bwp-framework",

@@ -4,8 +4,8 @@ function _bwp_gxs_autoloader($class_name)
 {
 	$class_maps = include dirname(__FILE__) . '/vendor/composer/autoload_classmap.php';
 
-	// only load BWP Sitemaps and GXS classes
-	if (stripos($class_name, 'BWP_Sitemaps') === false && stripos($class_name, 'GXS') === false) {
+	// only load BWP classes
+	if (stripos($class_name, 'BWP') === false) {
 		return;
 	}
 
