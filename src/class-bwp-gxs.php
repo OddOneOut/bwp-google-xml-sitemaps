@@ -2459,6 +2459,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		{
 			// http cache can be used, we don't need to output anything except
 			// for some headers
+			// @link http://edn.embarcadero.com/article/38123
 			$this->_send_headers(array_merge(
 				array('status' => 304), $this->cache->get_headers()
 			));
@@ -2904,15 +2905,13 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				header('Etag: ' . $headers['etag']);
 		}
 
+		// some headers are only needed when sending a 200 OK response
 		if ($headers['status'] == 200)
 		{
-			// some headers are only needed when sending a 200 OK response
+			// only send a last modified header if debug is NOT on, and caching
+			// is enabled
 			if (!$this->_debug && $this->options['enable_cache'] == 'yes')
-			{
-				// only send a last modified header if debug is NOT on, and
-				// caching is enabled
 				header('Last-Modified: ' . $headers['lastmod']);
-			}
 
 			header('Accept-Ranges: bytes');
 			header('Content-Type: ' . $content_types['google'] . '; charset=UTF-8');
@@ -2922,6 +2921,11 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		}
 
 		header('Vary: ' . $headers['vary']);
+
+		// @since 1.4.0 add a noindex header to prevent sitemaps from being
+		// indexed by search engines (Google supports this fully)
+		// @link https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag?hl=en#using-the-x-robots-tag-http-header
+		header('X-Robots-Tag: noindex');
 
 		status_header($headers['status']);
 
