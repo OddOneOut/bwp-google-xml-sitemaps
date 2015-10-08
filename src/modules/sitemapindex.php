@@ -14,10 +14,6 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 		// this contains a list of all sitemaps that need to be included in the
 		// sitemapindex, along with their data
 		$this->requested_modules = $requested;
-
-		// @since 1.3.0 get sitemap log to populate sitemaps' last modified date data
-		global $bwp_gxs;
-		$this->sitemap_logs = $bwp_gxs->get_sitemap_logs();
 	}
 
 	/**
@@ -27,21 +23,17 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 	 */
 	private function _get_sitemap_lastmod($sitemap_name)
 	{
-		if (!empty($this->sitemap_logs[$sitemap_name]))
-		{
-			// there's a log entry in db, take last modified date from it in
-			// Unix timestamp format
-			return $this->sitemap_logs[$sitemap_name];
-		}
+		global $bwp_gxs;
 
+		// try to find last modified timestamp from a log entry in db
+		if ($sitemap_log = $bwp_gxs->get_sitemap_logger()->get_sitemap_log_item($sitemap_name))
+			return $sitemap_log->get_timestamp();
+
+		// if we can get a last modified Unix timestamp from the filesystem,
+		// use that one as a last resort
 		$sitemap_file = bwp_gxs_get_filename($sitemap_name);
-
 		if ($filemtime = @filemtime($sitemap_file))
-		{
-			// if we can get a last modified Unix timestamp from the
-			// filesystem, use that one as a last resort
 			return $filemtime;
-		}
 
 		// all fail, no lastmod should be display
 		return false;

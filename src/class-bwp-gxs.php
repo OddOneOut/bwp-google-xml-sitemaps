@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Main Sitemap class that provides all logics.
  *
@@ -25,28 +26,18 @@
 class BWP_Sitemaps extends BWP_Framework_V3
 {
 	/**
-	 * Sitemap generation log
+	 * Sitemap generation message logger
 	 *
-	 * @var array
+	 * @var BWP_Sitemaps_Logger_MessageLogger
 	 */
-	public $logs = array(
-		'log'     => array(),
-		'sitemap' => array()
-	);
+	protected $message_logger;
 
 	/**
-	 * Maximum number of log entries for Sitemap generation log
+	 * Sitemap generation sitemap logger
 	 *
-	 * @var integer
+	 * @var BWP_Sitemaps_Logger_SitemapLogger
 	 */
-	private $_log_limit = 25;
-
-	/**
-	 * Whether generator log is empty
-	 *
-	 * @var bool
-	 */
-	private $_is_log_empty = false;
+	protected $sitemap_logger;
 
 	/**
 	 * Modules to load when generating sitemapindex
@@ -399,9 +390,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		// init debug and debug extra mode
 		$this->_init_debug();
 
-		// init sitemap log
-		$this->_init_logs();
-
 		// some stats
 		$this->build_stats['mem'] = memory_get_usage();
 	}
@@ -418,9 +406,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		add_filter('rewrite_rules_array', array($this, 'insert_rewrite_rules'), 9);
 		add_filter('query_vars', array($this, 'insert_query_vars'));
 		add_action('parse_request', array($this, 'request_sitemap'));
-
-		// check and update plugin db if needed, this is fired after init
-		add_action('bwp_gxs_init_upgrade', array($this, 'upgrade_plugin'), 10, 2);
 
 		if ('yes' == $this->options['enable_ping'])
 		{
@@ -460,6 +445,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		$this->module_map = $this->bridge->wp_parse_args($module_map, array(
 			'post_format' => 'post_tag'
 		));
+
+		// init sitemap log
+		$this->_init_logs();
 
 		// init urls structure used for xml sitemap files
 		$this->_init_sitemap_urls();
@@ -603,7 +591,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 			$this->query_var_non_perma = $this->bridge->apply_filters('bwp_gxs_query_var_non_perma', 'bwpsitemap');
 
-			// @todo recheck https
 			$this->sitemap_url        = $this->bridge->home_url() . '/?' . $this->query_var_non_perma . '=sitemapindex';
 			$this->sitemap_url_struct = $this->bridge->home_url() . '/?' . $this->query_var_non_perma . '=%s';
 		}
@@ -667,6 +654,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		$this->_debug_extra = $this->options['enable_debug_extra'] == 'yes' ? true : false;
 	}
 
+	private function _get_initial_logs()
+	{
+		return array(
+			'messages' => array(),
+			'sitemaps' => array()
+		);
+	}
+
 	/**
 	 * Inits sitemap log property
 	 *
@@ -675,32 +670,58 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 */
 	private function _init_logs()
 	{
-		$this->logs = $this->bridge->get_option(BWP_GXS_LOG);
+		$this->message_logger = BWP_Sitemaps_Logger::create_message_logger(25);
+		$this->sitemap_logger = BWP_Sitemaps_Logger::create_sitemap_logger();
 
-		if (!$this->logs)
+		// populate logger with logs currently stored in db
+		$logs = $this->bridge->get_option(BWP_GXS_LOG);
+		$logs = $logs && is_array($logs) ? $logs : $this->_get_initial_logs();
+
+		foreach ($logs as $key => $log)
 		{
-			$this->logs = array(
-				'log'     => array(),
-				'sitemap' => array()
-			);
-		}
-
-		if (sizeof($this->logs['log']) == 0)
-			$this->_is_log_empty = true;
-
-		foreach ($this->logs as $key => $log)
-		{
-			if ($key == 'sitemap')
-				// don't use log limit for sitemap log
+			// invalid log
+			if (!is_array($log))
 				continue;
 
-			if (is_array($log) && $this->_log_limit < sizeof($log))
+			foreach ($log as $log_item)
 			{
-				// only keep latest log entries
-				$log = array_slice($log, (-1) * $this->_log_limit);
-				$this->logs[$key] = $log;
+				// invalid log item
+				if (!is_array($log_item))
+					continue;
+
+				if ($key == 'sitemaps')
+				{
+					try {
+						$this->_log_sitemap_item(
+							$log_item['slug'],
+							$log_item['datetime']
+						);
+					} catch (Exception $e) {
+						continue;
+					}
+				}
+				elseif ($key == 'messages')
+				{
+					try {
+						$this->_log_message_item(
+							$log_item['message'],
+							$log_item['type'],
+							$log_item['datetime']
+						);
+					} catch (Exception $e) {
+						continue;
+					}
+				}
 			}
 		}
+	}
+
+	private function _reset_logs()
+	{
+		$this->message_logger->reset();
+		$this->sitemap_logger->reset();
+
+		$this->commit_logs();
 	}
 
 	private static function _flush_rewrite_rules()
@@ -717,12 +738,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function uninstall()
 	{
-		$this->logs = array(
-			'log'     => array(),
-			'sitemap' => array()
-		);
-
-		$this->commit_logs();
+		$this->_reset_logs();
 
 		/* self::_flush_rewrite_rules(); */
 	}
@@ -883,6 +899,64 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 		// @since 1.4.0 allow filtering news languages
 		return (array) $this->bridge->apply_filters('bwp_gxs_news_languages', $languages);
+	}
+
+	private function _get_formatted_logs($template_file, array $data)
+	{
+		ob_start();
+
+		include_once $template_file;
+
+		$output = ob_get_clean();
+
+		return $output;
+	}
+
+	private function _get_formatted_message_logs()
+	{
+		if ($this->message_logger->is_empty())
+			return strtoupper(__('No log yet!', $this->domain)) . "\n";
+
+		$data = array(
+			'items' => array_reverse($this->message_logger->get_log_items())
+		);
+
+		return $this->_get_formatted_logs(dirname(__FILE__) . '/templates/logger/admin/message-log-item.php', $data);
+	}
+
+	private function _get_formatted_sitemap_logs()
+	{
+		if ($this->sitemap_logger->is_empty())
+		{
+			return '<em>' . __('It appears that no sitemap has been generated yet, '
+				. 'or you have recently cleared the sitemap log.', $this->domain)
+				. '</em>';
+		}
+
+		$items = array_reverse($this->sitemap_logger->get_log_items());
+
+		/* @var $item BWP_Sitemaps_Logger_Sitemap_LogItem */
+		foreach ($items as $key => $item)
+		{
+			// remove sitemapindex log item because we will add it manually
+			// later on
+			if ($item->get_sitemap_slug() === 'sitemapindex')
+			{
+				unset($items[$key]);
+				break;
+			}
+		}
+
+		// add sitemapindex log item to the top
+		if ($sitemapindex = $this->sitemap_logger->get_sitemap_log_item('sitemapindex'))
+			array_unshift($items, $sitemapindex);
+
+		$data = array(
+			'sitemap_url_struct' => $this->sitemap_url_struct,
+			'items'              => $items
+		);
+
+		return $this->_get_formatted_logs(dirname(__FILE__) . '/templates/logger/admin/sitemap-log-item.php', $data);
 	}
 
 	protected function build_option_page()
@@ -1234,7 +1308,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 							. 'More info can be found <a href="%s">here</a>.', $this->domain),
 							'https://support.google.com/webmasters/answer/75712?hl=en&ref_topic=4581190')
 						. '</em>',
-						$this->get_logs(true)
+						$this->_get_formatted_sitemap_logs()
 					)
 				),
 				'role' => array(
@@ -1463,14 +1537,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 							. '</em>',
 				),
 				'container' => array(
-					'h3' => 'yes' == $this->options['enable_log'] ? $this->get_logs() : '',
+					'h3' => 'yes' == $this->options['enable_log'] ? $this->_get_formatted_message_logs() : '',
 				)
 			);
 
 			// no save changes button
 			add_filter('bwp_option_submit_button', create_function('', 'return "";'));
 
-			if ($this->_is_log_empty || 'yes' != $this->options['enable_log'])
+			if ('yes' != $this->options['enable_log'] || $this->message_logger->is_empty())
 			{
 				// no log is found, or logging is disabled, hide sidebar to save space
 				add_filter('bwp_info_showable', create_function('', 'return "";'));
@@ -1668,12 +1742,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 */
 	public function handle_clear_log_action()
 	{
-		$this->logs = array(
-			'log'     => array(),
-			'sitemap' => array()
-		);
-
-		$this->commit_logs();
+		$this->_reset_logs();
 
 		$this->add_notice_flash(
 			'<strong>' . __('Notice', $this->domain) . ':</strong> '
@@ -1689,11 +1758,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	private static function _format_header_time($time)
 	{
 		return bwp_gxs_format_header_time($time);
-	}
-
-	private static function _get_current_time()
-	{
-		return current_time('timestamp');
 	}
 
 	/**
@@ -1722,51 +1786,60 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function commit_logs()
 	{
-		update_option(BWP_GXS_LOG, $this->logs);
+		update_option(BWP_GXS_LOG, array(
+			'messages' => $this->message_logger->get_log_item_data(),
+			'sitemaps' => $this->sitemap_logger->get_log_item_data()
+		));
 	}
 
-	public function do_log($message, $error = true, $sitemap = false)
+	private function _log_message_item($message, $type, $time = null)
 	{
-		/* _deprecated_function(__FUNCTION__, '1.3.0', 'BWP_SIMPLE_GXS::log_message'); */
-		$this->log_message($message, $error, $sitemap);
+		$time = $time ? $time : current_time('mysql', true);
+
+		$item = new BWP_Sitemaps_Logger_Message_LogItem($message, $type, $time);
+		$item->set_datetimezone($this->get_current_timezone());
+
+		$this->message_logger->log($item);
 	}
 
-	public function log_message($message, $error = true, $sitemap = false)
+	/**
+	 * Log a message when generating a sitemap
+	 *
+	 * @param string $message
+	 * @param string $type @since 1.4.0 before this is a boolean and optional
+	 */
+	public function log_message($message, $type, $deprecated = null)
 	{
-		$time = self::_get_current_time();
+		if (isset($sitemap))
+			_deprecated_argument(__FUNCTION__, 'BWP Google XML Sitemaps 1.4.0');
+
+		// dont log anything if not allowed
+		if ('yes' !== $this->options['enable_log'])
+			return;
+
+		// dont log anything if message or type is empty
+		if (empty($message) || empty($type))
+			return;
 
 		$debug_message = $this->_debug_extra
-			? __('Debug extra was on', $this->domain)
-			: __('Debug was on', $this->domain);
+			? __('extra debugging was on', $this->domain)
+			: __('debugging was on', $this->domain);
 
 		$debug = $this->_debug ? ' (' . $debug_message . ')' : '';
 
-		if (!$sitemap && 'yes' == $this->options['enable_log']
-			&& !empty($message)
-		) {
-			$this->logs['log'][] = array(
-				'log'   => $message . $debug,
-				'time'  => $time,
-				'error' => $error
-			);
-		}
-		elseif (!is_bool($sitemap))
-		{
-			$this->logs['sitemap'][$sitemap] = array(
-				'time' => $time,
-				'url'  => $sitemap
-			);
-		}
+		$this->_log_message_item($message . $debug, $type);
 	}
 
 	public function elog($message, $die = false, $error_code = 404)
 	{
+		_deprecated_function(__FUNCTION__, 'BWP Google XML Sitemaps 1.4.0', 'BWP_Sitemaps::log_error');
+
 		$this->log_error($message, $die, $error_code);
 	}
 
 	public function log_error($message, $die = false, $error_code = 404)
 	{
-		$this->log_message($message);
+		$this->log_message($message, BWP_Sitemaps_Logger_Message_LogItem::TYPE_ERROR);
 
 		if (true == $die)
 		{
@@ -1777,146 +1850,53 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function slog($message)
 	{
+		_deprecated_function(__FUNCTION__, 'BWP Google XML Sitemaps 1.4.0', 'BWP_Sitemaps::log_success');
+
 		$this->log_success($message);
 	}
 
 	public function log_success($message)
 	{
-		$this->log_message($message, false);
+		$this->log_message($message, BWP_Sitemaps_Logger_Message_LogItem::TYPE_SUCCESS);
 	}
 
 	public function nlog($message)
 	{
+		_deprecated_function(__FUNCTION__, 'BWP Google XML Sitemaps 1.4.0', 'BWP_Sitemaps::log_notice');
+
 		$this->log_notice($message);
 	}
 
 	public function log_notice($message)
 	{
-		$this->log_message($message, 'notice');
+		$this->log_message($message, BWP_Sitemaps_Logger_Message_LogItem::TYPE_NOTICE);
 	}
 
 	public function smlog($url)
 	{
+		_deprecated_function(__FUNCTION__, 'BWP Google XML Sitemaps 1.4.0', 'BWP_Sitemaps::log_sitemap');
+
 		$this->log_sitemap($url);
+	}
+
+	private function _log_sitemap_item($url, $time = null)
+	{
+		$time = $time ? $time : current_time('mysql', true);
+
+		$item = new BWP_Sitemaps_Logger_Sitemap_LogItem($url, $time);
+		$item->set_datetimezone($this->get_current_timezone());
+
+		$this->sitemap_logger->log($item);
 	}
 
 	public function log_sitemap($url)
 	{
-		$this->log_message('', false, $url);
+		$this->_log_sitemap_item($url);
 	}
 
-	public function get_sitemap_logs()
+	public function get_sitemap_logger()
 	{
-		$logs = $this->logs['sitemap'];
-
-		if (!$logs || !is_array($logs) || 0 == sizeof($logs))
-			return false;
-
-		$return = array();
-
-		foreach ($logs as $log)
-			$return[$log['url']] = $log['time'];
-
-		return $return;
-	}
-
-	public function get_logs($sitemap = false)
-	{
-		$logs = !$sitemap ? $this->logs['log'] : $this->logs['sitemap'];
-
-		if (!$logs || !is_array($logs) || 0 == sizeof($logs))
-		{
-			return $sitemap
-				? '<em>' . __('It appears that no sitemap has been generated yet, '
-					. 'or you have recently cleared the sitemap log.', $this->domain)
-					. '</em>'
-				: strtoupper(__('No log yet!', $this->domain)) . "\n";
-		}
-
-		$log_class = !$sitemap ? 'bwp-gxs-log bwp-gxs-log-big' : 'bwp-gxs-log bwp-gxs-log-small';
-		$log_str   = !$sitemap
-			? '<li class="bwp-clear" style="margin-top: 5px; line-height: 1.7;">'
-				. '<span style="float: left; margin-right: 5px;">%s &mdash;</span> '
-				. '<span style="color: #%s;">%s</span></li>'
-			: '<span style="margin-top: 5px; display: inline-block;">'
-				. __('<a href="%s" target="_blank">%s</a> was generated on <strong>%s</strong>.', $this->domain)
-				. '</span><br />';
-
-		$output = $sitemap
-			? '<span style="display:inline-block; margin-bottom: 7px;"><em>'
-				. __('Below you can find a list of generated sitemaps:', $this->domain)
-				. '</em></span>'
-				. '<br />'
-			: '';
-
-		$output .= '<ul class="' . $log_class . '">' . "\n";
-
-		if (!$sitemap)
-		{
-			krsort($logs);
-		}
-		else
-		{
-			$log_time = array();
-
-			foreach ($logs as $key => $row)
-				$log_time[$key] = $row['time'];
-
-			array_multisort($log_time, SORT_DESC, $logs);
-		}
-
-		foreach ($logs as $log)
-		{
-			if (isset($log['error']))
-			{
-				$color = !is_bool($log['error']) && 'notice' == $log['error'] ? '999999' : '';
-
-				if ('' ==  $color)
-					$color = (!$log['error']) ? '009900' : 'FF0000';
-
-				/* translators: date format, see http://php.net/date */
-				$output .= sprintf($log_str,
-					date(__('M j, Y : H:i:s', $this->domain), $log['time']),
-					$color, $log['log']) . "\n";
-			}
-			else
-			{
-				// @since 1.1.5 - check for mapped domain
-				global $wpdb, $blog_id;
-
-				if (!empty($wpdb->dmtable) && !empty($wpdb->blogs) && self::is_multisite())
-				{
-					// @todo 1.3.0 recheck whether this is needed
-					$mapped_domain = $wpdb->get_var($wpdb->prepare('
-						SELECT wpdm.domain as mapped_domain
-						FROM ' . $wpdb->blogs . ' wpblogs
-						LEFT JOIN ' . $wpdb->dmtable . ' wpdm
-							ON wpblogs.blog_id = wpdm.blog_id AND wpdm.active = 1
-						WHERE wpblogs.public = 1 AND wpblogs.spam = 0
-							AND wpblogs.deleted = 0 AND wpblogs.blog_id = %d', $blog_id
-					));
-				}
-
-				// @todo default to the main site's scheme
-				$home = @parse_url(home_url());
-
-				$sitemap_struct = !empty($mapped_domain)
-					? str_replace($home['host'],
-						str_replace(array('http', 'https'), '', $mapped_domain),
-						$this->sitemap_url_struct)
-					: $this->sitemap_url_struct;
-
-				$sitemap_struct = sprintf($sitemap_struct, $log['url']);
-
-				$output .= sprintf($log_str,
-					$sitemap_struct,
-					$log['url'],
-					date(__('M j, Y : H:i:s', $this->domain),
-					$log['time'])) . "\n";
-			}
-		}
-
-		return $output . '</ul>' . "\n";
+		return $this->sitemap_logger;
 	}
 
 	public function do_robots($output, $public)
@@ -3063,7 +3043,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 			$module_label = $this->_get_module_label($this->module_data['module'], $this->module_data['sub_module']);
 			$module_guide = 'google_news' != $this->module_data['sub_module']
-				? __('Enable/disable sitemaps via <em>BWP Sitemaps >> XML Sitemaps >> Sitemaps to generate</em>.', $this->domain)
+				? __('Enable/disable sitemaps via <em>BWP Sitemaps >> XML Sitemaps</em>.', $this->domain)
 				: '';
 
 			$error_message_admin_module = $module_label && current_user_can('manage_options')
@@ -3355,7 +3335,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function ping($post)
 	{
-		$time      = self::_get_current_time();
+		$time      = current_time('timestamp');
 		$ping_data = get_option(BWP_GXS_PING);
 
 		if (!$ping_data || !is_array($ping_data)
