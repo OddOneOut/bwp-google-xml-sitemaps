@@ -2,7 +2,6 @@ cache/*.xml
 cache/*.xml.gz
 vendor/
 *.inc
-gxs_*
 .*
 *.otl
 phpunit.xml
