@@ -32,6 +32,20 @@ class BWP_Sitemaps_Logger_Sitemap_LogItem extends BWP_Sitemaps_Logger_LogItem
 		$this->datetime = new DateTime($datetime, new DateTimeZone('UTC'));
 	}
 
+	/**
+	 * Check whether this log item is obsolete
+	 *
+	 * An item is obsolete when it's at least 1-month old
+	 *
+	 * @return bool
+	 */
+	public function is_obsolete()
+	{
+		$last_month = new DateTime('-1 month', new DateTimeZone('UTC'));
+
+		return $this->datetime <= $last_month;
+	}
+
 	public function get_sitemap_slug()
 	{
 		return $this->sitemap_slug;

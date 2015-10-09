@@ -108,4 +108,38 @@ class BWP_Sitemaps_Logger_SitemapLogger_Test extends PHPUnit_Framework_TestCase
 			'datetime' => '2015-10-05 14:00:00'
 		), $item->get_item_data());
 	}
+
+	/**
+	 * @covers BWP_Sitemaps_Logger_SitemapLogger::get_log_items
+	 */
+	public function test_get_log_items_should_filter_out_obsolete_items()
+	{
+		$item1 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug1', '2015-10-05 12:00:00 GMT');
+		$item2 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug2', '2015-09-05 13:00:00 GMT');
+
+		$this->logger->log($item1);
+		$this->logger->log($item2);
+
+		$this->assertEquals(
+			array('slug1' => $item1),
+			$this->logger->get_log_items(), 'item2 is obsolete, it should be filtered out'
+		);
+	}
+
+	/**
+	 * @covers BWP_Sitemaps_Logger_SitemapLogger::get_log_item_data
+	 */
+	public function test_get_log_item_data_should_filter_out_obsolete_items()
+	{
+		$item1 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug1', '2015-10-05 12:00:00 GMT');
+		$item2 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug2', '2015-09-05 13:00:00 GMT');
+
+		$this->logger->log($item1);
+		$this->logger->log($item2);
+
+		$this->assertEquals(
+			array($item1->get_item_data()),
+			$this->logger->get_log_item_data(), 'item2 is obsolete, it should be filtered out'
+		);
+	}
 }

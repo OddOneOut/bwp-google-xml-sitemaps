@@ -16,8 +16,8 @@
 			/* @var $item BWP_Sitemaps_Logger_Sitemap_LogItem */
 			foreach ($data['items'] as $item) :
 				$count++;
-			/* translators: date format, see http://php.net/date */
-			$generated_on = $item->get_formatted_datetime(__('M j, Y : H:i:s', $this->domain));
+				/* translators: date format, see http://php.net/date */
+				$generated_on = $item->get_formatted_datetime(__('M j, Y : H:i:s', $this->domain));
 ?>
 			<tr>
 				<td class="ordinal"><?php echo $count; ?></td>

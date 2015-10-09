@@ -59,6 +59,18 @@ class BWP_Sitemaps_Logger_Sitemap_LogItem_Test extends PHPUnit_Framework_TestCas
 	}
 
 	/**
+	 * @covers BWP_Sitemaps_Logger_Sitemap_LogItem::is_obsolete
+	 */
+	public function test_is_obsolete()
+	{
+		$datetime = new DateTime('1 month 2 days ago', new DateTimeZone('UTC'));
+
+		$item = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug', $datetime->format('Y-m-d H:i:s'));
+
+		$this->assertTrue($item->is_obsolete());
+	}
+
+	/**
 	 * @covers BWP_Sitemaps_Logger_Sitemap_LogItem::__construct
 	 */
 	public function test_should_default_datetime_to_current_time_and_UTC_timezone_if_none_provided()

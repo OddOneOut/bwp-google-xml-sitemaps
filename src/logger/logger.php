@@ -93,11 +93,19 @@ abstract class BWP_Sitemaps_Logger
 	}
 
 	/**
-	 * @return bool
+	 * Filter out some items
+	 *
+	 * @return false
 	 */
-	public function is_empty()
+	public function filter_items(BWP_Sitemaps_Logger_LogItem $item)
 	{
-		return count($this->items) == 0;
+		// if this item can become obsolete, so they should be filtered out if
+		// they are obsolete
+		if ($item instanceof BWP_Sitemaps_Logger_Sitemap_LogItem && $item->is_obsolete()) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -105,7 +113,7 @@ abstract class BWP_Sitemaps_Logger
 	 */
 	public function get_log_items()
 	{
-		return $this->items;
+		return array_filter($this->items, array($this, 'filter_items'));
 	}
 
 	/**
@@ -118,12 +126,23 @@ abstract class BWP_Sitemaps_Logger
 	public function get_log_item_data()
 	{
 		$data = array();
+		$items = $this->get_log_items();
 
 		/* @var $item BWP_Sitemaps_Logger_LogItem */
-		foreach ($this->items as $item) {
+		foreach ($items as $item) {
 			$data[] = $item->get_item_data();
 		}
 
 		return $data;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function is_empty()
+	{
+		$items = $this->get_log_items();
+
+		return count($items) == 0;
 	}
 }
