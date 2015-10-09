@@ -745,12 +745,20 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function upgrade_plugin($from, $to)
 	{
+		$upgrade_path = dirname(__FILE__) . '/upgrades/db';
+
+		// @since 1.4.0 change log formats
+		if (version_compare($from, '1.4.0', '<')) include_once $upgrade_path . '/r2.php';
+	}
+
+	public function init_upgrade_plugin($from, $to)
+	{
+		// @since 1.3.0 default values of cache directory is empty
 		if (!$from || version_compare($from, '1.3.0', '<'))
 		{
-			// @since 1.3.0 default values of cache directory is empty
-			$options = get_option(BWP_GXS_OPTION_GENERATOR);
-			$options['input_cache_dir'] = '';
-			update_option(BWP_GXS_OPTION_GENERATOR, $options);
+			$this->update_some_options(BWP_GXS_OPTION_GENERATOR, array(
+				'input_cache_dir' => ''
+			));
 		}
 	}
 
