@@ -716,10 +716,12 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		}
 	}
 
-	private function _reset_logs()
+	private function _reset_logs($keep_sitemaps = true)
 	{
 		$this->message_logger->reset();
-		$this->sitemap_logger->reset();
+
+		if (!$keep_sitemaps)
+			$this->sitemap_logger->reset();
 
 		$this->commit_logs();
 	}
@@ -738,7 +740,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function uninstall()
 	{
-		$this->_reset_logs();
+		$this->_reset_logs(false);
 
 		/* self::_flush_rewrite_rules(); */
 	}
@@ -936,9 +938,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	{
 		if ($this->sitemap_logger->is_empty())
 		{
-			return '<em>' . __('It appears that no sitemap has been generated yet, '
-				. 'or you have recently cleared the sitemap log.', $this->domain)
-				. '</em>';
+			return __('It appears that no sitemap has been generated yet', $this->domain)
+				. ', '
+				. '<a href="#" target="_blank" class="button-secondary button-inline" '
+				. 'onclick="this.href=\'' . $this->get_sitemap_url('sitemapindex') . '\';">'
+				. __('click to generate your Sitemap Index', $this->domain)
+				. '</a>'
+				. ' .'
+			;
 		}
 
 		$items = array_reverse($this->sitemap_logger->get_log_items());
@@ -964,7 +971,21 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'items'              => $items
 		);
 
-		return $this->_get_formatted_logs(dirname(__FILE__) . '/templates/logger/admin/sitemap-log-item.php', $data);
+		$logs = $this->_get_formatted_logs(dirname(__FILE__) . '/templates/logger/admin/sitemap-log-item.php', $data);
+
+		$logs .= '<p class="bwp-paragraph">'
+			. sprintf(__('To proceed, submit your <a href="%s" target="_blank">sitemapindex</a> '
+				. 'to major search engines like <a href="%s" target="_blank">Google</a> or '
+				. '<a href="%s" target="_blank">Bing</a>.', $this->domain),
+				$this->sitemap_url,
+				'https://www.google.com/webmasters/tools/home?hl=en',
+				'http://www.bing.com/toolbox/webmasters/')
+			. ' '
+			. sprintf(__('For more details, see <a target="_blank" href="%1$s">this article</a>.', $this->domain),
+				'https://support.google.com/webmasters/answer/75712?hl=en&ref_topic=4581190')
+			. '</p>';
+
+		return $logs;
 	}
 
 	protected function build_option_page()
@@ -1025,7 +1046,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'checkbox'
 				),
 				'item_labels' => array(
-					__('Your sitemaps', $this->domain),
+					__('Generated Sitemaps', $this->domain),
 					__('Sitemaps to generate', $this->domain),
 					__('<strong>Enable</strong> following sitemaps', $this->domain),
 					__('For post-based sitemaps, <strong>disable</strong> following post types:', $this->domain),
@@ -1061,10 +1082,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Sitemap modules', $this->domain),
 					__('Database query limit', $this->domain),
 					__('Custom module directory', $this->domain),
-					htmlspecialchars(__('Sitemap log & debug', $this->domain)),
-					__('Enable sitemap log', $this->domain),
-					__('Enable debug mode', $this->domain),
-					__('Enable debug extra mode', $this->domain)
+					__('Debugging', $this->domain),
+					__('Enable message log', $this->domain),
+					__('Enable debugging mode', $this->domain),
+					__('Enable extra debugging mode', $this->domain)
 				),
 				'item_names' => array(
 					'heading_submit',
@@ -1229,7 +1250,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'enable_ping'               => array(__('Ping search engines when you publish new posts. By default all public posts are considered, unless explicitly disabled below.', $this->domain) => ''),
 					'enable_ping_google'        => array(__('Google', $this->domain) => ''),
 					'enable_ping_bing'          => array(__('Bing', $this->domain) => ''),
-					'enable_log'                => array(sprintf(__('No additional load is needed so enabling this is highly recommended. You can check the log <a href="%s">here</a>.', $this->domain), $this->get_admin_page_url(BWP_GXS_STATS)) => ''),
+					'enable_log'                => array(sprintf(__('Log useful messages when sitemaps are generated. The log can be viewed <a href="%s">here</a>.', $this->domain), $this->get_admin_page_url(BWP_GXS_STATS)) => ''),
 					'enable_debug'              => array(__('When this is on, NO caching is used and <code>WP_DEBUG</code> is respected, useful when developing new modules.', $this->domain) => ''),
 					'enable_debug_extra'        => array(sprintf(__('When this is on, NO headers are sent and sitemaps are NOT compressed, useful when debugging <em>Content Encoding Error</em>. More info <a href="%s#sitemap_log_debug" target="_blank">here</a>.', $this->domain), $this->plugin_url) => ''),
 				),
@@ -1303,20 +1324,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				),
 				'container' => array(
 					'heading_submit' => array(
-						'<em>'
-						. sprintf(__('Submit your <a href="%s" target="_blank">sitemapindex</a> '
-							. 'to major search engines like <a href="%s" target="_blank">Google</a>, '
-							. '<a href="%s" target="_blank">Bing</a>.', $this->domain),
-							$this->sitemap_url,
-							'https://www.google.com/webmasters/tools/home?hl=en',
-							'http://www.bing.com/toolbox/webmasters/')
-						. ' '
-						. sprintf(__('Only the sitemapindex needs to be submitted '
-							. 'as search engines will automatically recognize other included sitemaps. '
-							. 'More info can be found <a href="%s">here</a>.', $this->domain),
-							'https://support.google.com/webmasters/answer/75712?hl=en&ref_topic=4581190')
-						. '</em>',
-						$this->_get_formatted_sitemap_logs()
+						$this->_get_formatted_sitemap_logs(),
 					)
 				),
 				'role' => array(
@@ -1387,11 +1395,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				add_action('bwp_option_page_custom_action_flush_cache', array($this, 'handle_flush_action'));
 				add_action('bwp_option_page_custom_action_save_flush_cache', array($this, 'handle_save_flush_action'));
 			}
-
-			// add a clear log button
-			$this->current_option_page->register_custom_submit_action('clear_log');
-			add_filter('bwp_option_submit_button', array($this, 'add_clear_log_button'));
-			add_action('bwp_option_page_custom_action_clear_log', array($this, 'handle_clear_log_action'));
 
 			$this->_add_checkboxes_to_form('sec_post', 'ept_', $form, $form_options);
 			$this->_add_checkboxes_to_form('sec_post_ping', 'eppt_', $form, $form_options);
@@ -1525,7 +1528,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				),
 				'item_labels' => array
 				(
-					__('Sitemap Generator\'s Log', $this->domain),
+					__('Message Log', $this->domain),
 				),
 				'item_names' => array(
 					'h3',
@@ -1533,7 +1536,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'heading' => array(
 					'h3' => 'yes' == $this->options['enable_log']
 						? '<em>'
-							. __('Below are details on how your sitemaps are generated '
+							. __('Below are messages logged when your sitemaps were generated, '
 							. 'including <span style="color: #999999;">notices</span>, '
 							. '<span style="color: #FF0000;">errors</span> and '
 							. '<span style="color: #009900;">success messages</span>.', $this->domain)
@@ -1541,7 +1544,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						: '<em>'
 							. __('Logging is not currently enabled. '
 							. 'You can enable this feature by checking '
-							. '"Enable sitemap log" in <strong>XML Sitemaps >> Sitemap log & debug</strong>.', $this->domain)
+							. '"Enable logging" in <strong>XML Sitemaps >> Sitemap log & debug</strong>.', $this->domain)
 							. '</em>',
 				),
 				'container' => array(
@@ -1549,13 +1552,19 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				)
 			);
 
-			// no save changes button
-			add_filter('bwp_option_submit_button', create_function('', 'return "";'));
-
 			if ('yes' != $this->options['enable_log'] || $this->message_logger->is_empty())
 			{
-				// no log is found, or logging is disabled, hide sidebar to save space
+				// no log is found, or logging is disabled, hide sidebar and
+				// save changes button to save space
 				add_filter('bwp_info_showable', create_function('', 'return "";'));
+				add_filter('bwp_option_submit_button', create_function('', 'return "";'));
+			}
+			else
+			{
+				// add a clear log button, also remove the save changes button
+				$this->current_option_page->register_custom_submit_action('clear_log');
+				add_filter('bwp_option_submit_button', array($this, 'add_clear_log_button'));
+				add_action('bwp_option_page_custom_action_clear_log', array($this, 'handle_clear_log_action'));
 			}
 		}
 
@@ -1667,12 +1676,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function add_clear_log_button($button)
 	{
-		$button = str_replace(
-			'</p>',
-			'&nbsp; <input type="submit" class="button-secondary action" name="clear_log" value="'
-			. __('Clear All Logs', $this->domain) . '" /></p>',
-			$button
-		);
+		$button = '<p>'
+			. '<input type="submit" class="button-primary action" name="clear_log" value="'
+			. __('Clear Message Log', $this->domain) . '" />'
+			. '</p>';
 
 		return $button;
 	}
