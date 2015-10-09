@@ -1422,7 +1422,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				),
 				'item_labels' => array
 				(
-					__('Add Google News Sitemap to your sitemapindex', $this->domain),
+					__('Add Google News Sitemap to your Sitemap Index', $this->domain),
 					__('Enable news sitemap', $this->domain),
 					__('News name', $this->domain),
 					__('News language', $this->domain),
@@ -2004,7 +2004,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'UserGenerated'
 		);
 
-		$return  = '<table class="bwp-table">' . "\n";
+		$return  = '<table class="wp-list-table widefat striped bwp-table bwp-table-wide bwp-table-inline">' . "\n";
 		$return .= '<thead>' . "\n"
 			. '<tr><th><span>#</span></th><th><span>'
 			. __('Category\'s name', $this->domain) . '</span></th><th>'
