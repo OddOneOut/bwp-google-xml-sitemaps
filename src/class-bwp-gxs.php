@@ -1517,6 +1517,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 			// build options dynamically
 			add_filter('bwp_option_page_submit_options', array($this, 'handle_dynamic_google_news_options'));
+
+			// handle option changes
+			add_filter('bwp_option_page_action_submitted', array($this, 'handle_google_news_option_changes'));
 		}
 		elseif ($page == BWP_GXS_STATS)
 		{
@@ -1658,6 +1661,39 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		$options['input_news_genres'] = $news_genres;
 
 		return $options;
+	}
+
+	public function handle_google_news_option_changes()
+	{
+		// google news sitemap has just been enabled, try generating for the
+		// first time to make sure it works
+		if ($this->current_options['enable_news_sitemap'] != $this->options['enable_news_sitemap']
+			&& $this->options['enable_news_sitemap'] == 'yes'
+		) {
+			// @todo 2.0.0 use a provider to fetch data here instead
+			$response = wp_remote_get($this->get_sitemap_url('post_google_news'));
+
+			$is_news_sitemap_ok = false;
+
+			if (!is_wp_error($response))
+			{
+				$response_status = wp_remote_retrieve_response_code($response);
+
+				// the news sitemap can be generated successfully
+				if ($response_status === 200)
+					$is_news_sitemap_ok = true;
+			}
+
+			if (!$is_news_sitemap_ok)
+			{
+				$this->add_error_flash(sprintf(
+					__('Google News sitemap could not be generated, '
+					. 'please check <a href="%s">Sitemap Log</a> '
+					. 'for possible errors.', $this->domain),
+					$this->get_admin_page_url(BWP_GXS_STATS)
+				));
+			}
+		}
 	}
 
 	public function add_flush_cache_buttons($button)
@@ -3061,7 +3097,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				? __('Enable/disable sitemaps via <em>BWP Sitemaps >> XML Sitemaps</em>.', $this->domain)
 				: '';
 
-			$error_message_admin_module = $module_label && current_user_can('manage_options')
+			$error_message_module = $module_label
 				? ' ' . sprintf(
 						__('There are no public <em>%s</em>.', $this->domain)
 						. " $module_guide",
@@ -3071,7 +3107,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			$error_message_admin = $this->module_data['sitemap_name'] == 'sitemapindex'
 				? ' ' . __('Please make sure that you have at least one sitemap enabled '
 					. 'in <em>BWP Sitemaps >> XML Sitemaps >> Sitemaps to generate</em>.', $this->domain)
-				: $error_message_admin_module;
+				: $error_message_module;
 
 			// issue a WP die with 404 not found response code
 			$this->log_error($error_message . $error_message_admin, true, 404);
