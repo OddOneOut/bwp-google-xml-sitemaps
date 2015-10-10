@@ -69,11 +69,6 @@ class BWP_GXS_MODULE
 	 */
 	public $sort_column = false;
 
-	public function __contruct()
-	{
-		/* Intetionally left blank */
-	}
-
 	protected function init_data($pre_data = array())
 	{
 		global $bwp_gxs;

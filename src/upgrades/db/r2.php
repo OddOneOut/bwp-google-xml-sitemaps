@@ -24,18 +24,18 @@ foreach ($old_logs as $key => $logs) {
 			$new_logs['messages'][] = array(
 				'message' => $log['log'],
 				'type'    => $log['error'] === true
-                    ? BWP_Sitemaps_Logger_Message_LogItem::TYPE_ERROR
-                    : ($log['error'] === 'notice'
-                        ? BWP_Sitemaps_Logger_Message_LogItem::TYPE_NOTICE
-                        : BWP_Sitemaps_Logger_Message_LogItem::TYPE_SUCCESS),
+					? BWP_Sitemaps_Logger_Message_LogItem::TYPE_ERROR
+					: ($log['error'] === 'notice'
+						? BWP_Sitemaps_Logger_Message_LogItem::TYPE_NOTICE
+						: BWP_Sitemaps_Logger_Message_LogItem::TYPE_SUCCESS),
 				'datetime' => $datetime_utc->format('Y-m-d H:i:s')
 			);
-        } elseif ($key == 'sitemap') {
-            $new_logs['sitemaps'][] = array(
-                'slug'     => $log['url'],
+		} elseif ($key == 'sitemap') {
+			$new_logs['sitemaps'][] = array(
+				'slug'     => $log['url'],
 				'datetime' => $datetime_utc->format('Y-m-d H:i:s')
-            );
-        }
+			);
+		}
 	}
 }
 

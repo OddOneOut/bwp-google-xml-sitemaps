@@ -50,7 +50,7 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE
 		// there is nothing to loop through anymore we return false so the
 		// cycling can stop.
 		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
- 			return false;
+			return false;
 
 		$using_permalinks = $this->using_permalinks();
 

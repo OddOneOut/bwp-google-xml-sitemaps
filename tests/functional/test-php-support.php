@@ -27,7 +27,7 @@ class BWP_Sitemaps_PHP_Support_Functional_Test extends BWP_Framework_PHPUnit_WP_
 		$root_dir = dirname(dirname(dirname(__FILE__)));
 
 		return array(
-            $root_dir . '/bwp-gxs.php' => 'bwp-google-xml-sitemaps/bwp-gxs.php'
+			$root_dir . '/bwp-gxs.php' => 'bwp-google-xml-sitemaps/bwp-gxs.php'
 		);
 	}
 
