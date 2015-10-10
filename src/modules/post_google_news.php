@@ -75,9 +75,17 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 		return $processed_posts;
 	}
 
+	/**
+	 * Google news articles should be published in the last two days
+	 *
+	 * @link http://www.google.com/support/news_pub/bin/answer.py?answer=74288
+	 */
 	private static function news_time()
 	{
-		return gmdate('Y-m-d H:i:s', time() + get_option('gmt_offset') * 3600 - 48 * 3600);
+		$news_post_date = new DateTime(null, new DateTimeZone('UTC'));
+		$news_post_date->modify('-2 days');
+
+		return $news_post_date->format('Y-m-d H:i:s');
 	}
 
 	protected function generate_data()
@@ -92,8 +100,6 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 			// '名人'=> 'celebrities'
 		));
 
-		// @see http://www.google.com/support/news_pub/bin/answer.py?answer=74288
-		$time = self::news_time();
 		$lang = $bwp_gxs->options['select_news_lang'];
 
 		$news_genres     = $bwp_gxs->options['input_news_genres'];
@@ -130,11 +136,11 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 				AND tt.taxonomy = 'category'" . '
 			, ' . $wpdb->terms . ' t
 			WHERE tt.term_id = t.term_id
-				AND p.post_date > %s' .
+				AND p.post_date_gmt > %s' .
 				$cat_query . $group_by . '
-			ORDER BY p.post_date DESC';
+			ORDER BY p.post_date_gmt DESC';
 
-		$latest_posts = $this->get_results($wpdb->prepare($latest_post_query, $time));
+		$latest_posts = $this->get_results($wpdb->prepare($latest_post_query, self::news_time()));
 
 		if ('yes' == $bwp_gxs->options['enable_news_multicat'])
 		{
