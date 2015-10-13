@@ -213,7 +213,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 *
 	 * @var BWP_GXS_CACHE
 	 */
-	public $cache = false;
+	public $sitemap_cache;
 
 	/**
 	 * Directory to store cached sitemap
@@ -258,12 +258,12 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 */
 	public $sitemap_url_struct;
 
-	/**
-	 * Constructor
-	 */
-	public function __construct(array $meta, BWP_WP_Bridge $bridge = null)
+	public function __construct(
+		array $meta,
+		BWP_WP_Bridge $bridge = null,
+		BWP_Cache $cache = null)
 	{
-		parent::__construct($meta, $bridge);
+		parent::__construct($meta, $bridge, $cache);
 
 		// basic version checking
 		if (!$this->check_required_versions())
@@ -398,7 +398,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	{
 		require_once dirname(__FILE__) . '/common-functions.php';
 
-		$this->cache = new BWP_GXS_CACHE($this);
+		$this->sitemap_cache = new BWP_GXS_CACHE($this);
 	}
 
 	protected function pre_init_hooks()
@@ -640,17 +640,11 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		$this->xslt_index = empty($this->xslt) ? '' : substr_replace($this->xslt, 'index', -4, 0);
 	}
 
-	/**
-	 * Inits debug and debug extra mode
-	 *
-	 * @return void
-	 * @since 1.3.0
-	 * @access private
-	 **/
 	private function _init_debug()
 	{
-		$this->_debug       = $this->options['enable_debug'] == 'yes'
+		$this->_debug = $this->options['enable_debug'] == 'yes'
 			|| $this->options['enable_debug_extra'] == 'yes' ? true : false;
+
 		$this->_debug_extra = $this->options['enable_debug_extra'] == 'yes' ? true : false;
 	}
 
@@ -2479,7 +2473,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			return false;
 		}
 
-		$cache_status = $this->cache->get_cache_status($module_name, $sitemap_name);
+		$cache_status = $this->sitemap_cache->get_cache_status($module_name, $sitemap_name);
 
 		if (!$cache_status)
 		{
@@ -2492,15 +2486,15 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			// for some headers
 			// @link http://edn.embarcadero.com/article/38123
 			$this->_send_headers(array_merge(
-				array('status' => 304), $this->cache->get_headers()
+				array('status' => 304), $this->sitemap_cache->get_headers()
 			));
 		}
 		else if ($cache_status == '200')
 		{
 			// file cache is ok, output the cached sitemap
-			$this->_send_headers($this->cache->get_headers());
+			$this->_send_headers($this->sitemap_cache->get_headers());
 
-			$cache_file = $this->cache->get_cache_file();
+			$cache_file = $this->sitemap_cache->get_cache_file();
 
 			if ($this->_is_gzip_ok() && !self::is_gzipped())
 			{
@@ -2556,7 +2550,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			return false;
 		}
 
-		$lastmod = $this->cache->write_cache($this->output);
+		$lastmod = $this->sitemap_cache->write_cache($this->output);
 
 		if (!$lastmod)
 		{
