@@ -16,6 +16,15 @@ class BWP_Sitemaps_PHP_Support_Functional_Test extends BWP_Framework_PHPUnit_WP_
 				continue;
 			}
 
+			$not_php_52 = array(
+				'BWP_Sitemaps_PHPUnit_Provider_Unit_TestCase',
+			);
+
+			// do not load certain testcase classes if PHP version is less than 5.3
+			if (in_array($class_name, $not_php_52) && version_compare(PHP_VERSION, '5.3', '<')) {
+				continue;
+			}
+
 			require_once $class_file;
 		}
 
