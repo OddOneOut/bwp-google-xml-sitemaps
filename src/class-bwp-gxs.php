@@ -1012,7 +1012,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'items' => array_reverse($this->message_logger->get_log_items())
 		);
 
-		return $this->_get_formatted_logs(dirname(__FILE__) . '/templates/logger/admin/message-log-item.php', $data);
+		return $this->_get_formatted_logs(dirname(__FILE__) . '/templates/logger/admin/message-log.html.php', $data);
 	}
 
 	private function _get_formatted_sitemap_logs()
@@ -1052,7 +1052,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'items'              => $items
 		);
 
-		$logs = $this->_get_formatted_logs(dirname(__FILE__) . '/templates/logger/admin/sitemap-log-item.php', $data);
+		$logs = $this->_get_formatted_logs(dirname(__FILE__) . '/templates/logger/admin/sitemap-log.html.php', $data);
 
 		$logs .= '<p class="bwp-paragraph">'
 			. sprintf(__('To proceed, submit your <a href="%s" target="_blank">sitemapindex</a> '

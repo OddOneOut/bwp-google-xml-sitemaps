@@ -1,3 +1,5 @@
+<?php if (!defined('ABSPATH')) { exit; } ?>
+
 <ul class="bwp-gxs-log bwp-gxs-log-big">
 <?php
 	/* @var $item BWP_Sitemaps_Logger_Message_LogItem */

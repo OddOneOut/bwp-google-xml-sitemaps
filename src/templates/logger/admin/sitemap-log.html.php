@@ -1,3 +1,5 @@
+<?php if (!defined('ABSPATH')) { exit; } ?>
+
 <!--[if lte IE 9]>
 <div class="bwp-table-fixed-headers-old-id-wrapper" style="width: 700px>
 <!--<![endif]-->

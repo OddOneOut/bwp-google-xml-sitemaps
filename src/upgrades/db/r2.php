@@ -1,5 +1,7 @@
 <?php
 
+if (!defined('ABSPATH')) { exit; }
+
 // r2 2015-10-08
 
 $old_logs = $this->bridge->get_option(BWP_GXS_LOG);
