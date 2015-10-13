@@ -9,9 +9,13 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 {
 	protected $plugin_slug = 'bwp-google-xml-sitemaps';
 
+	protected $excluder;
+
 	protected function setUp()
 	{
 		parent::setUp();
+
+		$this->excluder = Mockery::mock('BWP_Sitemaps_Excluder');
 
 		$this->plugin = Mockery::mock('BWP_Sitemaps')
 			->makePartial()
@@ -25,7 +29,10 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 			'php_version' => '5.1.2',
 			'wp_version'  => '3.0',
 			'domain'      => 'bwp-google-xml-sitemaps'
-		), $this->bridge);
+		), $this->bridge, $this->cache);
+
+		$this->plugin->set_post_excluder($this->excluder);
+		$this->plugin->set_term_excluder($this->excluder);
 
 		$_SERVER['HTTP_HOST'] = 'example.com';
 	}
@@ -57,5 +64,98 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 
 		$this->assertEquals('http://example.com/wp-content/plugins/bwp-google-xml-sitemaps/assets/xsl/bwp-sitemap.xsl', $this->plugin->xslt);
 		$this->assertEquals('http://example.com/wp-content/plugins/bwp-google-xml-sitemaps/assets/xsl/bwp-sitemapindex.xsl', $this->plugin->xslt_index);
+	}
+
+	/**
+	 * @covers BWP_Sitemaps::add_excluded_posts
+	 */
+	public function test_add_excluded_posts()
+	{
+		$group = 'post';
+
+		$user_filtered_excluded_items = array(1,2,3,4);
+
+		$this->excluder
+			->shouldReceive('get_excluded_items')
+			->with($group)
+			->andReturn(array(2,3,4,5,6))
+			->byDefault();
+
+		$this->assertEquals(
+			array(1,2,3,4,5,6), $this->plugin->add_excluded_posts($user_filtered_excluded_items, $group)
+		);
+	}
+
+	/**
+	 * @covers BWP_Sitemaps::add_excluded_terms
+	 */
+	public function test_add_excluded_terms()
+	{
+		$group = 'category';
+
+		$user_filtered_excluded_items = array(1,2,3,4);
+
+		$this->excluder
+			->shouldReceive('get_excluded_items')
+			->with($group)
+			->andReturn(array(2,3,4,5,6))
+			->byDefault();
+
+		$this->assertEquals(
+			array(1,2,3,4,5,6), $this->plugin->add_excluded_terms($user_filtered_excluded_items, $group)
+		);
+	}
+
+	/**
+	 * @covers BWP_Sitemaps::add_post_title_like_query_variable
+	 * @dataProvider get_bwp_post_title_like
+	 */
+	public function test_add_post_title_like_query_variable($post_title_like)
+	{
+		$wp_query = Mockery::mock('WP_Query');
+
+		$wp_query
+			->shouldReceive('get')
+			->with('bwp_post_title_like')
+			->andReturn($post_title_like)
+			->byDefault();
+
+		global $wpdb;
+
+		$wpdb = Mockery::mock('wpdb');
+
+		$wpdb->posts = 'posts';
+
+		$wpdb
+			->shouldReceive('esc_like')
+			->andReturnUsing(function($like) {
+				return $like . '_esc_like';
+			})
+			->byDefault();
+
+		$this->bridge
+			->shouldReceive('esc_sql')
+			->andReturnUsing(function($like) {
+				return $like . '_esc_sql';
+			})
+			->byDefault();
+
+		$where = $this->plugin->add_post_title_like_query_variable('SQL', $wp_query);
+
+		if ($post_title_like) {
+			$this->assertEquals("SQL AND LOWER(posts.post_title) LIKE '%title_esc_like_esc_sql%'", $where);
+		} else {
+			$this->assertEquals('SQL', $where);
+		}
+	}
+
+	public function get_bwp_post_title_like()
+	{
+		return array(
+			array(false),
+			array(null),
+			array(''),
+			array('title')
+		);
 	}
 }

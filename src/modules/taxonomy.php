@@ -86,6 +86,10 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE
 			if (in_array($term->slug, $exclude_terms))
 				continue;
 
+			// @since 1.4.0 exclude by ids as well
+			if (in_array($term->term_id, $exclude_terms))
+				continue;
+
 			$data = $this->init_data($data);
 
 			$data['location'] = $this->get_term_link($term, $requested);

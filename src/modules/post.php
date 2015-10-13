@@ -67,7 +67,7 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 
 		// @since 1.3.0 use a different filter hook that expects an array instead
 		$excluded_posts   = apply_filters('bwp_gxs_excluded_posts', array(), $requested);
-		$exclude_post_sql = sizeof($excluded_posts) > 0
+		$excluded_posts_sql = sizeof($excluded_posts) > 0
 			? ' AND p.ID NOT IN (' . implode(',', $excluded_posts) . ') '
 			: '';
 
@@ -94,7 +94,7 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 					AND tt.taxonomy = 'category'" . '
 				, ' . $wpdb->terms . ' t
 				WHERE tt.term_id = t.term_id '
-					. "$exclude_post_sql"
+					. "$excluded_posts_sql"
 					. "$sql_where" . '
 				GROUP BY p.ID
 				ORDER BY p.post_modified DESC';
@@ -108,7 +108,7 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 				WHERE p.post_status = 'publish'
 					AND p.post_password = ''
 					AND p.post_type = %s
-					$exclude_post_sql
+					$excluded_posts_sql
 					$sql_where" . '
 				ORDER BY p.post_modified DESC';
 		}

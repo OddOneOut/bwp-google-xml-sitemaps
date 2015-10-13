@@ -40,6 +40,34 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	protected $sitemap_logger;
 
 	/**
+	 * Post excluder
+	 *
+	 * @var BWP_Sitemaps_Excluder
+	 */
+	protected $post_excluder;
+
+	/**
+	 * Term excluder
+	 *
+	 * @var BWP_Sitemaps_Excluder
+	 */
+	protected $term_excluder;
+
+	/**
+	 * Content providers
+	 *
+	 * @var BWP_Sitemaps_Provider[]
+	 */
+	protected $providers;
+
+	/**
+	 * Ajax action handlers
+	 *
+	 * @var BWP_Sitemaps_Handler_AjaxHandler[]
+	 */
+	protected $ajax_handlers;
+
+	/**
 	 * Modules to load when generating sitemapindex
 	 *
 	 * @var array
@@ -352,6 +380,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		{
 			define('BWP_GXS_LOG', 'bwp_gxs_log');
 			define('BWP_GXS_PING', 'bwp_gxs_ping_data');
+			define('BWP_GXS_EXCLUDED_POSTS', 'bwp_gxs_excluded_posts');
+			define('BWP_GXS_EXCLUDED_TERMS', 'bwp_gxs_excluded_terms');
 		}
 
 		$this->build_properties('BWP_GXS', $options,
@@ -385,6 +415,24 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			/*'stats_cached'	=> "\n" . '<!-- ' . __('Served from cache in %s second(s) (Memory usage: %s) - %s queries - %s URL(s) listed', $this->domain) . ' -->'*/
 		);
 
+		$this->post_excluder = new BWP_Sitemaps_Excluder(
+			$this->bridge, $this->cache, 'excluded_posts', BWP_GXS_EXCLUDED_POSTS
+		);
+
+		$this->term_excluder = new BWP_Sitemaps_Excluder(
+			$this->bridge, $this->cache, 'excluded_terms', BWP_GXS_EXCLUDED_TERMS
+		);
+
+		$this->providers = array(
+			'post'     => new BWP_Sitemaps_Provider_Post($this, $this->post_excluder),
+			'taxonomy' => new BWP_Sitemaps_Provider_Taxonomy($this, $this->term_excluder)
+		);
+
+		$this->ajax_handlers = array(
+			'post'     => new BWP_Sitemaps_Handler_Ajax_PostHandler($this->get_provider('post')),
+			'taxonomy' => new BWP_Sitemaps_Handler_Ajax_TaxonomyHandler($this->get_provider('taxonomy'))
+		);
+
 		$this->pings_per_day = (int) $this->options['input_ping_limit'];
 
 		// init debug and debug extra mode
@@ -406,6 +454,11 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		add_filter('rewrite_rules_array', array($this, 'insert_rewrite_rules'), 9);
 		add_filter('query_vars', array($this, 'insert_query_vars'));
 		add_action('parse_request', array($this, 'request_sitemap'));
+
+		// @since 1.4.0 add excluded items from admin, use a relatively low
+		// priority so they can be merged with excluded items from user's filters
+		add_filter('bwp_gxs_excluded_posts', array($this, 'add_excluded_posts'), 999, 2);
+		add_filter('bwp_gxs_excluded_terms', array($this, 'add_excluded_terms'), 999, 2);
 
 		if ('yes' == $this->options['enable_ping'])
 		{
@@ -430,6 +483,21 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 		if ('yes' == $this->options['enable_robots'])
 			add_filter('robots_txt', array($this, 'do_robots'), 1000, 2);
+
+		if (is_admin())
+		{
+			// handle ajax in admin area
+			add_action('wp_ajax_bwp-gxs-get-posts', array($this->get_ajax_handler('post'), 'get_posts_action'));
+			add_action('wp_ajax_bwp-gxs-get-excluded-posts', array($this->get_ajax_handler('post'), 'get_excluded_posts_action'));
+			add_action('wp_ajax_bwp-gxs-remove-excluded-post', array($this->get_ajax_handler('post'), 'remove_excluded_item_action'));
+
+			add_action('wp_ajax_bwp-gxs-get-terms', array($this->get_ajax_handler('taxonomy'), 'get_terms_action'));
+			add_action('wp_ajax_bwp-gxs-get-excluded-terms', array($this->get_ajax_handler('taxonomy'), 'get_excluded_terms_action'));
+			add_action('wp_ajax_bwp-gxs-remove-excluded-term', array($this->get_ajax_handler('taxonomy'), 'remove_excluded_item_action'));
+
+			// filter post queries in admin
+			add_filter('posts_where', array($this, 'add_post_title_like_query_variable'), 10, 2);
+		}
 	}
 
 	protected function init_properties()
@@ -458,13 +526,38 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	protected function enqueue_media()
 	{
-		if ($this->is_admin_page())
-			wp_enqueue_style('bwp-gxs-admin', BWP_GXS_CSS . '/bwp-gxs.css');
+		$style_deps = array('bwp-option-page');
 
 		if ($this->is_admin_page(BWP_GXS_OPTION_GENERATOR)
 			|| $this->is_admin_page(BWP_GXS_GOOGLE_NEWS)
 		) {
-			wp_enqueue_script('bwp-gxs-setting', BWP_GXS_JS . '/bwp-gxs.js', array(), $this->plugin_ver);
+			$style_deps = array('bwp-select2', 'bwp-datatables', 'bwp-option-page');
+
+			$this->enqueue_media_file('bwp-gxs-admin',
+				BWP_GXS_JS . '/bwp-gxs-admin.js',
+				array('bwp-select2', 'bwp-datatables', 'bwp-op-toggle'), false,
+				BWP_GXS_DIST . '/js/script.min.js'
+			);
+
+			wp_localize_script('bwp-gxs-admin', 'bwp_gxs', array(
+				'nonce' => array(
+					'remove_excluded_item' => wp_create_nonce('bwp_gxs_remove_excluded_item')
+				),
+				'text'  => array(
+					'exclude_items' => array(
+						'remove_title'   => __('Remove from exclusion', $this->domain),
+						'remove_warning' => __('This action can not be undone, are you sure?', $this->domain)
+					)
+				)
+			));
+		}
+
+		if ($this->is_admin_page())
+		{
+			$this->enqueue_media_file('bwp-gxs-admin',
+				BWP_GXS_CSS . '/style.css', $style_deps, false,
+				BWP_GXS_DIST . '/css/style.min.css'
+			);
 		}
 	}
 
@@ -840,13 +933,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		{
 			case 'sec_post':
 			case 'sec_post_ping':
-				$post_types = get_post_types(array('public' => true), 'objects');
+				$post_types = $this->get_provider('post')->get_post_types();
 
 				foreach ($post_types as $post_type)
 				{
-					if ('attachment' == $post_type->name)
-						continue;
-
 					$key = $key_prefix . $post_type->name;
 
 					$form[$for][] = array('checkbox', 'name' => $key);
@@ -863,13 +953,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				break;
 
 			case 'sec_tax':
-				$taxonomies = get_taxonomies(array('public' => true), '');
+				$taxonomies = $this->get_provider('taxonomy')->get_taxonomies();
 
 				foreach ($taxonomies as $taxonomy)
 				{
-					if ('post_format' == $taxonomy->name)
-						continue;
-
 					$key = $key_prefix . $taxonomy->name;
 
 					$form[$for][] = array('checkbox', 'name' => $key);
@@ -982,6 +1069,56 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		return $logs;
 	}
 
+	private function _get_post_types_as_choices($placeholder = true)
+	{
+		$choices = $placeholder
+			? array(__('Select a post type', $this->domain) => '')
+			: array();
+
+		$post_types = $this->get_provider('post')->get_post_types();
+
+		foreach ($post_types as $post_type)
+			$choices[$post_type->labels->singular_name] = $post_type->name;
+
+		return $choices;
+	}
+
+	private function _get_taxonomies_as_choices($placeholder = true)
+	{
+		$choices = $placeholder
+			? array(__('Select a taxonomy', $this->domain) => '')
+			: array();
+
+		$taxonomies = $this->get_provider('taxonomy')->get_taxonomies();
+
+		foreach ($taxonomies as $taxonomy)
+			$choices[$taxonomy->labels->singular_name] = $taxonomy->name;
+
+		return $choices;
+	}
+
+	private function _get_exclude_posts_html()
+	{
+		ob_start();
+
+		include_once BWP_GXS_PLUGIN_SRC . '/templates/provider/admin/exclude-posts.html.php';
+
+		$output = ob_get_clean();
+
+		return $output;
+	}
+
+	private function _get_exclude_terms_html()
+	{
+		ob_start();
+
+		include_once BWP_GXS_PLUGIN_SRC . '/templates/provider/admin/exclude-terms.html.php';
+
+		$output = ob_get_clean();
+
+		return $output;
+	}
+
 	protected function build_option_page()
 	{
 		$page        = $this->get_current_admin_page();
@@ -999,15 +1136,19 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			$form = array(
 				'items' => array(
 					'heading',
-					'heading',
+					'heading', // sitemaps to generate
 					'section',
 					'section',
 					'section',
-					'heading',
+					'heading', // exclude items
+					'select',
+					'select',
+					'checkbox',
+					'heading', // item limits
 					'input',
 					'checkbox',
 					'input',
-					'heading',
+					'heading', // formatting
 					'select',
 					'select',
 					'select',
@@ -1045,6 +1186,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('<strong>Enable</strong> following sitemaps', $this->domain),
 					__('For post-based sitemaps, <strong>disable</strong> following post types:', $this->domain),
 					__('For taxonomy-based sitemaps, <strong>disable</strong> following taxonomies:', $this->domain),
+					__('Exclude items', $this->domain),
+					__('Exclude posts', $this->domain),
+					__('Exclude terms', $this->domain),
+					__('Also exclude posts whose terms are excluded', $this->domain),
 					__('Item limits', $this->domain),
 					__('Global limit', $this->domain),
 					__('Split <strong>post-based</strong> sitemaps', $this->domain),
@@ -1087,6 +1232,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'sec_index',
 					'sec_post',
 					'sec_tax',
+					'heading_exclude',
+					'select_exclude_post_type',
+					'select_exclude_taxonomy',
+					'heading_external_pages',
 					'heading_limit',
 					'input_item_limit',
 					'enable_sitemap_split_post',
@@ -1126,13 +1275,17 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'heading' => array(
 					'heading_submit' => '',
 					'heading_contents' => '<em>'
+						. __('Choose appropriate sitemaps to generate.', $this->domain)
+						. '</em>',
+					'heading_exclude' => '<em>'
 						. sprintf(
-							__('Choose appropriate sitemaps to generate. '
-							. 'For each sitemap, you can use filters to further '
-							. '<a href="%s#exclude_items" target="_blank">exclude items</a> '
-							. 'you do not need.', $this->domain),
+							__('Exclude individual items for each sitemap.'
+							. ' You can also use '
+							. '<a href="%s#exclude-items" target="_blank">filters</a> '
+							. 'to exclude items programmatically.', $this->domain),
 							$this->plugin_url
-						) . '</em>',
+						)
+						. '</em>',
 					'heading_limit' => '<em>'
 						. __('Limit the number of items to output in one sitemap. ', $this->domain)
 						. sprintf(__('Avoid setting too high limits, i.e. ones that your server '
@@ -1212,7 +1365,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					),
 					'select_default_freq' => $this->_get_frequencies_as_choices(),
 					'select_default_pri' => $this->priorities,
-					'select_min_pri' => $this->priorities
+					'select_min_pri' => $this->priorities,
+					'select_exclude_post_type' => $this->_get_post_types_as_choices(),
+					'select_exclude_taxonomy' => $this->_get_taxonomies_as_choices()
 				),
 				'post' => array(
 					'select_default_freq' => sprintf('<a href="%s" target="_blank">'
@@ -1319,6 +1474,12 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'container' => array(
 					'heading_submit' => array(
 						$this->_get_formatted_sitemap_logs(),
+					),
+					'select_exclude_post_type' => array(
+						$this->_get_exclude_posts_html()
+					),
+					'select_exclude_taxonomy' => array(
+						$this->_get_exclude_terms_html()
 					)
 				),
 				'role' => array(
@@ -1336,6 +1497,22 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'input_cache_age'        => 'int',
 					'input_ping_limit'       => 'int',
 					'select_time_type'       => 'int'
+				),
+				'attributes' => array(
+					'select_exclude_post_type' => array(
+						'class'               => 'bwp-switch-select',
+						'data-target'         => 'wrapper-exclude-posts',
+						'data-callback-after' => 'bwp_select_exclude_post_cb'
+					),
+					'select_exclude_taxonomy' => array(
+						'class'               => 'bwp-switch-select',
+						'data-target'         => 'wrapper-exclude-terms',
+						'data-callback-after' => 'bwp_select_exclude_term_cb'
+					),
+					'enable_sitemap_split_post' => array(
+						'class'       => 'bwp-switch-on-load bwp-switch-select',
+						'data-target' => 'input_split_limit_post'
+					)
 				)
 			);
 
@@ -1389,6 +1566,11 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				add_action('bwp_option_page_custom_action_flush_cache', array($this, 'handle_flush_action'));
 				add_action('bwp_option_page_custom_action_save_flush_cache', array($this, 'handle_save_flush_action'));
 			}
+
+			$this->current_option_page->register_custom_submit_action('exclude_posts');
+			$this->current_option_page->register_custom_submit_action('exclude_terms');
+			add_action('bwp_option_page_custom_action_exclude_posts', array($this, 'handle_exclude_posts'));
+			add_action('bwp_option_page_custom_action_exclude_terms', array($this, 'handle_exclude_terms'));
 
 			$this->_add_checkboxes_to_form('sec_post', 'ept_', $form, $form_options);
 			$this->_add_checkboxes_to_form('sec_post_ping', 'eppt_', $form, $form_options);
@@ -1492,6 +1674,12 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						. 'the <code>post.xml</code> sitemap, which means it also uses posts from '
 						. 'the <strong>Post</strong> post type, but only from categories that are selected.', $this->domain)
 						. '</em>'
+				),
+				'attributes' => array(
+					'enable_news_keywords' => array(
+						'class'       => 'bwp-switch-on-load bwp-switch-select',
+						'data-target' => 'select_news_keyword_type'
+					)
 				)
 			);
 
@@ -1795,9 +1983,43 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		);
 	}
 
-	public function get_options()
+	private function _handle_exclude_items($group, array $items_to_exclude, BWP_Sitemaps_Excluder $excluder)
 	{
-		return $this->options;
+		// merge currently excluded items with new items to exclude
+		$excluded_items = $excluder->get_excluded_items($group);
+		$excluded_items = array_unique(array_merge($excluded_items, $items_to_exclude));
+
+		$excluder->update_excluded_items($group, $excluded_items);
+
+		$this->add_notice_flash(sprintf(__('Successfully excluded <strong>%d</strong> items.', $this->domain), count($items_to_exclude)));
+	}
+
+	public function handle_exclude_posts()
+	{
+		if (! ($post_type = BWP_Framework_Util::get_request_var('select_exclude_post_type')))
+			return;
+
+		if (! ($posts_to_exclude = BWP_Framework_Util::get_request_var('select-exclude-posts')))
+		{
+			$this->add_error_flash(__('Please select at least one item to exclude.', $this->domain));
+			return;
+		}
+
+		$this->_handle_exclude_items($post_type, (array) $posts_to_exclude, $this->post_excluder);
+	}
+
+	public function handle_exclude_terms()
+	{
+		if (! ($taxonomy = BWP_Framework_Util::get_request_var('select_exclude_taxonomy')))
+			return;
+
+		if (! ($terms_to_exclude = BWP_Framework_Util::get_request_var('select-exclude-terms')))
+		{
+			$this->add_error_flash(__('Please select at least one item to exclude.', $this->domain));
+			return;
+		}
+
+		$this->_handle_exclude_items($taxonomy, (array) $terms_to_exclude, $this->term_excluder);
 	}
 
 	private static function _format_header_time($time)
@@ -2013,6 +2235,37 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		}
 
 		return $output;
+	}
+
+	public function add_excluded_posts($excluded_items, $post_type)
+	{
+		$excluded_items = array_merge(
+			$excluded_items, $this->post_excluder->get_excluded_items($post_type)
+		);
+
+		return array_values(array_unique($excluded_items));
+	}
+
+	public function add_excluded_terms($excluded_items, $taxonomy)
+	{
+		$excluded_items = array_merge(
+			$excluded_items, $this->term_excluder->get_excluded_items($taxonomy)
+		);
+
+		return array_values(array_unique($excluded_items));
+	}
+
+	public function add_post_title_like_query_variable($where, WP_Query $wp_query)
+	{
+		global $wpdb;
+
+		if ($post_title_like = $wp_query->get('bwp_post_title_like'))
+		{
+			$post_title_like = $wpdb->esc_like($post_title_like);
+			$where .= " AND LOWER($wpdb->posts.post_title) LIKE '%" . $this->bridge->esc_sql($post_title_like) . "%'";
+		}
+
+		return $where;
 	}
 
 	private function get_news_cats()
@@ -3476,5 +3729,49 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		update_option(BWP_GXS_PING, $ping_data);
 
 		$this->commit_logs();
+	}
+
+	/**
+	 * @param BWP_Sitemaps_Excluder $excluder
+	 */
+	public function set_post_excluder(BWP_Sitemaps_Excluder $excluder)
+	{
+		$this->post_excluder = $excluder;
+	}
+
+	/**
+	 * @param BWP_Sitemaps_Excluder $excluder
+	 */
+	public function set_term_excluder(BWP_Sitemaps_Excluder $excluder)
+	{
+		$this->term_excluder = $excluder;
+	}
+
+	/**
+	 * Get a content provider
+	 *
+	 * @param string $name
+	 * @return BWP_Sitemaps_Provider
+	 */
+	public function get_provider($name)
+	{
+		if (!isset($this->providers[$name]))
+			throw new DomainException(sprintf('invalid provider name "%s"', $name));
+
+		return $this->providers[$name];
+	}
+
+	/**
+	 * Get an ajax action handler
+	 *
+	 * @param string $name
+	 * @return BWP_Sitemaps_Handler_AjaxHandler
+	 */
+	public function get_ajax_handler($name)
+	{
+		if (!isset($this->ajax_handlers[$name]))
+			throw new DomainException(sprintf('invalid ajax handler name "%s"', $name));
+
+		return $this->ajax_handlers[$name];
 	}
 }
