@@ -17,9 +17,14 @@
         "test:php:stable": "npm run test:php:unit && npm run test:php:functional:stable",
         "test:php:all": "npm run test:php:unit && npm run test:php:functional:all",
         "test": "npm run test:php:stable",
-        "build": "export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:all",
+        "build:assets:js": "uglifyjs assets/js/*.js -m -o assets/dist/js/script.min.js",
+        "build:assets:css": "cleancss assets/css/style.css -o assets/dist/css/style.min.css",
+        "build:assets": "npm run build:assets:js && npm run build:assets:css",
+        "prebuild": "npm run build:assets",
+        "build": "npm run test:php:all",
+        "build:ci": "export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:all",
         "build:legacy": "export PHPUNIT_CMD='test:php:legacy' && export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:functional:all",
-        "build:php55": "npm run build",
+        "build:php55": "npm run build:ci",
         "install": "composer install && cd vendor/kminh/bwp-framework && composer install",
         "update": "composer update"
     }
