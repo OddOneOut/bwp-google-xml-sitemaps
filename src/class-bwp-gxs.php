@@ -1027,7 +1027,16 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			;
 		}
 
-		$items = array_reverse($this->sitemap_logger->get_log_items());
+		$items = $this->sitemap_logger->get_log_items();
+		$sitemap_log_times = array();
+
+		/* @var $item BWP_Sitemaps_Logger_Sitemap_LogItem */
+		foreach ($items as $item) {
+			$sitemap_log_times[] = $item->get_timestamp();
+		}
+
+		// sort the log DESC by timestamp
+		array_multisort($sitemap_log_times, SORT_DESC, SORT_NUMERIC, $items);
 
 		/* @var $item BWP_Sitemaps_Logger_Sitemap_LogItem */
 		foreach ($items as $key => $item)
@@ -1046,8 +1055,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			array_unshift($items, $sitemapindex);
 
 		$data = array(
-			'sitemap_url_struct' => $this->_get_sitemap_url_struct(),
-			'items'              => $items
+			'items' => $items
 		);
 
 		$logs = $this->_get_formatted_logs(dirname(__FILE__) . '/templates/logger/admin/sitemap-log.html.php', $data);
