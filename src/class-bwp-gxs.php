@@ -258,34 +258,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 */
 	public $cache_time;
 
-	/**
-	 * Whether to use friendly url for sitemap links
-	 *
-	 * @var bool
-	 */
-	public $use_permalink = true;
-
-	/**
-	 * Query variable to use when not using friendly urls
-	 *
-	 * @var string
-	 */
-	public $query_var_non_perma = '';
-
-	/**
-	 * Url to the sitemapindex file
-	 *
-	 * @var string
-	 */
-	public $sitemap_url;
-
-	/**
-	 * Sitemap url structure used to construct other sitemap files
-	 *
-	 * @var string
-	 */
-	public $sitemap_url_struct;
-
 	public function __construct(
 		array $meta,
 		BWP_WP_Bridge $bridge = null,
@@ -314,7 +286,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'enable_ping'                  => 'yes',
 			'enable_ping_google'           => 'yes',
 			'enable_ping_bing'             => 'yes',
-			//'enable_ping_ask' => '',
 			'enable_log'                   => 'yes',
 			'enable_debug'                 => '',
 			'enable_debug_extra'           => '', // @since 1.3.0
@@ -517,9 +488,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		// init sitemap log
 		$this->_init_logs();
 
-		// init urls structure used for xml sitemap files
-		$this->_init_sitemap_urls();
-
 		// init xslt stylesheet
 		$this->_init_xslt_stylesheet();
 	}
@@ -563,9 +531,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function insert_query_vars($vars)
 	{
-		if (!$this->use_permalink)
+		if (!$this->_should_use_permalink())
 		{
-			array_push($vars, $this->query_var_non_perma);
+			array_push($vars, $this->_get_non_permalink_query_var());
 		}
 		else
 		{
@@ -651,51 +619,58 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 * Constructs a sitemap url (friendly or normal) based on provided slug
 	 *
 	 * @since 1.3.0
-	 * @access public
 	 * @return string
 	 */
 	public function get_sitemap_url($slug)
 	{
-		if ($slug == 'sitemapindex')
-		{
-			return $this->sitemap_url;
-		}
-		else
-		{
-			return sprintf($this->sitemap_url_struct, $slug);
-		}
+		return sprintf($this->_get_sitemap_url_struct(), $slug);
 	}
 
 	/**
-	 * Inits sitemapindex url and sitemap structure
+	 * Construct the url to the sitemap index
 	 *
-	 * @return void
-	 * @since 1.3.0
-	 * @access private
-	 **/
-	private function _init_sitemap_urls()
+	 * @since 1.4.0
+	 * @return string
+	 */
+	public function get_sitemap_index_url()
 	{
-		$permalink = $this->bridge->get_option('permalink_structure');
+		return $this->get_sitemap_url('sitemapindex');
+	}
 
-		if (!$permalink)
-		{
-			// do not use friendly sitemap urls
-			$this->use_permalink = false;
+	/**
+	 * @since 1.4.0
+	 * @return mixed bool|string false if should not use permalink
+	 *                           the permalink structure itself if used
+	 */
+	private function _should_use_permalink()
+	{
+		if ($permalink = $this->bridge->get_option('permalink_structure'))
+			return $permalink;
 
-			$this->query_var_non_perma = $this->bridge->apply_filters('bwp_gxs_query_var_non_perma', 'bwpsitemap');
+		return false;
+	}
 
-			$this->sitemap_url        = $this->bridge->home_url() . '/?' . $this->query_var_non_perma . '=sitemapindex';
-			$this->sitemap_url_struct = $this->bridge->home_url() . '/?' . $this->query_var_non_perma . '=%s';
-		}
-		else
+	private function _get_non_permalink_query_var()
+	{
+		return $this->bridge->apply_filters('bwp_gxs_query_var_non_perma', 'bwpsitemap');
+	}
+
+	/**
+	 * @since 1.4.0
+	 */
+	private function _get_sitemap_url_struct()
+	{
+		if ($permalink = $this->_should_use_permalink())
 		{
 			// use friendly sitemap urls such as http://example.com/sitemapindex.xml
 			// If user is using index.php in their permalink structure, we will
 			// have to include it also
 			$indexphp = strpos($permalink, 'index.php') === false ? '' : '/index.php';
-
-			$this->sitemap_url        = $this->bridge->home_url() . $indexphp . '/sitemapindex.xml';
-			$this->sitemap_url_struct = $this->bridge->home_url() . $indexphp . '/%s.xml';
+			return $this->bridge->home_url() . $indexphp . '/%s.xml';
+		}
+		else
+		{
+			return $this->bridge->home_url() . '/?' . $this->_get_non_permalink_query_var() . '=%s';
 		}
 	}
 
@@ -1048,7 +1023,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			array_unshift($items, $sitemapindex);
 
 		$data = array(
-			'sitemap_url_struct' => $this->sitemap_url_struct,
+			'sitemap_url_struct' => $this->_get_sitemap_url_struct(),
 			'items'              => $items
 		);
 
@@ -1058,7 +1033,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			. sprintf(__('To proceed, submit your <a href="%s" target="_blank">sitemapindex</a> '
 				. 'to major search engines like <a href="%s" target="_blank">Google</a> or '
 				. '<a href="%s" target="_blank">Bing</a>.', $this->domain),
-				$this->sitemap_url,
+				$this->get_sitemap_index_url(),
 				'https://www.google.com/webmasters/tools/home?hl=en',
 				'http://www.bing.com/toolbox/webmasters/')
 			. ' '
@@ -1658,7 +1633,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					),
 				),
 				'checkbox' => array(
-					'enable_news_sitemap'  => array(sprintf(__('A <code>post_google_news.xml</code> sitemap will be added to the main <a href="%s" target="_blank">sitemapindex.xml</a>. It is strongly recommended that you take a look at <a href="%s" target="_blank">Google\'s guidelines</a> before enabling this feature.', $this->domain), $this->sitemap_url, 'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines') => ''),
+					'enable_news_sitemap'  => array(sprintf(__('A <code>post_google_news.xml</code> sitemap will be added to the main <a href="%s" target="_blank">sitemapindex.xml</a>. It is strongly recommended that you take a look at <a href="%s" target="_blank">Google\'s guidelines</a> before enabling this feature.', $this->domain), $this->get_sitemap_index_url(), 'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines') => ''),
 					'enable_news_keywords' => array(sprintf(__('More info <a href="%s" target="_blank">here</a>.', $this->domain), 'https://support.google.com/news/publisher/answer/116037?hl=en&ref_topic=4359874') => ''),
 					'enable_news_ping'     => array(__('This ping works separately from the sitemapindex ping, and only occurs when you publish an article in one of the news categories set below.', $this->domain) => ''),
 					'enable_news_multicat' => array(__('Enable this if you have posts assigned to more than one categories.', $this->domain) => '')
@@ -2053,7 +2028,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function commit_logs()
 	{
-		update_option(BWP_GXS_LOG, array(
+		$this->bridge->update_option(BWP_GXS_LOG, array(
 			'messages' => $this->message_logger->get_log_item_data(),
 			'sitemaps' => $this->sitemap_logger->get_log_item_data()
 		));
@@ -2176,7 +2151,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		if (self::is_subdomain_install() || (isset($blog_id) && 1 == $blog_id))
 		{
 			$output .= "\n";
-			$output .= 'Sitemap: ' . $this->sitemap_url;
+			$output .= 'Sitemap: ' . $this->get_sitemap_index_url();
 			$output .= "\n";
 		}
 
@@ -2216,6 +2191,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 				// @since 1.3.0 allow mapped domains
 				// @see https://support.google.com/webmasters/answer/75712?hl=en&ref_topic=4581190
+				// @todo maybe we should use switch_blog here
 				$blog_domain = empty($blog->mapped_domain)
 					? $blog->domain . $path
 					: $blog->mapped_domain;
@@ -2224,7 +2200,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				{
 					$output .= 'Sitemap: ' . str_replace(home_url(),
 						$scheme . $blog_domain,
-						$this->sitemap_url) . "\n";
+						$this->get_sitemap_index_url()) . "\n";
 
 					$num_sites++;
 				}
@@ -2372,7 +2348,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		}
 		else
 		{
-			wp_redirect(sprintf($this->sitemap_url_struct, $sitemap_name), 301);
+			wp_redirect($this->get_sitemap_url($sitemap_name), 301);
 			exit;
 		}
 	}
@@ -2649,10 +2625,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			if (!empty($module))
 				$this->_load_sitemap_module($module, $sub_module);
 		}
-		else if (isset($wp_query->query_vars[$this->query_var_non_perma]))
+		else if (isset($wp_query->query_vars[$this->_get_non_permalink_query_var()]))
 		{
 			// non-friendly sitemap url is used, i.e. http://example.com/?bwpsitemap=xxx
-			$sitemap_name = $wp_query->query_vars[$this->query_var_non_perma];
+			$sitemap_name = $wp_query->query_vars[$this->_get_non_permalink_query_var()];
 			$modules      = self::_get_modules_from_query_var($sitemap_name);
 
 			if ($modules && is_array($modules))
@@ -3569,7 +3545,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	private function _is_post_pingable($post)
 	{
-		$post_types = get_post_types(array('public' => true));
+		$post_types = $this->bridge->get_post_types(array('public' => true));
 
 		if (!in_array($post->post_type, $post_types))
 		{
@@ -3611,7 +3587,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		// only carry out the ping if this post is in a news category
 		$is_news    = 'inc' == $this->options['select_news_cat_action'] ? false : true;
 		$news_cats  = explode(',', $this->options['select_news_cats']);
-		$categories = get_the_category($post->ID);
+		$categories = $this->bridge->get_the_category($post->ID);
 
 		foreach ($categories as $cat)
 		{
@@ -3633,8 +3609,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function ping($post)
 	{
-		$time      = current_time('timestamp');
-		$ping_data = get_option(BWP_GXS_PING);
+		$time      = $this->bridge->current_time('timestamp');
+		$ping_data = $this->bridge->get_option(BWP_GXS_PING);
 
 		if (!$ping_data || !is_array($ping_data)
 			|| isset($ping_data['data_pinged']['yahoo'])
@@ -3669,16 +3645,15 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					// ping limit has not been reached
 					$ping_data['data_pinged'][$key]++;
 
-					$url = sprintf($service, urlencode(str_replace('&', '&amp;', sprintf(
-						$this->sitemap_url_struct,
-						$this->_ping_sitemap)
+					$url = sprintf($service, urlencode(str_replace(
+						'&', '&amp;', $this->get_sitemap_url($this->_ping_sitemap)
 					)));
 
-					$response = wp_remote_post($url,
+					$response = $this->bridge->wp_remote_post($url,
 						array('timeout' => $this->ping_timeout)
 					);
 
-					if (is_wp_error($response))
+					if ($this->bridge->is_wp_error($response))
 					{
 						$errno    = $response->get_error_code();
 						$errorstr = $response->get_error_message();
@@ -3726,7 +3701,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			}
 		}
 
-		update_option(BWP_GXS_PING, $ping_data);
+		$this->bridge->update_option(BWP_GXS_PING, $ping_data);
 
 		$this->commit_logs();
 	}

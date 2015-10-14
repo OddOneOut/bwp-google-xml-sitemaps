@@ -36,7 +36,7 @@ class BWP_Sitemaps_Sitemap_Output_Functional_Test extends BWP_Framework_PHPUnit_
 
 	public function test_should_send_correct_headers_when_output_sitemap_without_cache()
 	{
-		$client = self::get_client();
+		$client = self::get_client(false);
 		$client->request('GET', $this->plugin->get_sitemap_url('sitemapindex'));
 
 		$this->assertEquals(200, $client->getResponse()->getStatus(), 'should have 200 SUCCESS status code');
@@ -52,9 +52,9 @@ class BWP_Sitemaps_Sitemap_Output_Functional_Test extends BWP_Framework_PHPUnit_
 			'enable_cache' => 'yes'
 		));
 
-		$src = $this->plugin->get_sitemap_url('sitemapindex');
+		$src = $this->plugin->get_sitemap_index_url();
 
-		$client = self::get_client();
+		$client = self::get_client(false);
 		if ($accept_encoding) {
 			$client->setHeader('Accept-Encoding', $accept_encoding);
 		}

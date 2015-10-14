@@ -158,4 +158,72 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 			array('title')
 		);
 	}
+
+	/**
+	 * @covers BWP_Sitemaps::ping
+	 */
+	public function test_ping_should_ping_with_correct_url()
+	{
+		$post = $this->prepare_for_ping_test($this->plugin->get_sitemap_index_url());
+
+		$this->plugin->ping($post);
+	}
+
+	/**
+	 * @covers BWP_Sitemaps::ping_google_news
+	 */
+	public function test_ping_google_news_should_ping_with_correct_url()
+	{
+		$this->bridge
+			->shouldReceive('get_the_category')
+			->andReturn(array())
+			->byDefault();
+
+		$this->plugin->options['select_news_cat_action'] = 'exc';
+
+		$post = $this->prepare_for_ping_test($this->plugin->get_sitemap_url('post_google_news'));
+
+		$this->plugin->ping_google_news($post);
+	}
+
+	protected function prepare_for_ping_test($sitemap_url)
+	{
+		$this->bridge
+			->shouldReceive('get_post_types')
+			->andReturn(array('post'))
+			->byDefault();
+
+		$this->bridge
+			->shouldReceive('current_time')
+			->andReturn(time())
+			->byDefault();
+
+		$post = new stdClass();
+		$post->ID = 1;
+		$post->post_type = 'post';
+
+		$sitemap_url = urlencode($sitemap_url);
+
+		$this->bridge
+			->shouldReceive('wp_remote_post')
+			->with(
+				'http://www.google.com/webmasters/sitemaps/ping?sitemap=' . $sitemap_url,
+				Mockery::type('array')
+			)
+			->once();
+
+		$this->bridge
+			->shouldReceive('wp_remote_post')
+			->with(
+				'http://www.bing.com/webmaster/ping.aspx?siteMap=' . $sitemap_url,
+				Mockery::type('array')
+			)
+			->once();
+
+		$this->plugin
+			->shouldReceive('commit_logs')
+			->byDefault();
+
+		return $post;
+	}
 }

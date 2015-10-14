@@ -24,7 +24,7 @@
 			<tr>
 				<td class="ordinal"><?php echo $count; ?></td>
 				<td style="min-width: 370px">
-					<a href="<?php esc_attr_e(sprintf($data['sitemap_url_struct'], $item->get_sitemap_slug())); ?>"
+					<a href="<?php esc_attr_e($this->get_sitemap_url($item->get_sitemap_slug())); ?>"
 						target="_blank"><?php echo esc_html($item->get_sitemap_slug()); ?></a>
 				</td>
 				<td style="width: 300px"><?php echo esc_html($generated_on); ?></td>
