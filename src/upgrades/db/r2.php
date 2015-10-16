@@ -14,6 +14,11 @@ $new_logs = $this->_get_initial_logs();
 
 foreach ($old_logs as $key => $logs) {
 	foreach ($logs as $log) {
+		// logs already updated to new format
+		if (isset($log['datetime'])) {
+			continue;
+		}
+
 		// old logs use time in local timezone, convert it to UTC
 		$time = $log['time'];
 		$time_utc = $time - $this->bridge->get_option('gmt_offset') * HOUR_IN_SECONDS;
