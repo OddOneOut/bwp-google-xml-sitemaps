@@ -42,9 +42,34 @@ class BWP_Sitemaps_Sitemap_Exclude_Items_Functional_Test extends BWP_Framework_P
 	protected static function set_plugin_default_options()
 	{
 		self::update_option(BWP_GXS_GENERATOR, array(
+			'input_exclude_post_type' => '',
+			'input_exclude_taxonomy'  => '',
 			'enable_sitemap_taxonomy' => 'yes',
-			'enable_cache' => ''
+			'enable_cache'            => ''
 		));
+	}
+
+	public function test_should_exclude_sitemaps_correctly()
+	{
+		$this->create_posts('post', 1);
+		$this->create_posts('movie', 1);
+
+		$this->create_terms('category', 1);
+		$this->create_terms('post_tag', 1);
+
+		self::set_options(BWP_GXS_GENERATOR, array(
+			'input_exclude_post_type' => 'movie',
+			'input_exclude_taxonomy'  => 'post_tag'
+		));
+
+		CssSelector::disableHtmlExtension();
+
+		$crawler = self::get_crawler_from_url($this->plugin->get_sitemap_index_url());
+
+		$this->assertCount(1, $crawler->filter('default|sitemapindex default|sitemap default|loc:contains("post.xml")'));
+		$this->assertCount(0, $crawler->filter('default|sitemapindex default|sitemap default|loc:contains("post_movie.xml")'));
+		$this->assertCount(1, $crawler->filter('default|sitemapindex default|sitemap default|loc:contains("taxonomy_category.xml")'));
+		$this->assertCount(0, $crawler->filter('default|sitemapindex default|sitemap default|loc:contains("taxonomy_post_tag.xml")'));
 	}
 
 	public function test_should_exclude_posts_correctly_if_specified()

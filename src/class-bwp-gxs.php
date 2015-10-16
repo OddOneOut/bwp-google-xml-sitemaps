@@ -942,7 +942,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 					$form_options[] = $key;
 
-					if (in_array($post_type->name, $excluded_post_types))
+					if (!in_array($post_type->name, $excluded_post_types))
 						$options[$key] = 'yes';
 					else
 						$options[$key] = '';
@@ -962,7 +962,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 					$form_options[] = $key;
 
-					if (in_array($taxonomy->name, $exclude_options['taxonomies']))
+					if (!in_array($taxonomy->name, $exclude_options['taxonomies']))
 						$options[$key] = 'yes';
 					else
 						$options[$key] = '';
@@ -1174,9 +1174,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'item_labels' => array(
 					__('Generated Sitemaps', $this->domain),
 					__('Sitemaps to generate', $this->domain),
-					__('<strong>Enable</strong> following sitemaps', $this->domain),
-					__('For post-based sitemaps, <strong>disable</strong> following post types:', $this->domain),
-					__('For taxonomy-based sitemaps, <strong>disable</strong> following taxonomies:', $this->domain),
+					__('Enable following sitemaps', $this->domain),
+					__('Enable following post types:', $this->domain),
+					__('Enable following taxonomies:', $this->domain),
 					__('Exclude items', $this->domain),
 					__('Exclude posts', $this->domain),
 					__('Exclude terms', $this->domain),
@@ -1194,7 +1194,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Ping search engines', $this->domain),
 					__('Enable pinging', $this->domain),
 					__('Search engines to ping', $this->domain),
-					__('<strong>Disable pinging</strong> for following post types:', $this->domain),
+					__('Enable pinging for following post types:', $this->domain),
 					__('Ping limit for each search engine', $this->domain),
 					__('Look and Feel', $this->domain),
 					__('Make sitemaps look pretty', $this->domain),
@@ -1396,9 +1396,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'input_item_limit',
 				'input_split_limit_post',
 				'input_custom_xslt',
-				'input_exclude_post_type',
-				'input_exclude_post_type_ping',
-				'input_exclude_taxonomy',
 				'input_ping_limit',
 				'enable_gmt',
 				'enable_xslt',
@@ -1425,8 +1422,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			add_action('bwp_option_page_custom_action_exclude_terms', array($this, 'handle_exclude_terms'));
 
 			$this->_add_checkboxes_to_form('sec_post', 'ept_', $form, $form_options);
-			$this->_add_checkboxes_to_form('sec_post_ping', 'eppt_', $form, $form_options);
 			$this->_add_checkboxes_to_form('sec_tax', 'etax_', $form, $form_options);
+			$this->_add_checkboxes_to_form('sec_post_ping', 'eppt_', $form, $form_options);
 
 			// build options dynamically
 			add_filter('bwp_option_page_submit_options', array($this, 'handle_dynamic_generator_options'));
@@ -1820,23 +1817,31 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function handle_dynamic_generator_options(array $options)
 	{
-		$ept  = array(); // exclude post types from sitemap
-		$eppt = array(); // exclude post types from pinging
-		$etax = array(); // exclude taxonomies from sitemap
+		$post_types = $this->get_provider('post')->get_post_types();
+		$taxonomies = $this->get_provider('taxonomy')->get_taxonomies();
 
-		foreach ($_POST as $o => $v)
+		$excluded_post_types      = array();
+		$excluded_post_types_ping = array();
+		$excluded_taxonomies      = array();
+
+		foreach ($post_types as $post_type)
 		{
-			if (strpos($o, 'ept_') === 0)
-				$ept[] = trim(str_replace('ept_', '', $o));
-			elseif (strpos($o, 'eppt_') === 0)
-				$eppt[] = trim(str_replace('eppt_', '', $o));
-			else if (strpos($o, 'etax_') === 0)
-				$etax[] = trim(str_replace('etax_', '', $o));
+			if (!array_key_exists('ept_' . $post_type->name, $_POST))
+				$excluded_post_types[] = $post_type->name;
+
+			if (!array_key_exists('eppt_' . $post_type->name, $_POST))
+				$excluded_post_types_ping[] = $post_type->name;
 		}
 
-		$options['input_exclude_post_type']      = implode(',', $ept);
-		$options['input_exclude_post_type_ping'] = implode(',', $eppt);
-		$options['input_exclude_taxonomy']       = implode(',', $etax);
+		foreach ($taxonomies as $taxonomy)
+		{
+			if (!array_key_exists('etax_' . $taxonomy->name, $_POST))
+				$excluded_taxonomies[] = $taxonomy->name;
+		}
+
+		$options['input_exclude_post_type']      = implode(',', $excluded_post_types);
+		$options['input_exclude_post_type_ping'] = implode(',', $excluded_post_types_ping);
+		$options['input_exclude_taxonomy']       = implode(',', $excluded_taxonomies);
 
 		// no more than 50000 URLs per sitemap
 		$options['input_item_limit'] = 50000 < $options['input_item_limit']
