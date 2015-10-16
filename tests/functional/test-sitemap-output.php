@@ -31,7 +31,7 @@ class BWP_Sitemaps_Sitemap_Output_Functional_Test extends BWP_Framework_PHPUnit_
 			'input_cache_dir' => self::$cache_dir,
 		);
 
-		self::update_option(BWP_GXS_OPTION_GENERATOR, $default_options);
+		self::update_option(BWP_GXS_GENERATOR, $default_options);
 	}
 
 	public function test_should_send_correct_headers_when_output_sitemap_without_cache()
@@ -48,7 +48,7 @@ class BWP_Sitemaps_Sitemap_Output_Functional_Test extends BWP_Framework_PHPUnit_
 	 */
 	public function test_should_send_304_not_modified_response_status_when_output_sitemap_from_cache($accept_encoding)
 	{
-		self::set_options(BWP_GXS_OPTION_GENERATOR, array(
+		self::set_options(BWP_GXS_GENERATOR, array(
 			'enable_cache' => 'yes'
 		));
 

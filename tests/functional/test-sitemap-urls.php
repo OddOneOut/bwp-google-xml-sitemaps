@@ -28,7 +28,7 @@ class BWP_Sitemaps_Sitemap_Urls_Functional_Test extends BWP_Framework_PHPUnit_WP
 			'enable_cache'    => ''
 		);
 
-		self::update_option(BWP_GXS_OPTION_GENERATOR, $default_options);
+		self::update_option(BWP_GXS_GENERATOR, $default_options);
 	}
 
 	public function test_should_use_query_variable_when_permalink_is_not_used()

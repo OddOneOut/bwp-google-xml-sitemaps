@@ -2,7 +2,7 @@
 
 use Symfony\Component\CssSelector\CssSelector;
 
-class BWP_Sitemaps_Exclude_Items_Functional_Test extends BWP_Framework_PHPUnit_WP_Functional_TestCase
+class BWP_Sitemaps_Sitemap_Exclude_Items_Functional_Test extends BWP_Framework_PHPUnit_WP_Functional_TestCase
 {
 	protected $plugin;
 
@@ -41,7 +41,7 @@ class BWP_Sitemaps_Exclude_Items_Functional_Test extends BWP_Framework_PHPUnit_W
 
 	protected static function set_plugin_default_options()
 	{
-		self::update_option(BWP_GXS_OPTION_GENERATOR, array(
+		self::update_option(BWP_GXS_GENERATOR, array(
 			'enable_sitemap_taxonomy' => 'yes',
 			'enable_cache' => ''
 		));
