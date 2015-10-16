@@ -86,7 +86,7 @@ abstract class BWP_Sitemaps_Logger_LogItem
 	 *
 	 * @return string
 	 */
-	public function get_formatted_datetime($format = 'M j, Y : H:i:s')
+	public function get_formatted_datetime($format = 'M d, Y h:i:s A')
 	{
 		return $this->get_datetime()->format($format);
 	}

@@ -7,7 +7,7 @@
 		$color = $item->is_error() ? 'FF0000' : ($item->is_success() ? '009900' : '999999');
 
 		/* translators: date format, see http://php.net/date */
-		$datetime = $item->get_formatted_datetime(__('M j, Y : H:i:s', $this->domain));
+		$datetime = $item->get_formatted_datetime(__('M d, Y h:i:s A', $this->domain));
 ?>
 	<li class="bwp-clear" style="margin-top: 5px; line-height: 1.7;">
 		<span style="float: left; margin-right: 5px;"><?php echo esc_html($datetime); ?> &mdash;</span>

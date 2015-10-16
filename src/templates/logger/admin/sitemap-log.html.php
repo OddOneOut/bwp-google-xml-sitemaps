@@ -19,7 +19,7 @@
 			foreach ($data['items'] as $item) :
 				$count++;
 				/* translators: date format, see http://php.net/date */
-				$generated_on = $item->get_formatted_datetime(__('M j, Y : H:i:s', $this->domain));
+				$generated_on = $item->get_formatted_datetime(__('M d, Y h:i:s A', $this->domain));
 ?>
 			<tr>
 				<td class="ordinal"><?php echo $count; ?></td>
