@@ -18,8 +18,9 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 	 */
 	private static function process_posts($posts, $news_cats, $news_cat_action)
 	{
-		// This $post array surely contains duplicate posts (fortunately they
-		// are already sorted) let's group 'em
+		// this $post array surely contains duplicate posts, fortunately they
+		// are already sorted by post_date_gmt and ID, so we can group them
+		// here by IDs
 		$ord_num = 0;
 
 		$excluded_cats = 'inc' == $news_cat_action ? array() : explode(',', $news_cats);
@@ -82,8 +83,7 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 	 */
 	private static function news_time()
 	{
-		$news_post_date = new DateTime(null, new DateTimeZone('UTC'));
-		$news_post_date->modify('-2 days');
+		$news_post_date = new DateTime('-2 days', new DateTimeZone('UTC'));
 
 		return $news_post_date->format('Y-m-d H:i:s');
 	}
@@ -131,16 +131,19 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 				ON tr.object_id = p.ID' . "
 				AND p.post_status = 'publish'
 				AND p.post_password = ''" . '
+				AND p.post_date_gmt > %s
 			INNER JOIN ' . $wpdb->term_taxonomy . ' tt
 				ON tr.term_taxonomy_id = tt.term_taxonomy_id' . "
 				AND tt.taxonomy = 'category'" . '
-			, ' . $wpdb->terms . ' t
-			WHERE tt.term_id = t.term_id
-				AND p.post_date_gmt > %s' .
-				$cat_query . $group_by . '
-			ORDER BY p.post_date_gmt DESC';
+			INNER JOIN ' . $wpdb->terms . ' t
+				ON tt.term_id = t.term_id
+			WHERE 1 = 1 '
+				. $cat_query
+				. $group_by . '
+			ORDER BY p.post_date_gmt, p.ID DESC
+			LIMIT 0, ' . $this->limit;
 
-		$latest_posts = $this->get_results($wpdb->prepare($latest_post_query, self::news_time()));
+		$latest_posts = $wpdb->get_results($wpdb->prepare($latest_post_query, self::news_time()));
 
 		if ('yes' == $bwp_gxs->options['enable_news_multicat'])
 		{
@@ -170,9 +173,9 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 			$data['language'] = $lang;
 
+			// multi-cat support for genres and keywords
 			if (isset($post->terms))
 			{
-				// multi-cat support for genres
 				$genres_cache_key = md5(implode('|', $post->terms));
 
 				if (!isset($genres_cache[$genres_cache_key])
@@ -207,7 +210,7 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 				? $this->format_lastmod(strtotime($post->post_date_gmt), false)
 				: $this->format_lastmod(strtotime($post->post_date));
 
-			$data['title']    = $post->post_title;
+			$data['title'] = $post->post_title;
 
 			// multi-cat support for news categories as keywords
 			if ('cat' == $bwp_gxs->options['select_news_keyword_type'] && isset($post->term_names))
@@ -249,8 +252,7 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 			$this->data[] = $data;
 		}
 
-		// always return true if we can get here, otherwise you're stuck in a
-		// SQL cycling loop
-		return true;
+		// @since 1.4.0 we don't use SQL cyclying for google news sitemap
+		return false;
 	}
 }

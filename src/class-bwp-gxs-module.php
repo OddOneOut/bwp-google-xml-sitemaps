@@ -538,12 +538,11 @@ class BWP_GXS_MODULE
 
 		$start = !empty($this->url_sofar) ? $this->offset + (int) $this->url_sofar : $this->offset;
 		$end   = (int) $bwp_gxs->options['input_sql_limit'];
-		$limit = $this->limit;
 
 		// @since 1.1.5 if we exceed the actual limit, limit $end to the
 		// correct limit
-		if ($this->url_sofar + $end > $limit)
-			$end = $limit - $this->url_sofar;
+		if ($this->url_sofar + $end > $this->limit)
+			$end = $this->limit - $this->url_sofar;
 
 		$query_str  = trim($query_str);
 		$query_str .= ' LIMIT ' . $start . ',' . $end;
