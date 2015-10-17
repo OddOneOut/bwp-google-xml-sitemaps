@@ -44,25 +44,40 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE
 		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
 			return false;
 
+		// @since 1.3.0 exclude by term ids
+		$excluded_term_ids = apply_filters('bwp_gxs_excluded_terms', array(), $requested);
+
+		$excluded_term_ids_sql = count($excluded_term_ids) > 0
+			? ' AND t.term_id NOT IN (' . implode(',', array_map('intval', $excluded_term_ids)) . ') ' : '';
+
+		// @deprecated 1.3.0, use `bwp_gxs_excluded_term_slugs` instead
+		$excluded_terms = apply_filters('bwp_gxs_term_exclude', array(), $requested);
+
+		// @since 1.4.0 use this to exclude terms programmatically using slugs
+		$excluded_term_slugs = apply_filters('bwp_gxs_excluded_term_slugs', $excluded_terms, $requested);
+		$excluded_term_slugs_placeholders = array_fill(0, count($excluded_term_slugs), '%s');
+
+		$excluded_term_slugs_sql = count($excluded_term_slugs) > 0
+			? ' AND t.slug NOT IN (' . implode(',', $excluded_term_slugs_placeholders) . ') ' : '';
+
+		$excluded_term_slugs_sql = !empty($excluded_term_slugs_sql)
+			? $wpdb->prepare($excluded_term_slugs_sql, $excluded_term_slugs) : '';
+
 		$term_query = '
 			SELECT t.*, tt.*
 			FROM ' . $wpdb->terms  . ' as t
 			INNER JOIN ' . $wpdb->term_taxonomy . ' as tt
 				ON t.term_id = tt.term_id
 			WHERE tt.taxonomy = %s
-				AND tt.count > 0
+				AND tt.count > 0 '
+				. $excluded_term_ids_sql
+				. $excluded_term_slugs_sql . '
 			ORDER BY t.term_id DESC';
 
 		$terms = $this->get_results($wpdb->prepare($term_query, $requested));
 
 		if (!isset($terms) || 0 == sizeof($terms))
 			return false;
-
-		// can be something like array('cat1', 'cat2', 'cat3')
-		// @deprecated 1.3.0
-		$exclude_terms = (array) apply_filters('bwp_gxs_term_exclude', array(), $requested);
-		// @since 1.3.0 use `bwp_gxs_excluded_terms` instead
-		$exclude_terms = (array) apply_filters('bwp_gxs_excluded_terms', $exclude_terms, $requested);
 
 		// build an array with term_id as key
 		$term2post = array();
@@ -82,13 +97,6 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE
 		for ($i = 0; $i < sizeof($terms); $i++)
 		{
 			$term = $terms[$i];
-
-			if (in_array($term->slug, $exclude_terms))
-				continue;
-
-			// @since 1.4.0 exclude by ids as well
-			if (in_array($term->term_id, $exclude_terms))
-				continue;
 
 			$data = $this->init_data($data);
 
