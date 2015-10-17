@@ -74,7 +74,9 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 		// @since 1.3.0 this should be used to add other things to the SQL
 		// instead of excluding posts
 		$sql_where = apply_filters('bwp_gxs_post_where', '', $requested);
-		$sql_where = str_replace('wposts', 'p', $sql_where); // @since 1.3.0 use a different alias for post table
+
+		// @since 1.3.0 use a different alias for post table
+		$sql_where = str_replace('wposts', 'p', $sql_where);
 
 		if ('post' == $requested && strpos($this->perma_struct, '%category%') !== false)
 		{
@@ -88,16 +90,18 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 				INNER JOIN ' . $wpdb->posts . ' p
 					ON tr.object_id = p.ID' . "
 					AND p.post_status = 'publish'
-					AND p.post_password = ''" . '
+					AND p.post_password = ''
+					AND p.post_type = 'post'" . '
 				INNER JOIN ' . $wpdb->term_taxonomy . ' tt
 					ON tr.term_taxonomy_id = tt.term_taxonomy_id' . "
 					AND tt.taxonomy = 'category'" . '
-				, ' . $wpdb->terms . ' t
-				WHERE tt.term_id = t.term_id '
+				INNER JOIN ' . $wpdb->terms . ' t
+					ON tt.term_id = t.term_id
+				WHERE 1 = 1 '
 					. "$excluded_posts_sql"
 					. "$sql_where" . '
 				GROUP BY p.ID
-				ORDER BY p.post_modified DESC';
+				ORDER BY p.post_modified, p.ID DESC';
 		}
 		else
 		{

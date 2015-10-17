@@ -414,6 +414,9 @@ class BWP_GXS_MODULE
 		return apply_filters('post_type_link', $post_link, $post, $leavename, $sample);
 	}
 
+	/**
+	 * @todo improve this function to rely more on WordPress API
+	 */
 	protected function get_permalink($leavename = false)
 	{
 		global $post;
