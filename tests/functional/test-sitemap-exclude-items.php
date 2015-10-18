@@ -2,6 +2,10 @@
 
 use Symfony\Component\CssSelector\CssSelector;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ */
 class BWP_Sitemaps_Sitemap_Exclude_Items_Functional_Test extends BWP_Sitemaps_PHPUnit_WP_Functional_TestCase
 {
 	protected static $wp_options = array(
