@@ -5,13 +5,13 @@ if (! get_option('bwp_gxs_generator_exclude_terms_by_slugs')) {
 }
 
 add_filter('bwp_gxs_term_exclude', 'bwp_gxs_exclude_terms_slugs_deprecated', 10, 2);
-add_filter('bwp_gxs_excluded_terms_slugs', 'bwp_gxs_exclude_terms_slugs', 10, 2);
+add_filter('bwp_gxs_excluded_term_slugs', 'bwp_gxs_exclude_terms_slugs', 10, 2);
 
 function bwp_gxs_exclude_terms_slugs_deprecated(array $terms_slugs, $taxonomy)
 {
 	switch ($taxonomy) {
 		case 'category':
-			return array('category-2', 'category-3');
+			return array('category-3');
 			break;
 
 		case 'genre':

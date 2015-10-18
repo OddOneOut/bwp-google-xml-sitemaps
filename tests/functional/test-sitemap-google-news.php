@@ -2,28 +2,13 @@
 
 use Symfony\Component\CssSelector\CssSelector;
 
-class BWP_Sitemaps_Sitemap_Google_News_Functional_Test extends BWP_Framework_PHPUnit_WP_Functional_TestCase
+class BWP_Sitemaps_Sitemap_Google_News_Functional_Test extends BWP_Sitemaps_PHPUnit_WP_Functional_TestCase
 {
-	protected $plugin;
-
 	public function setUp()
 	{
 		parent::setUp();
 
-		global $bwp_gxs;
-
-		$this->plugin = $bwp_gxs;
-
 		self::reset_posts_terms();
-	}
-
-	public function get_plugins()
-	{
-		$root_dir = dirname(dirname(dirname(__FILE__)));
-
-		return array(
-			$root_dir . '/bwp-gxs.php' => 'bwp-google-xml-sitemaps/bwp-gxs.php'
-		);
 	}
 
 	protected static function set_plugin_default_options()
@@ -92,25 +77,10 @@ class BWP_Sitemaps_Sitemap_Google_News_Functional_Test extends BWP_Framework_PHP
 		);
 	}
 
-	protected function create_posts($post_type = 'post', $count = 5, $post_date)
-	{
-		return $this->factory->post->create_many($count, array(
-			'post_type' => $post_type
-		));
-	}
-
-	protected function create_terms($taxonomy = 'category', $count = 5)
-	{
-		return $this->factory->term->create_many($count, array(
-			'taxonomy' => $taxonomy,
-			'slug'     => $taxonomy
-		));
-	}
-
 	protected function prepare_for_tests()
 	{
-		$news_posts     = $this->create_posts('post', 3, current_time('mysql'));
-		$not_news_posts = $this->create_posts('post', 3, current_time('mysql'));
+		$news_posts     = $this->create_posts('post', 3);
+		$not_news_posts = $this->create_posts('post', 3);
 
 		$two_days_ago = new DateTime('2 days 1 minute ago');
 		$outdated_news_posts = $this->create_posts('post', 3, $two_days_ago->format('Y-m-d H:i:s'));

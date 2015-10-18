@@ -1,34 +1,25 @@
 <?php
 
-class BWP_Sitemaps_Sitemap_Urls_Functional_Test extends BWP_Framework_PHPUnit_WP_Functional_TestCase
+class BWP_Sitemaps_Sitemap_Urls_Functional_Test extends BWP_Sitemaps_PHPUnit_WP_Functional_TestCase
 {
-	protected $plugin;
-
-	public function setUp()
-	{
-		parent::setUp();
-
-		global $bwp_gxs;
-
-		$this->plugin = $bwp_gxs;
-	}
-
-	public function get_plugins()
-	{
-		$root_dir = dirname(dirname(dirname(__FILE__)));
-
-		return array(
-			$root_dir . '/bwp-gxs.php' => 'bwp-google-xml-sitemaps/bwp-gxs.php'
-		);
-	}
+	protected static $wp_options = array(
+		'permalink_structure' => ''
+	);
 
 	protected static function set_plugin_default_options()
 	{
-		$default_options = array(
-			'enable_cache'    => ''
-		);
+		self::update_option(BWP_GXS_GENERATOR, array(
+			'enable_cache' => ''
+		));
+	}
 
-		self::update_option(BWP_GXS_GENERATOR, $default_options);
+	public function get_extra_plugins()
+	{
+		$fixtures_dir = dirname(__FILE__) . '/data/fixtures';
+
+		return array(
+			$fixtures_dir . '/flush-rewrite-rules.php' => 'bwp-gxs-fixtures/flush-rewrite-rules.php',
+		);
 	}
 
 	public function test_should_use_query_variable_when_permalink_is_not_used()
@@ -40,9 +31,8 @@ class BWP_Sitemaps_Sitemap_Urls_Functional_Test extends BWP_Framework_PHPUnit_WP
 	{
 		self::update_option('permalink_structure', '/%year%/%monthnum%/%day%/%postname%/');
 
-		flush_rewrite_rules();
-
-		self::commit_transaction();
+		// need this to generate the .htaccess file
+		self::get_client(false)->request('GET', home_url());
 
 		$this->assert_sitemaps_are_generated_with_correct_urls();
 	}

@@ -15,5 +15,7 @@ function bwp_gxs_register_custom_post_types()
 
 function bwp_gxs_register_custom_taxonomies()
 {
-	register_taxonomy('genre', 'movie');
+	register_taxonomy('genre', 'movie', array(
+		'label' => 'Genres'
+	));
 }

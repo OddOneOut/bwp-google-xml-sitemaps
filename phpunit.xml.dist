@@ -24,6 +24,7 @@
 
 	<listeners>
 		<listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
+		<listener class="\BWP_Framework_PHPUnit_WP_Functional_TestListener"></listener>
 	</listeners>
 
 	<php>

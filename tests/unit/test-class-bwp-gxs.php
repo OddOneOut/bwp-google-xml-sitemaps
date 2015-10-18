@@ -108,6 +108,8 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 
 	/**
 	 * @covers BWP_Sitemaps::add_post_title_like_query_variable
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 * @dataProvider get_bwp_post_title_like
 	 */
 	public function test_add_post_title_like_query_variable($post_title_like)
@@ -122,7 +124,7 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 
 		global $wpdb;
 
-		$wpdb = Mockery::mock('wpdb');
+		$wpdb = Mockery::mock('wpdb_mock');
 
 		$wpdb->posts = 'posts';
 

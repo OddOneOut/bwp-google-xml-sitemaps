@@ -1,30 +1,17 @@
 <?php
 
-class BWP_Sitemaps_Plugin_Upgrade_Functional_Test extends BWP_Framework_PHPUnit_WP_Functional_TestCase
+class BWP_Sitemaps_Plugin_Upgrade_Functional_Test extends BWP_Sitemaps_PHPUnit_WP_Functional_TestCase
 {
-	protected $plugin;
+	protected static $wp_options = array(
+		'gmt_offset' => 7
+	);
 
 	public function setUp()
 	{
 		parent::setUpForCurrentRequest();
 
 		global $bwp_gxs;
-
 		$this->plugin = $bwp_gxs;
-	}
-
-	protected static function set_wp_default_options()
-	{
-		self::update_option('gmt_offset', 7);
-	}
-
-	public function get_plugins()
-	{
-		$root_dir = dirname(dirname(dirname(__FILE__)));
-
-		return array(
-			$root_dir . '/bwp-gxs.php' => 'bwp-google-xml-sitemaps/bwp-gxs.php'
-		);
 	}
 
 	public function test_should_upgrade_from_103xx_to_10400_correctly()

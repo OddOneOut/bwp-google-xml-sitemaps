@@ -1,27 +1,12 @@
 <?php
 
-class BWP_Sitemaps_Sitemap_Output_Functional_Test extends BWP_Framework_PHPUnit_WP_Functional_TestCase
+class BWP_Sitemaps_Sitemap_Output_Functional_Test extends BWP_Sitemaps_PHPUnit_WP_Functional_TestCase
 {
-	protected $plugin;
-
 	public function setUp()
 	{
 		parent::setUp();
 
-		global $bwp_gxs;
-
-		$bwp_gxs->options['input_cache_dir'] = self::$cache_dir;
-
-		$this->plugin = $bwp_gxs;
-	}
-
-	public function get_plugins()
-	{
-		$root_dir = dirname(dirname(dirname(__FILE__)));
-
-		return array(
-			$root_dir . '/bwp-gxs.php' => 'bwp-google-xml-sitemaps/bwp-gxs.php'
-		);
+		$this->plugin->options['input_cache_dir'] = self::$cache_dir;
 	}
 
 	protected static function set_plugin_default_options()
