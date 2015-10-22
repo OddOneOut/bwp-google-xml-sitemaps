@@ -23,12 +23,14 @@ class BWP_GXS_MODULE_PAGE_EXTERNAL extends BWP_GXS_MODULE
 			array(
 				'location' => home_url('a-page-not-belong-to-wordpress.html'),
 				'lastmod'  => '06/02/2011',
-				'priority' => '1.0'
+				'priority' => '1.0',
+				'sample'   => true // ignore this
 			),
 			array(
 				'location' => home_url('another-page-not-belong-to-wordpress.html'),
 				'lastmod'  => '05/02/2011',
-				'priority' => '0.8'
+				'priority' => '0.8',
+				'sample'   => true // ignore this
 			)
 		);
 
@@ -43,7 +45,12 @@ class BWP_GXS_MODULE_PAGE_EXTERNAL extends BWP_GXS_MODULE
 
 			$data['location'] = $page['location'];
 			$data['lastmod']  = $this->format_lastmod(strtotime($page['lastmod']));
-			$data['freq']     = $this->cal_frequency(false, $page['lastmod']);
+
+			// @since 1.4.0 use manually set frequency if any
+			$data['freq']     = empty($page['freq']) || $page['freq'] == 'auto'
+				? $this->cal_frequency(false, $page['lastmod'])
+				: $page['freq'];
+
 			$data['priority'] = $page['priority'];
 
 			$this->data[] = $data;

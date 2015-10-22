@@ -356,8 +356,13 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		{
 			define('BWP_GXS_LOG', 'bwp_gxs_log');
 			define('BWP_GXS_PING', 'bwp_gxs_ping_data');
+
+			// @since 1.4.0 allow excluding posts/terms via admin page
 			define('BWP_GXS_EXCLUDED_POSTS', 'bwp_gxs_excluded_posts');
 			define('BWP_GXS_EXCLUDED_TERMS', 'bwp_gxs_excluded_terms');
+
+			// @since 1.4.0 allow adding external pages via admin page
+			define('BWP_GXS_EXTERNAL_PAGES', 'bwp_gxs_external_pages');
 
 			// @deprecated 1.4.0 use BWP_GXS_GENERATOR instead
 			define('BWP_GXS_OPTION_GENERATOR', 'bwp_gxs_generator');
@@ -403,13 +408,20 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		);
 
 		$this->providers = array(
-			'post'     => new BWP_Sitemaps_Provider_Post($this, $this->post_excluder),
-			'taxonomy' => new BWP_Sitemaps_Provider_Taxonomy($this, $this->term_excluder)
+			'post'          => new BWP_Sitemaps_Provider_Post($this, $this->post_excluder),
+			'taxonomy'      => new BWP_Sitemaps_Provider_Taxonomy($this, $this->term_excluder),
+			'external_page' => new BWP_Sitemaps_Provider_ExternalPage($this, BWP_GXS_EXTERNAL_PAGES)
 		);
 
 		$this->ajax_handlers = array(
-			'post'     => new BWP_Sitemaps_Handler_Ajax_PostHandler($this->get_provider('post')),
-			'taxonomy' => new BWP_Sitemaps_Handler_Ajax_TaxonomyHandler($this->get_provider('taxonomy'))
+			'post'          => new BWP_Sitemaps_Handler_Ajax_PostHandler($this->get_provider('post')),
+			'taxonomy'      => new BWP_Sitemaps_Handler_Ajax_TaxonomyHandler($this->get_provider('taxonomy')),
+			'external_page' => new BWP_Sitemaps_Handler_Ajax_ExternalPageHandler(
+				$this->get_provider('external_page'),
+				$this->frequencies,
+				$this->priorities,
+				$this->get_current_timezone()
+			)
 		);
 
 		$this->pings_per_day = (int) $this->options['input_ping_limit'];
@@ -438,6 +450,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		// priority so they can be merged with excluded items from user's filters
 		add_filter('bwp_gxs_excluded_posts', array($this, 'add_excluded_posts'), 999, 2);
 		add_filter('bwp_gxs_excluded_terms', array($this, 'add_excluded_terms'), 999, 2);
+
+		// @since 1.4.0 add external pages from admin, use a relatively low
+		// priority so they can be merged with external pages from user's filters
+		add_filter('bwp_gxs_external_pages', array($this, 'add_external_pages'), 999);
 
 		if ('yes' == $this->options['enable_ping'])
 		{
@@ -473,6 +489,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			add_action('wp_ajax_bwp-gxs-get-terms', array($this->get_ajax_handler('taxonomy'), 'get_terms_action'));
 			add_action('wp_ajax_bwp-gxs-get-excluded-terms', array($this->get_ajax_handler('taxonomy'), 'get_excluded_terms_action'));
 			add_action('wp_ajax_bwp-gxs-remove-excluded-term', array($this->get_ajax_handler('taxonomy'), 'remove_excluded_item_action'));
+
+			add_action('wp_ajax_bwp-gxs-get-external-pages', array($this->get_ajax_handler('external_page'), 'get_pages_action'));
+			add_action('wp_ajax_bwp-gxs-submit-external-page', array($this->get_ajax_handler('external_page'), 'save_external_page_action'));
+			add_action('wp_ajax_bwp-gxs-remove-external-page', array($this->get_ajax_handler('external_page'), 'remove_external_page_action'));
 
 			// filter post queries in admin
 			add_filter('posts_where', array($this, 'add_post_title_like_query_variable'), 10, 2);
@@ -511,17 +531,23 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 			$this->enqueue_media_file('bwp-gxs-admin',
 				BWP_GXS_JS . '/bwp-gxs-admin.js',
-				array('bwp-select2', 'bwp-datatables', 'bwp-op-toggle'), false,
+				array('bwp-select2', 'bwp-datatables', 'bwp-op-modal', 'bwp-op-toggle', 'bwp-op-misc'), false,
 				BWP_GXS_DIST . '/js/script.min.js'
 			);
 
 			wp_localize_script('bwp-gxs-admin', 'bwp_gxs', array(
 				'nonce' => array(
-					'remove_excluded_item' => wp_create_nonce('bwp_gxs_remove_excluded_item')
+					'remove_excluded_item' => wp_create_nonce('bwp_gxs_remove_excluded_item'),
+					'remove_external_page' => wp_create_nonce('bwp_gxs_manage_external_page')
 				),
 				'text'  => array(
 					'exclude_items' => array(
 						'remove_title'   => __('Remove from exclusion', $this->domain),
+						'remove_warning' => __('This action can not be undone, are you sure?', $this->domain)
+					),
+					'external_pages' => array(
+						'edit_title'   => __('Edit this page', $this->domain),
+						'remove_title'   => __('Remove this page', $this->domain),
 						'remove_warning' => __('This action can not be undone, are you sure?', $this->domain)
 					)
 				)
@@ -1103,28 +1129,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		return $choices;
 	}
 
-	private function _get_exclude_posts_html()
-	{
-		ob_start();
-
-		include_once BWP_GXS_PLUGIN_SRC . '/templates/provider/admin/exclude-posts.html.php';
-
-		$output = ob_get_clean();
-
-		return $output;
-	}
-
-	private function _get_exclude_terms_html()
-	{
-		ob_start();
-
-		include_once BWP_GXS_PLUGIN_SRC . '/templates/provider/admin/exclude-terms.html.php';
-
-		$output = ob_get_clean();
-
-		return $output;
-	}
-
 	protected function build_option_page()
 	{
 		$page        = $this->get_current_admin_page();
@@ -1149,7 +1153,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'heading', // exclude items
 					'select',
 					'select',
-					'checkbox',
+					'heading', // external pages
 					'heading', // item limits
 					'input',
 					'checkbox',
@@ -1180,7 +1184,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Exclude items', $this->domain),
 					__('Exclude posts', $this->domain),
 					__('Exclude terms', $this->domain),
-					__('Also exclude posts whose terms are excluded', $this->domain),
+					__('External pages', $this->domain),
 					__('Item limits', $this->domain),
 					__('Global limit', $this->domain),
 					__('Split <strong>post-based</strong> sitemaps', $this->domain),
@@ -1247,6 +1251,18 @@ class BWP_Sitemaps extends BWP_Framework_V3
 							$this->plugin_url
 						)
 						. '</em>',
+					'heading_external_pages' => '<em>'
+						. sprintf(
+							__('Add non-WordPress pages to the %s sitemap. '
+							. 'You can also use %s to add external pages programmatically.', $this->domain),
+							'<a href="' . $this->get_sitemap_url('page_external') . '" target="_blank">'
+								. __('External pages', $this->domain)
+								. '</a>',
+							'<a href="' . $this->plugin_url . '#external-pages" target="_blank">'
+								. __('filter', $this->domain)
+								. '</a>'
+						)
+						.'</em>',
 					'heading_limit' => '<em>'
 						. __('Limit the number of items to output in one sitemap. ', $this->domain)
 						. sprintf(__('Avoid setting too high limits, i.e. ones that your server '
@@ -1316,8 +1332,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'enable_sitemap_taxonomy'   => array(__('Taxonomy (including custom taxonomies).', $this->domain) => ''),
 					'enable_sitemap_date'       => array(__('Date archives.', $this->domain) => ''),
 					'enable_sitemap_author'     => array(__('Author archives.', $this->domain) => ''),
-					'enable_sitemap_external'   => array(sprintf(__('External pages. More info <a href="%s#external_sitemap" target="_blank">here</a>.', $this->domain), $this->plugin_url) => ''),
-					'enable_credit'             => array(__('some copyrighted info is also added to your sitemaps. Thanks!', $this->domain) => ''),
+					'enable_sitemap_external'   => array(sprintf(__('External pages. You can add pages <a href="%s#external-pages">here</a>.', $this->domain), $this->get_admin_page_url()) => ''),
+					'enable_credit'             => array(__('some copyrighted info is added to your sitemaps.', $this->domain) => ''),
 					'enable_xslt'               => array(__('Default XSLT stylesheets will be used. Set your custom stylesheets below or filter the <code>bwp_gxs_xslt</code> hook.', $this->domain) => ''),
 					'enable_sitemap_split_post' => array(__('Sitemaps like <code>post.xml</code> are split into <code>post_part1.xml</code>, <code>post_part2.xml</code>, etc. when limit reached.', $this->domain) => ''),
 					'enable_gmt'                => array(__('Disable this to use the local timezone setting in <em>Settings >> General</em>.', $this->domain) => ''),
@@ -1363,10 +1379,13 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						$this->_get_formatted_sitemap_logs(),
 					),
 					'select_exclude_post_type' => array(
-						$this->_get_exclude_posts_html()
+						$this->get_template_contents('templates/provider/admin/exclude-posts.html.php')
 					),
 					'select_exclude_taxonomy' => array(
-						$this->_get_exclude_terms_html()
+						$this->get_template_contents('templates/provider/admin/exclude-terms.html.php')
+					),
+					'heading_external_pages' => array(
+						$this->get_template_contents('templates/provider/admin/external-pages.html.php')
 					)
 				),
 				'formats' => array(
@@ -1424,6 +1443,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			$this->_add_checkboxes_to_form('sec_post', 'ept_', $form, $form_options);
 			$this->_add_checkboxes_to_form('sec_tax', 'etax_', $form, $form_options);
 			$this->_add_checkboxes_to_form('sec_post_ping', 'eppt_', $form, $form_options);
+
+			// add extra forms
+			add_action('bwp_option_action_after_form', array($this, 'add_external_page_modal'));
 
 			// build options dynamically
 			add_filter('bwp_option_page_submit_options', array($this, 'handle_dynamic_generator_options'));
@@ -1813,6 +1835,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		}
 
 		$this->current_option_page->generate_html_form();
+	}
+
+	public function add_external_page_modal()
+	{
+		echo $this->get_template_contents('templates/provider/admin/external-page-modal.html.php', array(
+			'frequencies' => $this->_get_frequencies_as_choices(),
+			'priorities'  => $this->priorities
+		));
 	}
 
 	public function handle_dynamic_generator_options(array $options)
@@ -2294,6 +2324,38 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		);
 
 		return array_values(array_unique($excluded_items));
+	}
+
+	public function add_external_pages($pages)
+	{
+		$items = array();
+
+		foreach ($pages as $page)
+		{
+			// remove sample pages
+			if (!empty($page['sample']))
+				continue;
+
+			$items[] = $page;
+		}
+
+		// no pages stored in db
+		if (! $this->get_provider('external_page')->has_pages())
+			return $items;
+
+		$db_pages = $this->get_provider('external_page')->get_pages_for_display();
+
+		foreach ($db_pages as $url => $page)
+		{
+			$items[] = array(
+				'location' => $url,
+				'lastmod'  => $page['last_modified'],
+				'freq'     => $page['frequency'],
+				'priority' => $page['priority']
+			);
+		}
+
+		return $items;
 	}
 
 	public function add_post_title_like_query_variable($where, WP_Query $wp_query)

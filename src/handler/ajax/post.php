@@ -8,13 +8,19 @@
 /**
  * @author Khang Minh <contact@betterwp.net>
  */
-class BWP_Sitemaps_Handler_Ajax_PostHandler extends BWP_Sitemaps_Handler_AjaxHandler
+class BWP_Sitemaps_Handler_Ajax_PostHandler extends BWP_Sitemaps_Handler_Ajax_WPContentHandler
 {
-	public function __construct(BWP_Sitemaps_Provider_Post $provider)
+	public function __construct(BWP_Sitemaps_Provider $provider)
 	{
-		$this->provider = $provider;
-		$this->excluder = $provider->get_exluder();
-		$this->bridge   = $provider->get_bridge();
+		if (! ($provider instanceof BWP_Sitemaps_Provider_Post)) {
+			throw new InvalidArgumentException(sprintf(
+				'expect a provider of type "%s", type "%s" provided.',
+				'BWP_Sitemaps_Provider_Post',
+				get_class($provider)
+			));
+		}
+
+		parent::__construct($provider);
 	}
 
 	/**

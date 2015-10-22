@@ -33,4 +33,9 @@ abstract class BWP_Sitemaps_Provider
 	{
 		return $this->bridge;
 	}
+
+	public function get_domain()
+	{
+		return $this->plugin->domain;
+	}
 }
