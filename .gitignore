@@ -5,3 +5,4 @@ vendor/
 .*
 *.otl
 phpunit.xml
+assets/dist/
