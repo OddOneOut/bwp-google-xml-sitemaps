@@ -1158,12 +1158,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'input',
 					'checkbox',
 					'input',
-					'heading', // formatting
+					'heading', // default values
 					'select',
 					'select',
 					'select',
-					'checkbox',
-					'checkbox',
 					'heading', // ping search engines
 					'checkbox',
 					'section',
@@ -1172,7 +1170,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'heading', // look and feel
 					'checkbox',
 					'input',
-					'checkbox',
 					'checkbox',
 				),
 				'item_labels' => array(
@@ -1189,12 +1186,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Global limit', $this->domain),
 					__('Split <strong>post-based</strong> sitemaps', $this->domain),
 					__('Split limit', $this->domain),
-					__('Default values & Formatting', $this->domain),
+					__('Default values', $this->domain),
 					__('Default change frequency', $this->domain),
 					__('Default priority', $this->domain),
 					__('Minimum priority', $this->domain),
-					__('Use GMT for Last Modified date', $this->domain),
-					__('Compress sitemaps', $this->domain),
 					__('Ping search engines', $this->domain),
 					__('Enable pinging', $this->domain),
 					__('Search engines to ping', $this->domain),
@@ -1203,7 +1198,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Look and Feel', $this->domain),
 					__('Make sitemaps look pretty', $this->domain),
 					__('Custom XSLT stylesheet URL', $this->domain),
-					__('Enable build stats', $this->domain),
 					__('Enable credit', $this->domain),
 				),
 				'item_names' => array(
@@ -1220,12 +1214,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'input_item_limit',
 					'enable_sitemap_split_post',
 					'input_split_limit_post',
-					'heading_format',
+					'heading_default',
 					'select_default_freq',
 					'select_default_pri',
 					'select_min_pri',
-					'enable_gmt',
-					'enable_gzip',
 					'heading_ping',
 					'enable_ping',
 					'sec_ping_vendors',
@@ -1234,7 +1226,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'heading_look',
 					'enable_xslt',
 					'input_custom_xslt',
-					'enable_stats',
 					'enable_credit',
 				),
 				'heading' => array(
@@ -1265,22 +1256,19 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						.'</em>',
 					'heading_limit' => '<em>'
 						. __('Limit the number of items to output in one sitemap. ', $this->domain)
-						. sprintf(__('Avoid setting too high limits, i.e. ones that your server '
-							. 'can not handle. In such case, you might encounter white page error '
-							. 'due to timeout or memory issue. '
+						. sprintf(__('Setting too high limits might lead to '
+							. 'white page error due to timeout or memory issue. '
 							. 'Refer to this plugin\'s <a target="_blank" href="%s">FAQ section</a> for more info.', $this->domain),
 							$this->plugin_url . 'faq/')
 						. '</em>',
-					'heading_format' => '<em>'
-						. __('Customize default values and some formating for your sitemaps. '
-						. 'Default values are only used when valid ones can not '
+					'heading_default' => '<em>'
+						. __('Default values are only used when valid ones can not '
 						. 'be calculated.', $this->domain)
 						. '</em>',
 					'heading_look' => '<em>'
 						. __('Customize the look and feel of your sitemaps. '
-						. 'Note that an XSLT stylesheet will NOT be used '
-						. 'for the Google News Sitemap module '
-						. 'regardless of any setting in this section.', $this->domain)
+						. 'Note that no stylesheet will be used '
+						. 'for the Google News sitemap.', $this->domain)
 						. '</em>',
 					'heading_ping' => '<em>'
 						. __('Whenever you post something new to your blog, '
@@ -1327,8 +1315,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						. '</a>', 'http://sitemaps.org/protocol.php#xmlTagDefinitions')
 				),
 				'checkbox' => array(
-					'enable_stats'              => array(__('print useful information such as build time, memory usage, SQL queries, etc.', $this->domain) => ''),
-					'enable_gzip'               => array(__('Use gzip to make sitemaps ~70% smaller. If you see an error after enabling this, it\'s very likely that you have gzip active on your server already.', $this->domain) => ''),
 					'enable_sitemap_taxonomy'   => array(__('Taxonomy (including custom taxonomies).', $this->domain) => ''),
 					'enable_sitemap_date'       => array(__('Date archives.', $this->domain) => ''),
 					'enable_sitemap_author'     => array(__('Author archives.', $this->domain) => ''),
@@ -1336,7 +1322,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'enable_credit'             => array(__('some copyrighted info is added to your sitemaps.', $this->domain) => ''),
 					'enable_xslt'               => array(__('Default XSLT stylesheets will be used. Set your custom stylesheets below or filter the <code>bwp_gxs_xslt</code> hook.', $this->domain) => ''),
 					'enable_sitemap_split_post' => array(__('Sitemaps like <code>post.xml</code> are split into <code>post_part1.xml</code>, <code>post_part2.xml</code>, etc. when limit reached.', $this->domain) => ''),
-					'enable_gmt'                => array(__('Disable this to use the local timezone setting in <em>Settings >> General</em>.', $this->domain) => ''),
 					'enable_sitemap_site'       => array(__('Site Address. For a multi-site installation of WordPress, this sitemap will list all appropriate blogs\' addresses within your network, not just the main blog\'s.', $this->domain) => ''),
 					'enable_ping'               => array(__('Ping search engines when you publish new posts. By default all public posts are considered, unless explicitly disabled below.', $this->domain) => ''),
 					'enable_ping_google'        => array(__('Google', $this->domain) => ''),
@@ -1416,9 +1401,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'input_split_limit_post',
 				'input_custom_xslt',
 				'input_ping_limit',
-				'enable_gmt',
 				'enable_xslt',
-				'enable_stats',
 				'enable_credit',
 				'enable_sitemap_split_post',
 				'enable_sitemap_date',
@@ -1426,7 +1409,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'enable_sitemap_external',
 				'enable_sitemap_author',
 				'enable_sitemap_site',
-				'enable_gzip',
 				'enable_ping',
 				'enable_ping_google',
 				'enable_ping_bing',
@@ -1580,6 +1562,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 			$form = array(
 				'items' => array(
+					'heading',
+					'checkbox',
+					'checkbox',
 					'heading', // virtual robots
 					'checkbox',
 					'checkbox',
@@ -1594,9 +1579,13 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'heading', // debugging
 					'checkbox',
 					'checkbox',
+					'checkbox',
 					'checkbox'
 				),
 				'item_labels' => array(
+					__('Formatting', $this->domain),
+					__('Use GMT for Last Modified date', $this->domain),
+					__('Compress sitemaps', $this->domain),
 					__('Robots.txt', $this->domain),
 					__('Add a sitemapindex entry to blog\'s robots.txt', $this->domain),
 					__('Add sitemapindex entries from all blogs to primary blog\'s robots.txt', $this->domain),
@@ -1609,11 +1598,15 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Database query limit', $this->domain),
 					__('Custom module directory', $this->domain),
 					__('Debugging', $this->domain),
+					__('Enable build stats', $this->domain),
 					__('Enable message log', $this->domain),
 					__('Enable debugging mode', $this->domain),
 					__('Enable extra debugging mode', $this->domain)
 				),
 				'item_names' => array(
+					'heading_format',
+					'enable_gmt',
+					'enable_gzip',
 					'heading_robot',
 					'enable_robots',
 					'enable_global_robots',
@@ -1626,11 +1619,13 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'input_sql_limit',
 					'input_alt_module_dir',
 					'heading_debug',
+					'enable_stats',
 					'enable_log',
 					'enable_debug',
 					'enable_debug_extra'
 				),
 				'heading' => array(
+					'heading_format' => '',
 					'heading_cache' => '<em>'
 						. __('Cache your sitemaps for better performance. '
 						. 'If you are still configuring the plugin it\'s best to '
@@ -1657,10 +1652,13 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'heading_debug' => ''
 				),
 				'checkbox' => array(
+					'enable_gmt'            => array(__('Disable this to use the local timezone setting in <em>Settings >> General</em>.', $this->domain) => ''),
+					'enable_gzip'           => array(__('Use gzip to make sitemaps ~70% smaller. If you see an error after enabling this, it\'s very likely that you have gzip active on your server already.', $this->domain) => ''),
 					'enable_cache'          => array(__('Your sitemaps are generated and then cached to reduce unnecessary work.', $this->domain) => ''),
 					'enable_cache_auto_gen' => array(__('Re-generate sitemap cache when expired. If you disable this, remember to manually flush the cache once in a while.', $this->domain) => ''),
 					'enable_robots'         => array(sprintf(__('If you\'re on a Multi-site installation with <strong>Sub-domain</strong> enabled, each blog will have its own robots.txt. Blogs in <strong>sub-directory</strong> will not, however. Please read the <a href="%s#robots.txt" target="_blank">documentation</a> for more info.', $this->domain), $this->plugin_url) => ''),
 					'enable_global_robots'  => array(sprintf(__('If you have for example 50 blogs, 50 sitemapindex entries will be added to your primary blog\'s <a href="%s" target="_blank">robots.txt</a>.', $this->domain), get_site_option('home') . '/robots.txt') => ''),
+					'enable_stats'              => array(__('print useful information such as build time, memory usage, SQL queries, etc.', $this->domain) => ''),
 					'enable_log'            => array(sprintf(__('Log useful messages when sitemaps are generated. The log can be viewed <a href="%s">here</a>.', $this->domain), $this->get_admin_page_url(BWP_GXS_STATS)) => ''),
 					'enable_debug'          => array(__('When this is on, NO caching is used and <code>WP_DEBUG</code> is respected, useful when developing new modules.', $this->domain) => ''),
 					'enable_debug_extra'    => array(sprintf(__('When this is on, NO headers are sent and sitemaps are NOT compressed, useful when debugging <em>Content Encoding Error</em>. More info <a href="%s#sitemap_log_debug" target="_blank">here</a>.', $this->domain), $this->plugin_url) => ''),
@@ -1727,6 +1725,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			);
 
 			$form_options = array(
+				'enable_gmt',
+				'enable_gzip',
 				'enable_cache',
 				'enable_cache_auto_gen',
 				'input_cache_dir',
@@ -1736,6 +1736,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'enable_global_robots',
 				'input_sql_limit',
 				'input_alt_module_dir',
+				'enable_stats',
 				'enable_log',
 				'enable_debug',
 				'enable_debug_extra',
