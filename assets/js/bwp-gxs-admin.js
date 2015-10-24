@@ -268,7 +268,7 @@ jQuery(function($){
 	});
 
 	// edit an external page
-	$('#modal-external-page').on('shown.bs.modal', function(e, v) {
+	$('#modal-external-page').on('show.bs.modal', function(e, v) {
 		var $btn  = $(e.relatedTarget);
 		var $form = $(this).find('form');
 
