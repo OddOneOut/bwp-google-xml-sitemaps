@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kminh/bwp-framework",
-                "reference": "c090207c1a9f83f49b9631050ec29291e54665a9"
+                "reference": "1477d5d3d04aad4780896dd6f647d95ed312101b"
             },
             "require": {
                 "php": "^5.2.0"
@@ -51,7 +51,7 @@
             ],
             "description": "Base codes for BWP WordPress Plugins",
             "homepage": "http://betterwp.net",
-            "time": "2015-10-22 16:05:30"
+            "time": "2015-10-24 07:53:56"
         }
     ],
     "packages-dev": [],
