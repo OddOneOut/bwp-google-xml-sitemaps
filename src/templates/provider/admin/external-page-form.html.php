@@ -15,14 +15,13 @@
 <form action="" method="POST" accept-charset="utf-8">
 	<div class="bwp-form-group">
 		<label for="external-page-url"><?php _e('Absolute URL to page', $this->domain); ?></label>
-		<input class="bwp-form-control" type="text" name="url"
+		<input class="bwp-form-control bwp-popover-focus" type="text" name="url"
+			data-content="<?php _e('Each page must have a unique URL, '
+				. 'so if you provide an existing URL, '
+				. 'the page with that URL will be updated with new data provided here.', $this->domain); ?>"
+			data-placement="auto bottom"
 			id="external-page-url" value="<?php esc_attr_e($page['url']) ?>" />
 	</div>
-
-	<span class="bwp-form-help-block">
-		<?php _e('Each page must have a unique URL, so if you provide an existing URL, '
-		. 'the page with that URL will be updated with new data provided here.', $this->domain); ?>
-	</span>
 
 	<div class="bwp-form-group bwp-form-group-sm">
 		<label for="external-page-frequency"><?php _e('Change frequency', $this->domain); ?></label>

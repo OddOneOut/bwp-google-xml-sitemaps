@@ -531,7 +531,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 			$this->enqueue_media_file('bwp-gxs-admin',
 				BWP_GXS_JS . '/bwp-gxs-admin.js',
-				array('bwp-select2', 'bwp-datatables', 'bwp-op-modal', 'bwp-op-toggle', 'bwp-op-misc'), false,
+				array(
+					'bwp-select2',
+					'bwp-datatables',
+					'bwp-op-modal',
+					'bwp-op-popover',
+					'bwp-op-toggle',
+					'bwp-op-misc'
+				), false,
 				BWP_GXS_DIST . '/js/script.min.js'
 			);
 
@@ -1176,8 +1183,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Generated Sitemaps', $this->domain),
 					__('Sitemaps to generate', $this->domain),
 					__('Enable following sitemaps', $this->domain),
-					__('Enable following post types:', $this->domain),
-					__('Enable following taxonomies:', $this->domain),
+					__('Enable following post types', $this->domain),
+					__('Enable following taxonomies', $this->domain),
 					__('Exclude items', $this->domain),
 					__('Exclude posts', $this->domain),
 					__('Exclude terms', $this->domain),
@@ -1193,8 +1200,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Ping search engines', $this->domain),
 					__('Enable pinging', $this->domain),
 					__('Search engines to ping', $this->domain),
-					__('Enable pinging for following post types:', $this->domain),
-					__('Ping limit for each search engine', $this->domain),
+					__('Enable following post types', $this->domain),
+					__('Ping limit', $this->domain),
 					__('Look and Feel', $this->domain),
 					__('Make sitemaps look pretty', $this->domain),
 					__('Custom XSLT stylesheet URL', $this->domain),
@@ -1303,27 +1310,16 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'select_exclude_post_type' => $this->_get_post_types_as_choices(),
 					'select_exclude_taxonomy' => $this->_get_taxonomies_as_choices()
 				),
-				'post' => array(
-					'select_default_freq' => sprintf('<a href="%s" target="_blank">'
-						. __('read more', $this->domain)
-						. '</a>', 'http://sitemaps.org/protocol.php#xmlTagDefinitions'),
-					'select_default_pri'  => sprintf('<a href="%s" target="_blank">'
-						. __('read more', $this->domain)
-						. '</a>', 'http://sitemaps.org/protocol.php#xmlTagDefinitions'),
-					'select_min_pri'      => sprintf('<a href="%s" target="_blank">'
-						. __('read more', $this->domain)
-						. '</a>', 'http://sitemaps.org/protocol.php#xmlTagDefinitions')
-				),
 				'checkbox' => array(
-					'enable_sitemap_taxonomy'   => array(__('Taxonomy (including custom taxonomies).', $this->domain) => ''),
-					'enable_sitemap_date'       => array(__('Date archives.', $this->domain) => ''),
-					'enable_sitemap_author'     => array(__('Author archives.', $this->domain) => ''),
+					'enable_sitemap_taxonomy'   => array(__('Taxonomy (including custom taxonomies)', $this->domain) => ''),
+					'enable_sitemap_date'       => array(__('Date archives', $this->domain) => ''),
+					'enable_sitemap_author'     => array(__('Author archives', $this->domain) => ''),
 					'enable_sitemap_external'   => array(sprintf(__('External pages. You can add pages <a href="%s#external-pages">here</a>.', $this->domain), $this->get_admin_page_url()) => ''),
 					'enable_credit'             => array(__('some copyrighted info is added to your sitemaps.', $this->domain) => ''),
 					'enable_xslt'               => array(__('Default XSLT stylesheets will be used. Set your custom stylesheets below or filter the <code>bwp_gxs_xslt</code> hook.', $this->domain) => ''),
 					'enable_sitemap_split_post' => array(__('Sitemaps like <code>post.xml</code> are split into <code>post_part1.xml</code>, <code>post_part2.xml</code>, etc. when limit reached.', $this->domain) => ''),
-					'enable_sitemap_site'       => array(__('Site Address. For a multi-site installation of WordPress, this sitemap will list all appropriate blogs\' addresses within your network, not just the main blog\'s.', $this->domain) => ''),
-					'enable_ping'               => array(__('Ping search engines when you publish new posts. By default all public posts are considered, unless explicitly disabled below.', $this->domain) => ''),
+					'enable_sitemap_site'       => array(__('Site Address', $this->domain) => ''),
+					'enable_ping'               => array(__('Ping search engines when you publish new posts.', $this->domain) => ''),
 					'enable_ping_google'        => array(__('Google', $this->domain) => ''),
 					'enable_ping_bing'          => array(__('Bing', $this->domain) => ''),
 				),
@@ -1339,15 +1335,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 							. 'Set to 0 to use the Global limit.', $this->domain)
 					),
 					'input_custom_xslt' => array(
-						'size'  => 91,
-						'label' => '<br />'
-							. __('Expect an absolute URL, '
-							. 'e.g. <code>http://example.com/my-stylesheet.xsl</code>. '
-							. 'You must also have a stylesheet for the sitemapindex '
-							. 'that can be accessed through the above URL, '
-							. 'e.g. <code>my-stylesheet.xsl</code> and '
-							. '<code>my-stylesheetindex.xsl</code>. '
-							. 'Leave blank to use provided stylesheets.', $this->domain)
+						'size'  => 91
 					),
 					'input_oldest' => array(
 						'size' => 3,
@@ -1355,8 +1343,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					),
 					'input_ping_limit' => array(
 						'size'  => 5,
-						'label' => __('time(s) per day. Increase this limit if '
-							. 'you publish a lot of posts in a single day.', $this->domain)
+						'label' => __('time(s) per search engine per day. '
+						. 'Increase this limit if you '
+						. 'publish a lot of posts in a single day.', $this->domain)
 					),
 				),
 				'container' => array(
@@ -1377,6 +1366,36 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'input_item_limit'       => 'int',
 					'input_split_limit_post' => 'int',
 					'input_ping_limit'       => 'int',
+				),
+				'helps' => array(
+					'enable_sitemap_site' => array(
+						'content' => 'For a multi-site installation of WordPress, '
+							. 'this sitemap will list all appropriate blogs\' addresses within your network, '
+							. 'not just the main blog\'s.',
+					),
+					'select_default_freq' => array(
+						'type'    => 'link',
+						'content' => 'http://www.sitemaps.org/protocol.html#xmlTagDefinitions'
+					),
+					'select_default_pri' => array(
+						'type'    => 'link',
+						'content' => 'http://www.sitemaps.org/protocol.html#xmlTagDefinitions'
+					),
+					'select_min_pri' => array(
+						'type'    => 'link',
+						'content' => 'http://www.sitemaps.org/protocol.html#xmlTagDefinitions'
+					),
+					'input_custom_xslt' => array(
+						'type'      => 'focus',
+						'content'   => __('Expect an absolute URL, '
+							. 'e.g. <code>http://example.com/my-stylesheet.xsl</code>. '
+							. 'You must also have a stylesheet for the sitemapindex '
+							. 'that can be accessed through the above URL, '
+							. 'e.g. <code>my-stylesheet.xsl</code> and '
+							. '<code>my-stylesheetindex.xsl</code>. '
+							. 'Leave blank to use provided stylesheets.', $this->domain),
+						'size'      => 'medium'
+					)
 				),
 				'attributes' => array(
 					'select_exclude_post_type' => array(
