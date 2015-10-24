@@ -32,7 +32,7 @@ class BWP_Sitemaps_Validator_Url
 	 * Validate a url
 	 *
 	 * @param string $url
-	 * @return string
+	 * @return bool
 	 */
 	public static function validate($url)
 	{

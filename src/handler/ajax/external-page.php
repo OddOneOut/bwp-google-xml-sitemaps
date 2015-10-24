@@ -68,13 +68,14 @@ class BWP_Sitemaps_Handler_Ajax_ExternalPageHandler extends BWP_Sitemaps_Handler
 		// must be a valid url and starts with the Site Address (either scheme)
 		if (! BWP_Sitemaps_Validator_Url::validate($url)
 			|| (strpos($url, $this->bridge->home_url()) !== 0
-				&& strpos($url, $this->bridge->home_url('', 'https') !== 0))
+				&& strpos($url, $this->bridge->home_url('', 'https')) !== 0)
 		) {
 			$this->response_with(array(
 				'error'   => 1,
 				'message' => sprintf(
-					__('Please provide a valid and absolute URL, for example: %s.', $this->domain),
-					home_url('path-to-page/')
+					__('Please provide an absolute URL under your domain, '
+					. 'for example: %s.', $this->domain),
+					home_url('a-page/')
 				)
 			));
 		}
