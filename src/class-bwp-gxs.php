@@ -526,6 +526,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 		if ($this->is_admin_page(BWP_GXS_GENERATOR)
 			|| $this->is_admin_page(BWP_GXS_GOOGLE_NEWS)
+			|| $this->is_admin_page(BWP_GXS_GENERATOR_ADVANCED)
 		) {
 			$style_deps = array('bwp-select2', 'bwp-datatables', 'bwp-option-page');
 
@@ -542,23 +543,26 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				BWP_GXS_DIST . '/js/script.min.js'
 			);
 
-			wp_localize_script('bwp-gxs-admin', 'bwp_gxs', array(
-				'nonce' => array(
-					'remove_excluded_item' => wp_create_nonce('bwp_gxs_remove_excluded_item'),
-					'remove_external_page' => wp_create_nonce('bwp_gxs_manage_external_page')
-				),
-				'text'  => array(
-					'exclude_items' => array(
-						'remove_title'   => __('Remove from exclusion', $this->domain),
-						'remove_warning' => __('This action can not be undone, are you sure?', $this->domain)
+			if ($this->is_admin_page(BWP_GXS_GENERATOR))
+			{
+				wp_localize_script('bwp-gxs-admin', 'bwp_gxs', array(
+					'nonce' => array(
+						'remove_excluded_item' => wp_create_nonce('bwp_gxs_remove_excluded_item'),
+						'remove_external_page' => wp_create_nonce('bwp_gxs_manage_external_page')
 					),
-					'external_pages' => array(
-						'edit_title'   => __('Edit this page', $this->domain),
-						'remove_title'   => __('Remove this page', $this->domain),
-						'remove_warning' => __('This action can not be undone, are you sure?', $this->domain)
+					'text'  => array(
+						'exclude_items' => array(
+							'remove_title'   => __('Remove from exclusion', $this->domain),
+							'remove_warning' => __('This action can not be undone, are you sure?', $this->domain)
+						),
+						'external_pages' => array(
+							'edit_title'   => __('Edit this page', $this->domain),
+							'remove_title'   => __('Remove this page', $this->domain),
+							'remove_warning' => __('This action can not be undone, are you sure?', $this->domain)
+						)
 					)
-				)
-			));
+				));
+			}
 		}
 
 		if ($this->is_admin_page())
@@ -1477,7 +1481,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Enable keywords support', $this->domain),
 					__('Get keywords from', $this->domain),
 					__('Enable multi-category support', $this->domain),
-					__('Ping search engines when a news article is published', $this->domain),
+					__('Enable pinging', $this->domain),
 					__('News categories', $this->domain),
 					__('The Google News sitemap will', $this->domain)
 				),
@@ -1524,15 +1528,13 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				),
 				'input' => array(
 					'input_news_name' => array(
-						'size'  => 70,
-						'label' => '<br />' . __('Set a different name for your news sitemap. '
-							. 'By default, your Site Title is used.', $this->domain)
+						'size'  => 70
 					),
 				),
 				'checkbox' => array(
 					'enable_news_sitemap'  => array(sprintf(__('A <code>post_google_news.xml</code> sitemap will be added to the main <a href="%s" target="_blank">sitemapindex.xml</a>. It is strongly recommended that you take a look at <a href="%s" target="_blank">Google\'s guidelines</a> before enabling this feature.', $this->domain), $this->get_sitemap_index_url(), 'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines') => ''),
-					'enable_news_keywords' => array(sprintf(__('More info <a href="%s" target="_blank">here</a>.', $this->domain), 'https://support.google.com/news/publisher/answer/116037?hl=en&ref_topic=4359874') => ''),
-					'enable_news_ping'     => array(__('This ping works separately from the sitemapindex ping, and only occurs when you publish an article in one of the news categories set below.', $this->domain) => ''),
+					'enable_news_keywords' => array('' => ''),
+					'enable_news_ping'     => array(__('Ping search engines when a news article is published', $this->domain) => ''),
 					'enable_news_multicat' => array(__('Enable this if you have posts assigned to more than one categories.', $this->domain) => '')
 				),
 				'inline_fields' => array(
@@ -1546,6 +1548,22 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						. 'the <code>post.xml</code> sitemap, which means it also uses posts from '
 						. 'the <strong>Post</strong> post type, but only from categories that are selected.', $this->domain)
 						. '</em>'
+				),
+				'helps' => array(
+					'input_news_name' => array(
+						'type'    => 'focus',
+						'content' => __('Set a different name for your news sitemap. '
+							. 'By default, your <em>Site Title</em> is used.', $this->domain)
+					),
+					'enable_news_keywords' => array(
+						'type' => 'link',
+						'content' => 'https://support.google.com/news/publisher/answer/116037?hl=en&ref_topic=4359874'
+					),
+					'enable_news_ping' => array(
+						'content' => __('This ping works separately from the sitemap index ping, '
+						. 'and only occurs when you publish an article '
+						. 'in one of the news categories set below.', $this->domain)
+					)
 				),
 				'attributes' => array(
 					'enable_news_keywords' => array(
@@ -1606,8 +1624,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Use GMT for Last Modified date', $this->domain),
 					__('Compress sitemaps', $this->domain),
 					__('Robots.txt', $this->domain),
-					__('Add a sitemapindex entry to blog\'s robots.txt', $this->domain),
-					__('Add sitemapindex entries from all blogs to primary blog\'s robots.txt', $this->domain),
+					__('Enable robots.txt support', $this->domain),
+					__('Enable multisite robots.txt support', $this->domain),
 					__('Sitemap Cache', $this->domain),
 					__('Enable caching', $this->domain),
 					__('Enable auto cache re-generation', $this->domain),
@@ -1654,7 +1672,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'heading_robot' => '<em>'
 						. sprintf(__('WordPress generates a %svirtual robots.txt%s '
 							. 'file for your blog by default. '
-							. 'You can add links to sitemapindex files generated by this plugin '
+							. 'You can add sitemap index files generated by this plugin '
 							. 'to that robots.txt file using settings below.', $this->domain),
 							!self::is_multisite() || self::is_subdomain_install()
 								? '<a href="' . home_url('robots.txt') . '" target="_blank">'
@@ -1675,9 +1693,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'enable_gzip'           => array(__('Use gzip to make sitemaps ~70% smaller. If you see an error after enabling this, it\'s very likely that you have gzip active on your server already.', $this->domain) => ''),
 					'enable_cache'          => array(__('Your sitemaps are generated and then cached to reduce unnecessary work.', $this->domain) => ''),
 					'enable_cache_auto_gen' => array(__('Re-generate sitemap cache when expired. If you disable this, remember to manually flush the cache once in a while.', $this->domain) => ''),
-					'enable_robots'         => array(sprintf(__('If you\'re on a Multi-site installation with <strong>Sub-domain</strong> enabled, each blog will have its own robots.txt. Blogs in <strong>sub-directory</strong> will not, however. Please read the <a href="%s#robots.txt" target="_blank">documentation</a> for more info.', $this->domain), $this->plugin_url) => ''),
-					'enable_global_robots'  => array(sprintf(__('If you have for example 50 blogs, 50 sitemapindex entries will be added to your primary blog\'s <a href="%s" target="_blank">robots.txt</a>.', $this->domain), get_site_option('home') . '/robots.txt') => ''),
-					'enable_stats'              => array(__('print useful information such as build time, memory usage, SQL queries, etc.', $this->domain) => ''),
+					'enable_robots'         => array(__('Add a sitemap index entry to blog\'s robots.txt', $this->domain) => ''),
+					'enable_global_robots'  => array(__('Add sitemap index entries from all blogs to primary blog\'s robots.txt', $this->domain) => ''),
+					'enable_stats'          => array(__('Print useful information such as build time, memory usage, SQL queries, etc.', $this->domain) => ''),
 					'enable_log'            => array(sprintf(__('Log useful messages when sitemaps are generated. The log can be viewed <a href="%s">here</a>.', $this->domain), $this->get_admin_page_url(BWP_GXS_STATS)) => ''),
 					'enable_debug'          => array(__('When this is on, NO caching is used and <code>WP_DEBUG</code> is respected, useful when developing new modules.', $this->domain) => ''),
 					'enable_debug_extra'    => array(sprintf(__('When this is on, NO headers are sent and sitemaps are NOT compressed, useful when debugging <em>Content Encoding Error</em>. More info <a href="%s#sitemap_log_debug" target="_blank">here</a>.', $this->domain), $this->plugin_url) => ''),
@@ -1689,24 +1707,13 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					),
 					'input_cache_dir' => array(
 						'size'     => 91,
-						'disabled' => $this->_get_cache_directory_from_constant() ? ' disabled="disabled" ' : '',
-						'value'    => $this->_get_cache_directory_from_constant() ? strtoupper(__('set via constant (BWP_GXS_CACHE_DIR)', $this->domain)) : null,
-						'label'    => '<br />'
-							. __('Expect an absolute path to a writable directory '
-							. '(i.e. CHMOD to 755 or 777). ', $this->domain)
-							. '<br />'
-							. sprintf(__('Leave empty to use <code>%s</code>.', $this->domain),
-							$this->_get_default_cache_directory())
+						'disabled' => $this->_get_cache_directory_from_constant()
+							? ' disabled="disabled" ' : '',
+						'value'    => $this->_get_cache_directory_from_constant()
+							? strtoupper(__('set via constant (BWP_GXS_CACHE_DIR)', $this->domain)) : null,
 					),
 					'input_alt_module_dir' => array(
-						'size' => 91,
-						'label' => '<br />'
-							. __('Expect an absolute path to the directory '
-							. 'where you put your custom modules '
-							. '(e.g. <code>/home/mysite/public_html/gxs-modules/</code>). ', $this->domain)
-							. '<br />'
-							. __('Override a built-in module by having a module '
-							. 'with the same filename in specified directory.', $this->domain)
+						'size' => 91
 					),
 					'input_sql_limit' => array(
 						'size' => 5,
@@ -1727,6 +1734,49 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				),
 				'inline' => array(
 					'cb_enable_autogen' =>  '<br /><br />'
+				),
+				'helps' => array(
+					'enable_robots' => array(
+						'type'    => 'switch',
+						'target'  => 'icon',
+						'content' => sprintf(
+							__('If you\'re on a Multi-site installation with <strong>Sub-domain</strong> enabled, '
+							. 'each blog will have its own robots.txt. '
+							. 'Blogs in <strong>sub-directory</strong> will not, however. '
+							. 'Please read the <a href="%s#robots.txt" target="_blank">documentation</a> for more info.', $this->domain),
+							$this->plugin_url
+						)
+					),
+					'enable_global_robots' => array(
+						'type'    => 'switch',
+						'target'  => 'icon',
+						'content' => sprintf(
+							__('If you have for example 50 blogs, 50 sitemap index entries '
+							. 'will be added to your primary blog\'s <a href="%s" target="_blank">robots.txt</a>.', $this->domain),
+							get_site_option('home') . '/robots.txt'
+						)
+					),
+					'input_cache_dir' => array(
+						'type' => 'focus',
+						'content' => __('Expect an absolute path to a writable directory '
+							. '(i.e. CHMOD to 755 or 777). ', $this->domain)
+							. '<br />'
+							. sprintf(
+								__('Leave empty to use <code>%s</code>.', $this->domain),
+								$this->_get_default_cache_directory()
+							),
+						'size' => 'medium'
+					),
+					'input_alt_module_dir' => array(
+						'type'    => 'focus',
+						'content' => __('Expect an absolute path to the directory '
+							. 'where you put your custom modules '
+							. '(e.g. <code>/home/mysite/public_html/gxs-modules/</code>). ', $this->domain)
+							. '<br />'
+							. __('Override a built-in module by having a module '
+							. 'with the same filename in specified directory.', $this->domain),
+						'size'    => 'large'
+					)
 				),
 				'env' => array(
 					'enable_global_robots' => 'multisite'
