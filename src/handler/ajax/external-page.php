@@ -109,7 +109,7 @@ class BWP_Sitemaps_Handler_Ajax_ExternalPageHandler extends BWP_Sitemaps_Handler
 		);
 
 		if ($result = $this->save($url, $data)) {
-			$data['url'] = $this->bridge->esc_url($url);
+			$data['url'] = $this->bridge->esc_html($url);
 
 			// always display in local timezone
 			$data['last_modified'] = $last_modified
@@ -161,7 +161,7 @@ class BWP_Sitemaps_Handler_Ajax_ExternalPageHandler extends BWP_Sitemaps_Handler
 
 		foreach ($pages as $url => $page) {
 			$items[] = array(
-				'url'           => $this->bridge->esc_url($url),
+				'url'           => $this->bridge->esc_html($url),
 				'frequency'     => $this->bridge->esc_html($page['frequency']),
 				'priority'      => $this->bridge->esc_html($page['priority']),
 				'last_modified' => $page['last_modified']
