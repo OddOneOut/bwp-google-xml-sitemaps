@@ -3,7 +3,7 @@
 <!--[if lte IE 9]>
 <div class="bwp-table-fixed-headers-old-id-wrapper" style="width: 700px>
 <!--<![endif]-->
-	<table class="wp-list-table widefat striped bwp-table bwp-table-medium-wide bwp-table-inline bwp-table-fixed-headers" style="width: 700px;">
+	<table class="wp-list-table widefat striped bwp-table bwp-table-md bwp-table-inline bwp-table-fixed-headers" style="width: 700px;">
 		<thead>
 			<tr>
 				<th class="ordinal">#</th>

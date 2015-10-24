@@ -2410,7 +2410,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'UserGenerated'
 		);
 
-		$return  = '<table class="wp-list-table widefat striped bwp-table bwp-table-wide bwp-table-inline">' . "\n";
+		$return  = '<table class="wp-list-table widefat striped bwp-table bwp-table-lg bwp-table-inline">' . "\n";
 		$return .= '<thead>' . "\n"
 			. '<tr><th><span>#</span></th><th><span>'
 			. __('Category\'s name', $this->domain) . '</span></th><th>'

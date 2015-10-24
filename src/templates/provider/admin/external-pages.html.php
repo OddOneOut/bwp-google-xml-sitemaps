@@ -1,6 +1,6 @@
 <?php if (!defined('ABSPATH')) { exit; } ?>
 
-<div id="wrapper-external-pages" class="bwp-inline-form-wrapper bwp-inline-form-wrapper-wide">
+<div id="wrapper-external-pages" class="bwp-inline-form-wrapper bwp-inline-form-wrapper-lg">
 	<div class="bwp-button-group">
 		<button type="button" data-target="#modal-external-page"
 			class="button-secondary bwp-button-modal"
