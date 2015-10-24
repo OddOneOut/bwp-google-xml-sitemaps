@@ -230,6 +230,13 @@ function bwp_remove_excluded_item($, $t, group, type) {
 jQuery(function($){
 	"use strict";
 
+	// init datetime input mask
+	$('#external-page-last-modified').inputmask('y-m-d[ h:s]', {
+		placeholder: 'yyyy-mm-dd hh:mm',
+		showMaskOnHover: false,
+		removeMaskOnSubmit: true
+	});
+
 	// remove an excluded post
 	$('#table-excluded-posts').on('click', '.bwp-ua-remove', function(e) {
 		e.preventDefault();

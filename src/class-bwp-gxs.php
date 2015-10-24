@@ -528,13 +528,15 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			|| $this->is_admin_page(BWP_GXS_GOOGLE_NEWS)
 			|| $this->is_admin_page(BWP_GXS_GENERATOR_ADVANCED)
 		) {
-			$style_deps = array('bwp-select2', 'bwp-datatables', 'bwp-option-page');
+			$style_deps = array('bwp-select2', 'bwp-datatables', 'bwp-jquery-ui', 'bwp-option-page');
 
 			$this->enqueue_media_file('bwp-gxs-admin',
 				BWP_GXS_JS . '/bwp-gxs-admin.js',
 				array(
 					'bwp-select2',
 					'bwp-datatables',
+					'bwp-inputmask',
+					'jquery-ui-datepicker',
 					'bwp-op-modal',
 					'bwp-op-popover',
 					'bwp-op-toggle',

@@ -43,9 +43,12 @@
 	</div>
 
 	<div class="bwp-form-group bwp-form-group-sm">
-		<label for="external-page-last-modified"><?php _e('Last modified', $this->domain); ?></label>
-		<input class="bwp-form-control" type="text" name="last_modified"
+		<label for="external-page-last-modified"><?php _e('Last modified (time is optional)', $this->domain); ?></label>
+		<input class="bwp-form-control bwp-form-control-with-icon bwp-datepicker"
+			type="text" name="last_modified"
 			id="external-page-last-modified" value="<?php esc_attr_e($page['last_modified']) ?>" />
+		<span class="dashicons dashicons-calendar bwp-form-control-icon"
+			title="<?php _e('Click to open a calendar', $this->domain); ?>"></span>
 	</div>
 
 	<span class="bwp-form-help-block bwp-form-help-block-last">
