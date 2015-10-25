@@ -1318,7 +1318,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'enable_sitemap_taxonomy'   => array(__('Taxonomy (including custom taxonomies)', $this->domain) => ''),
 					'enable_sitemap_date'       => array(__('Date archives', $this->domain) => ''),
 					'enable_sitemap_author'     => array(__('Author archives', $this->domain) => ''),
-					'enable_sitemap_external'   => array(sprintf(__('External pages. You can add pages <a href="%s#external-pages">here</a>.', $this->domain), $this->get_admin_page_url()) => ''),
+					'enable_sitemap_external'   => array(__('External (non-WordPress) pages.', $this->domain) => ''),
 					'enable_credit'             => array(__('some copyrighted info is added to your sitemaps.', $this->domain) => ''),
 					'enable_xslt'               => array(__('Default XSLT stylesheets will be used. Set your custom stylesheets below or filter the <code>bwp_gxs_xslt</code> hook.', $this->domain) => ''),
 					'enable_sitemap_split_post' => array(__('Sitemaps like <code>post.xml</code> are split into <code>post_part1.xml</code>, <code>post_part2.xml</code>, etc. when limit reached.', $this->domain) => ''),
@@ -1402,6 +1402,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					)
 				),
 				'attributes' => array(
+					'enable_sitemap_external' => array(
+						'class'       => 'bwp-switch-select',
+						'data-target' => 'external-pages',
+					),
 					'select_exclude_post_type' => array(
 						'class'               => 'bwp-switch-select',
 						'data-target'         => 'wrapper-exclude-posts',
