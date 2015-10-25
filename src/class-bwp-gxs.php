@@ -524,10 +524,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	{
 		$style_deps = array('bwp-option-page');
 
-		if ($this->is_admin_page(BWP_GXS_GENERATOR)
-			|| $this->is_admin_page(BWP_GXS_GOOGLE_NEWS)
-			|| $this->is_admin_page(BWP_GXS_GENERATOR_ADVANCED)
-		) {
+		if ($this->is_admin_page(BWP_GXS_GENERATOR))
+		{
 			$style_deps = array('bwp-select2', 'bwp-datatables', 'bwp-jquery-ui', 'bwp-option-page');
 
 			$this->enqueue_media_file('bwp-gxs-admin',
@@ -538,9 +536,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'bwp-inputmask',
 					'jquery-ui-datepicker',
 					'bwp-op-modal',
-					'bwp-op-popover',
-					'bwp-op-toggle',
-					'bwp-op-misc'
+					'bwp-op'
 				), false,
 				BWP_GXS_DIST . '/js/script.min.js'
 			);
@@ -573,6 +569,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				BWP_GXS_CSS . '/style.css', $style_deps, false,
 				BWP_GXS_DIST . '/css/style.min.css'
 			);
+
+			wp_enqueue_script('bwp-op');
 		}
 	}
 
