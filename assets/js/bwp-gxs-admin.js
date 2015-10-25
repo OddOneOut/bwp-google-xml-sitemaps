@@ -207,23 +207,21 @@ function bwp_button_view_external_pages_cb($, $t, hide_loader_cb) {
 }
 
 function bwp_remove_excluded_item($, $t, group, type) {
-	if (!window.confirm(bwp_gxs.text.exclude_items.remove_warning)) {
-		return;
-	}
+	bwp_bootbox.confirm(bwp_gxs.text.exclude_items.remove_warning, function() {
+		jQuery.post(ajaxurl, {
+			action: 'bwp-gxs-remove-excluded-' + type,
+			_ajax_nonce: bwp_gxs.nonce.remove_excluded_item,
+			group: group,
+			id: $t.data('itemId')
+		}, function(r) {
+			if (r != 1) {
+				return;
+			}
 
-	jQuery.post(ajaxurl, {
-		action: 'bwp-gxs-remove-excluded-' + type,
-		_ajax_nonce: bwp_gxs.nonce.remove_excluded_item,
-		group: group,
-		id: $t.data('itemId')
-	}, function(r) {
-		if (r != 1) {
-			return;
-		}
-
-		if ($.fn.dataTable.isDataTable('#table-excluded-' + type + 's')) {
-			bwp_remove_table_row($('#table-excluded-' + type + 's').DataTable(), $t.parents('tr'));
-		}
+			if ($.fn.dataTable.isDataTable('#table-excluded-' + type + 's')) {
+				bwp_remove_table_row($('#table-excluded-' + type + 's').DataTable(), $t.parents('tr'));
+			}
+		});
 	});
 }
 
@@ -253,24 +251,22 @@ jQuery(function($){
 	$('#table-external-pages').on('click', '.bwp-ua-remove', function(e) {
 		e.preventDefault();
 
-		if (!window.confirm(bwp_gxs.text.external_pages.remove_warning)) {
-			return;
-		}
-
 		var $t = $(this);
 
-		jQuery.post(ajaxurl, {
-			action: 'bwp-gxs-remove-external-page',
-			_ajax_nonce: bwp_gxs.nonce.remove_external_page,
-			url: $t.data('itemId')
-		}, function(r) {
-			if (r != 1) {
-				return;
-			}
+		bwp_bootbox.confirm(bwp_gxs.text.external_pages.remove_warning, function() {
+			jQuery.post(ajaxurl, {
+				action: 'bwp-gxs-remove-external-page',
+				_ajax_nonce: bwp_gxs.nonce.remove_external_page,
+				url: $t.data('itemId')
+			}, function(r) {
+				if (r != 1) {
+					return;
+				}
 
-			if ($.fn.dataTable.isDataTable('#table-external-pages')) {
-				bwp_remove_table_row($('#table-external-pages').DataTable(), $t.parents('tr'));
-			}
+				if ($.fn.dataTable.isDataTable('#table-external-pages')) {
+					bwp_remove_table_row($('#table-external-pages').DataTable(), $t.parents('tr'));
+				}
+			});
 		});
 	});
 
