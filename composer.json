@@ -1,5 +1,6 @@
 {
     "name": "kdm/bwp-google-xml-sitemaps",
+    "type": "wordpress-plugin",
     "description": "WordPress plugin that helps generate XML Sitemaps for your website/blog. This plugin comes with support for sitemap index, multisite WordPress and Google News sitemap. It also provides a powerful and flexible system for any customization need.",
     "homepage": "http://betterwp.net",
     "license": "GPLv3",
