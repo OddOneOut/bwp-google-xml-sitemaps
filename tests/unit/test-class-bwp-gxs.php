@@ -26,8 +26,8 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 		$this->plugin->__construct(array(
 			'title'       => 'BWP Google XML Sitemaps',
 			'version'     => '1.4.0',
-			'php_version' => '5.1.2',
-			'wp_version'  => '3.0',
+			'php_version' => '5.2.0',
+			'wp_version'  => '3.6',
 			'domain'      => 'bwp-google-xml-sitemaps'
 		), $this->bridge, $this->cache);
 
