@@ -1782,6 +1782,11 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						'size'    => 'large'
 					)
 				),
+				'attributes' => array(
+					'input_cache_dir' => array(
+						'placeholder' => $this->_get_default_cache_directory()
+					)
+				),
 				'env' => array(
 					'enable_global_robots' => 'multisite'
 				),
@@ -2046,15 +2051,23 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		return $button;
 	}
 
+	/**
+	 * Flush sitemap cache
+	 *
+	 * @return mixed int|bool false if there's something wrong
+	 *                        int the number of cached sitemaps flushed
+	 */
 	public function flush_cache()
 	{
-		$deleted = 0;
+		$deleted = false;
 		$dir     = trailingslashit($this->_get_cache_directory());
 
 		if (is_dir($dir))
 		{
 			if ($dh = opendir($dir))
 			{
+				$deleted = 0;
+
 				while (($file = readdir($dh)) !== false)
 				{
 					if (preg_match('/^gxs_[a-z0-9]+\.(xml|xml\.gz)$/i', $file))
@@ -2072,43 +2085,52 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	}
 
 	/**
-	 * Flushes sitemap cache inside admin area
+	 * Flush sitemap cache inside admin area
 	 *
 	 * @since 1.3.0
 	 * @internal
 	 */
 	public function handle_flush_action()
 	{
-		if ($deleted = $this->flush_cache())
+		$deleted = $this->flush_cache();
+
+		if ($deleted !== false)
 		{
-			$this->add_notice_flash(
-				'<strong>' . __('Notice', $this->domain) . ':</strong> '
-				. sprintf(
+			$message = $deleted > 0
+				? sprintf(
 					__('<strong>%d</strong> cached sitemaps have '
 					. 'been flushed successfully!', $this->domain),
-					$deleted)
-			);
+					$deleted
+				)
+				: __('There are no cached sitemaps to flush.', $this->domain);
+
+			$this->add_notice_flash($message);
 
 			return true;
 		}
 		else
 		{
-			$this->add_notice_flash(
-				'<strong>' . __('Notice', $this->domain) . ':</strong> '
-				. __('Could not delete any cached sitemaps. '
-				. 'Please manually check the cache directory.', $this->domain)
-			);
+			$this->add_error_flash(sprintf(
+				__('Could not flush the cache, '
+				. 'cache directory is either not found or is not writable. '
+				. 'See <a href="%s" target="_blank">this FAQ entry</a> '
+				. 'for a possible solution.', $this->domain),
+				$this->plugin_url . 'faq/#flush-cache-error'
+			));
 
 			return false;
 		}
 	}
 
+	/**
+	 * @internal
+	 */
 	public function handle_save_flush_action()
 	{
 		$this->current_option_page->submit_html_form();
 		$this->add_notice_flash(__('All options have been saved.', $this->domain));
 
-		$this->handle_flush_action();
+		return $this->handle_flush_action();
 	}
 
 	/**
@@ -2135,7 +2157,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 		$excluder->update_excluded_items($group, $excluded_items);
 
-		$this->add_notice_flash(sprintf(__('Successfully excluded <strong>%d</strong> items.', $this->domain), count($items_to_exclude)));
+		$this->add_notice_flash(
+			sprintf(__('Successfully excluded <strong>%d</strong> items.', $this->domain),
+			count($items_to_exclude))
+		);
 	}
 
 	public function handle_exclude_posts()
