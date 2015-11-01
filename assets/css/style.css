@@ -1,4 +1,4 @@
-* html .bwp-gxs-log { 
+* html .bwp-gxs-log {
 	height: expression( this.scrollHeight > 200 ? "200px" : "auto" );
 }
 

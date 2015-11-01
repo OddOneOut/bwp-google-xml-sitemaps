@@ -2897,20 +2897,30 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	private function _load_sitemap_from_cache($module_name, $sitemap_name)
 	{
+		// cache is not enabled or debug is enabled
 		if ('yes' != $this->options['enable_cache'] || $this->_debug)
 		{
-			// cache is not enabled or debug is enabled
 			return false;
 		}
 
 		$cache_status = $this->sitemap_cache->get_cache_status($module_name, $sitemap_name);
 
+		// cache is invalid
 		if (!$cache_status)
 		{
-			// cache is invalid
 			return false;
 		}
-		else if ($cache_status == '304')
+		elseif (!empty($_GET['generate']) && current_user_can('manage_options'))
+		{
+			// @since 1.4.0 admin is regenerating the sitemap, no cache should
+			// be used, even when cache status is valid. We need to do this
+			// here because we want to regenerate the sitemap, which requires
+			// the cache file, but it is only determined after running
+			// BWP_GXS_CACHE::get_cache_status(). This should be fixed in
+			// future versions.
+			return false;
+		}
+		elseif ($cache_status == '304')
 		{
 			// http cache can be used, we don't need to output anything except
 			// for some headers
@@ -2919,19 +2929,19 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				array('status' => 304), $this->sitemap_cache->get_headers()
 			));
 		}
-		else if ($cache_status == '200')
+		elseif ($cache_status == '200')
 		{
 			// file cache is ok, output the cached sitemap
 			$this->_send_headers($this->sitemap_cache->get_headers());
 
 			$cache_file = $this->sitemap_cache->get_cache_file();
 
+			// when server or script is not already gzipping, and gzip is
+			// allowed, we simply read the cached file without any additional
+			// compression because cached sitemap files are stored as gzipped
+			// files.
 			if ($this->_is_gzip_ok() && !self::is_gzipped())
 			{
-				// when server or script is not already gzipping, and gzip is
-				// allowed, we simply read the cached file without any
-				// additional compression because cached sitemap files are
-				// stored as gzipped files.
 				readfile($cache_file);
 			}
 			else
