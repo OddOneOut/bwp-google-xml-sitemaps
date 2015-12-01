@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Copyright (c) 2014 Khang Minh <betterwp.net>
+ * Copyright (c) 2015 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  * @package BWP Google XML Sitemaps
  */
@@ -189,11 +190,12 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 							? explode(', ', $news_genres['cat_' . $term_id])
 							: '';
 
-						if (is_array($cur_genres)) :
+						if (is_array($cur_genres))
+						{
 							foreach ($cur_genres as $cur_genre)
 								if (!in_array($cur_genre, $genres_cache[$genres_cache_key]))
 									$genres_cache[$genres_cache_key][] = $cur_genre;
-						endif;
+						}
 					}
 				}
 
@@ -218,7 +220,11 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 				$keywords = array();
 
 				foreach ($post->term_names as $term_name)
-					$keywords[] = (!empty($keywords_map[$term_name])) ? trim($keywords_map[$term_name]) : $term_name;
+				{
+					$keywords[] = !empty($keywords_map[$term_name])
+						? trim($keywords_map[$term_name])
+						: $term_name;
+				}
 
 				$keywords = implode(', ', $keywords);
 			}
@@ -228,14 +234,15 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 				$keywords = array();
 				$tags     = get_the_tags($post->ID);
 
-				if (is_array($tags)) :
+				if (is_array($tags))
+				{
 					foreach (get_the_tags($post->ID) as $tag)
 					{
 						$keywords[] = !empty($keywords_map[$tag->name])
 							? trim($keywords_map[$tag->name])
 							: $tag->name;
 					}
-				endif;
+				}
 
 				$keywords = implode(', ', $keywords);
 			}
