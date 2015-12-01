@@ -30,11 +30,8 @@ class BWP_Sitemaps_Provider_Taxonomy_Test extends BWP_Sitemaps_PHPUnit_Provider_
 	 */
 	public function test_get_taxonomies()
 	{
-		$post_format = new stdClass();
-		$post_format->name = 'post_format';
-
-		$taxonomy = new stdClass();
-		$taxonomy->name = 'category';
+		$post_format = $this->create_taxonomy('post_format');
+		$taxonomy    = $this->create_taxonomy('category');
 
 		$taxonomies = array(
 			$post_format, $taxonomy
@@ -46,7 +43,33 @@ class BWP_Sitemaps_Provider_Taxonomy_Test extends BWP_Sitemaps_PHPUnit_Provider_
 			->andReturn($taxonomies)
 			->byDefault();
 
-		$this->assertEquals(array($taxonomy), $this->provider->get_taxonomies());
+		$this->assertEquals(array($taxonomy), $this->provider->get_taxonomies(), 'should not return post format');
+	}
+
+	/**
+	 * @covers BWP_Sitemaps_Provider_Taxonomy::get_taxonomies
+	 */
+	public function test_get_taxonomies_with_post_type()
+	{
+		$post_format      = $this->create_taxonomy('post_format');
+		$taxonomy         = $this->create_taxonomy('category');
+		$private_taxonomy = $this->create_taxonomy('taxonomy', 0);
+
+		$taxonomies = array(
+			$post_format, $taxonomy, $private_taxonomy
+		);
+
+		$this->bridge
+			->shouldReceive('get_object_taxonomies')
+			->with('post_type', 'objects')
+			->andReturn($taxonomies)
+			->byDefault();
+
+		$this->assertEquals(
+			array($taxonomy),
+			$this->provider->get_taxonomies('post_type'),
+			'should not return post format and private taxonomies'
+		);
 	}
 
 	/**
@@ -93,6 +116,26 @@ class BWP_Sitemaps_Provider_Taxonomy_Test extends BWP_Sitemaps_PHPUnit_Provider_
 	}
 
 	/**
+	 * @covers BWP_Sitemaps_Provider_Taxonomy::get_all_terms
+	 */
+	public function test_get_all_terms()
+	{
+		$taxonomy = 'taxonomy';
+
+		$this->bridge
+			->shouldReceive('get_terms')
+			->with($taxonomy, array(
+				'include'    => array(),
+				'exclude'    => array(),
+				'number'     => 0,
+				'hide_empty' => false
+			))
+			->byDefault();
+
+		$this->provider->get_all_terms($taxonomy);
+	}
+
+	/**
 	 * @covers BWP_Sitemaps_Provider_Taxonomy::get_terms_by_name
 	 */
 	public function test_get_terms_by_name()
@@ -118,5 +161,15 @@ class BWP_Sitemaps_Provider_Taxonomy_Test extends BWP_Sitemaps_PHPUnit_Provider_
 			->byDefault();
 
 		$this->assertEquals($terms, $this->provider->get_terms_by_name('category', 'name'));
+	}
+
+	protected function create_taxonomy($name, $public = 1)
+	{
+		$taxonomy = new stdClass();
+
+		$taxonomy->name   = $name;
+		$taxonomy->public = $public;
+
+		return $taxonomy;
 	}
 }

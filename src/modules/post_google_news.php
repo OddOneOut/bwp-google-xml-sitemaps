@@ -17,14 +17,14 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 	/**
 	 * Process the posts if Multi-cat mode is enabled
 	 */
-	private static function process_posts($posts, $news_cats, $news_cat_action)
+	private static function process_posts($posts, $news_terms, $news_term_action)
 	{
 		// this $post array surely contains duplicate posts, fortunately they
 		// are already sorted by post_date_gmt and ID, so we can group them
 		// here by IDs
 		$ord_num = 0;
 
-		$excluded_cats = 'inc' == $news_cat_action ? array() : explode(',', $news_cats);
+		$excluded_cats = 'inc' == $news_term_action ? array() : explode(',', $news_terms);
 
 		$processed_posts = array();
 
@@ -94,8 +94,8 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 		global $wpdb, $post, $bwp_gxs;
 
 		$keywords_map = apply_filters('bwp_gxs_news_keyword_map', array(
-			// This is an array to map foreign categories to its English counterpart
-			// Use category title (name) as the key
+			// This is an array to map foreign terms to its English counterpart
+			// Use term title (name) as the key
 			// Below is an example:
 			// '電視台' => 'television',
 			// '名人'=> 'celebrities'
@@ -103,24 +103,32 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 		$lang = $bwp_gxs->options['select_news_lang'];
 
-		$news_genres     = $bwp_gxs->options['input_news_genres'];
-		$news_cats       = $bwp_gxs->options['select_news_cats'];
-		$news_cat_action = $bwp_gxs->options['select_news_cat_action'];
+		// @since 1.4.0 support custom post type for google news sitemap
+		$news_post_type = $bwp_gxs->options['select_news_post_type'];
+		$news_taxonomy  = $bwp_gxs->options['select_news_taxonomy'];
 
-		if ($news_cat_action == 'inc' && empty($news_cats))
+		$news_terms       = $bwp_gxs->options['select_news_cats'];
+		$news_term_action = $bwp_gxs->options['select_news_cat_action'];
+		$news_genres      = $bwp_gxs->options['input_news_genres'];
+
+		if ($news_term_action == 'inc' && empty($news_terms))
 		{
 			// if we have to look for news post in certain categories, but
-			// news category list is empty, nothing to do. This should stop the
+			// news term list is empty, nothing to do. This should stop the
 			// SQL cycling btw.
 			return false;
 		}
 
-		$cat_query = ' AND t.term_id NOT IN (' . $news_cats . ')';
-		$cat_query = $news_cat_action == 'inc'
-			? str_replace('NOT IN', 'IN', $cat_query) : $cat_query;
-		$cat_query = $news_cat_action != 'inc'
-			&& $bwp_gxs->options['enable_news_multicat'] == 'yes'
-			? '' : $cat_query;
+		$term_query = '';
+		if ($news_terms)
+		{
+			$term_query = ' AND t.term_id NOT IN (' . $news_terms . ')';
+			$term_query = $news_term_action == 'inc'
+				? str_replace('NOT IN', 'IN', $term_query) : $term_query;
+			$term_query = $news_term_action != 'inc'
+				&& $bwp_gxs->options['enable_news_multicat'] == 'yes'
+				? '' : $term_query;
+		}
 
 		$group_by = empty($bwp_gxs->options['enable_news_multicat'])
 			? ' GROUP BY p.ID' : '';
@@ -130,26 +138,34 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 			FROM ' . $wpdb->term_relationships . ' tr
 			INNER JOIN ' . $wpdb->posts . ' p
 				ON tr.object_id = p.ID' . "
+				AND p.post_type = %s
 				AND p.post_status = 'publish'
 				AND p.post_password = ''" . '
 				AND p.post_date_gmt > %s
 			INNER JOIN ' . $wpdb->term_taxonomy . ' tt
 				ON tr.term_taxonomy_id = tt.term_taxonomy_id' . "
-				AND tt.taxonomy = 'category'" . '
+				AND tt.taxonomy = %s" . '
 			INNER JOIN ' . $wpdb->terms . ' t
 				ON tt.term_id = t.term_id
 			WHERE 1 = 1 '
-				. $cat_query
+				. $term_query
 				. $group_by . '
 			ORDER BY p.post_date_gmt, p.ID DESC
 			LIMIT 0, ' . $this->limit;
 
-		$latest_posts = $wpdb->get_results($wpdb->prepare($latest_post_query, self::news_time()));
+		$latest_posts = $wpdb->get_results(
+			$wpdb->prepare(
+				$latest_post_query,
+				$news_post_type,
+				self::news_time(),
+				$news_taxonomy
+			)
+		);
 
 		if ('yes' == $bwp_gxs->options['enable_news_multicat'])
 		{
 			// if Multi-cat mode is enabled we will need to process fetched posts
-			$latest_posts = self::process_posts($latest_posts, $news_cats, $news_cat_action);
+			$latest_posts = self::process_posts($latest_posts, $news_terms, $news_term_action);
 		}
 
 		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
