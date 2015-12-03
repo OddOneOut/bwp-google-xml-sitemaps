@@ -300,7 +300,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'select_news_lang'             => 'en',
 			'select_news_post_type'        => 'post', // @since 1.4.0
 			'select_news_taxonomy'         => 'category', // @since 1.4.0
-			'select_news_keyword_type'     => 'cat',
+			'select_news_keyword_type'     => 'cat', // @deprecated 1.4.0
+			'select_news_keyword_source'   => '', // @since 1.4.0
 			'select_news_cat_action'       => 'inc',
 			'select_news_cats'             => '',
 			'input_news_name'              => '', // @since 1.3.1
@@ -879,8 +880,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	{
 		$upgrade_path = dirname(__FILE__) . '/upgrades/db';
 
-		// @since 1.4.0 change log formats
-		if (version_compare($from, '1.4.0', '<')) include_once $upgrade_path . '/r2.php';
+		if (version_compare($from, '1.4.0', '<'))
+		{
+			// @since 1.4.0 change log formats
+			include_once $upgrade_path . '/r2.php';
+
+			// @since 1.4.0 change google news settings
+			include_once $upgrade_path . '/r3.php';
+		}
 	}
 
 	public function init_upgrade_plugin($from, $to)
@@ -1149,10 +1156,13 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		return $choices;
 	}
 
-	private function _get_taxonomies_as_choices($placeholder = true, $post_type = null)
+	private function _get_taxonomies_as_choices($post_type = null, $placeholder = true)
 	{
+		$placeholder_text = is_string($placeholder)
+			? $placeholder : __('Select a taxonomy', $this->domain);
+
 		$choices = $placeholder
-			? array(__('Select a taxonomy', $this->domain) => '')
+			? array($placeholder_text => '')
 			: array();
 
 		$taxonomies = $this->get_provider('taxonomy')->get_taxonomies($post_type);
@@ -1527,7 +1537,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'select_news_taxonomy',
 					'select_news_cat_action',
 					'enable_news_keywords',
-					'select_news_keyword_type',
+					'select_news_keyword_source',
 					'enable_news_multicat',
 				),
 				'heading' => array(
@@ -1546,8 +1556,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'select' => array(
 					'select_news_post_type' => $this->_get_post_types_as_choices(),
 					'select_news_taxonomy' => $this->_get_taxonomies_as_choices(
-						true,
-						!empty($this->options['select_news_post_type'])
+						$this->options['select_news_post_type']
 							? $this->options['select_news_post_type']
 							: null
 					),
@@ -1556,9 +1565,11 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						__('Include', $this->domain) => 'inc',
 						__('Exclude', $this->domain) => 'exc'
 					),
-					'select_news_keyword_type' => array(
-						__('News categories', $this->domain) => 'cat',
-						__('News tags', $this->domain) => 'tag'
+					'select_news_keyword_source' => $this->_get_taxonomies_as_choices(
+						$this->options['select_news_post_type']
+							? $this->options['select_news_post_type']
+							: null,
+						__('Use the selected "News taxonomy"', $this->domain)
 					)
 				),
 				'input' => array(
@@ -1631,7 +1642,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					),
 					'enable_news_keywords' => array(
 						'class'       => 'bwp-switch-on-load bwp-switch-select',
-						'data-target' => 'select_news_keyword_type'
+						'data-target' => 'select_news_keyword_source'
 					)
 				)
 			);
@@ -1644,7 +1655,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'select_news_post_type',
 				'select_news_taxonomy',
 				'select_news_lang',
-				'select_news_keyword_type',
+				'select_news_keyword_source',
 				'select_news_cat_action',
 				'select_news_cats',
 				'input_news_name',

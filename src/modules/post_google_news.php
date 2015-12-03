@@ -89,17 +89,23 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 		return $news_post_date->format('Y-m-d H:i:s');
 	}
 
-	protected function generate_data()
+	/**
+	 * Map keyword in site language to its English counterpart
+	 */
+	private static function map_keyword($keyword)
 	{
-		global $wpdb, $post, $bwp_gxs;
-
 		$keywords_map = apply_filters('bwp_gxs_news_keyword_map', array(
-			// This is an array to map foreign terms to its English counterpart
-			// Use term title (name) as the key
-			// Below is an example:
+			// Use keyword as the key, example:
 			// '電視台' => 'television',
 			// '名人'=> 'celebrities'
 		));
+
+		return !empty($keywords_map[$keyword]) ? trim($keywords_map[$keyword]) : $keyword;
+	}
+
+	protected function generate_data()
+	{
+		global $wpdb, $post, $bwp_gxs;
 
 		$lang = $bwp_gxs->options['select_news_lang'];
 
@@ -190,7 +196,6 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 			$data['language'] = $lang;
 
-			// multi-cat support for genres and keywords
 			if (isset($post->terms))
 			{
 				$genres_cache_key = md5(implode('|', $post->terms));
@@ -228,49 +233,49 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 				? $this->format_lastmod(strtotime($post->post_date_gmt), false)
 				: $this->format_lastmod(strtotime($post->post_date));
 
-			$data['title'] = $post->post_title;
+			$data['title']    = $post->post_title;
+			$data['keywords'] = '';
 
-			// multi-cat support for news categories as keywords
-			if ('cat' == $bwp_gxs->options['select_news_keyword_type'] && isset($post->term_names))
+			// stop here if we do not need to add keywords
+			if ('yes' != $bwp_gxs->options['enable_news_keywords'])
 			{
-				$keywords = array();
-
-				foreach ($post->term_names as $term_name)
-				{
-					$keywords[] = !empty($keywords_map[$term_name])
-						? trim($keywords_map[$term_name])
-						: $term_name;
-				}
-
-				$keywords = implode(', ', $keywords);
+				$this->data[] = $data;
+				continue;
 			}
-			else if ('tag' == $bwp_gxs->options['select_news_keyword_type'])
+
+			$keywords       = array();
+			$keyword_source = $bwp_gxs->options['select_news_keyword_source'];
+
+			// if we take keywords from the selected news taxonomy, or the
+			// selected keyword source is the same as the selected news
+			// taxonomy, they have already been fetched
+			if (empty($keyword_source) || $keyword_source == $news_taxonomy)
 			{
-				// temporary support for news tags as keywords
-				$keywords = array();
-				$tags     = get_the_tags($post->ID);
-
-				if (is_array($tags))
+				// we have multiple terms to use as keywords
+				if (isset($post->term_names))
 				{
-					foreach (get_the_tags($post->ID) as $tag)
-					{
-						$keywords[] = !empty($keywords_map[$tag->name])
-							? trim($keywords_map[$tag->name])
-							: $tag->name;
-					}
+					foreach ($post->term_names as $term_name)
+						$keywords[] = self::map_keyword($term_name);
 				}
-
-				$keywords = implode(', ', $keywords);
+				else
+				{
+					// only one term, so only one keyword
+					$keywords[] = self::map_keyword($post->name);
+				}
 			}
 			else
 			{
-				$keywords = !empty($keywords_map[$post->name])
-					? trim($keywords_map[$post->name])
-					: $post->name;
+				$terms = get_the_terms($post->ID, $keyword_source);
+
+				if (is_array($terms))
+				{
+					foreach ($terms as $term)
+						$keywords[] = self::map_keyword($term->name);
+				}
 			}
 
-			$data['keywords'] = 'yes' == $bwp_gxs->options['enable_news_keywords']
-				? $keywords : '';
+
+			$data['keywords'] = implode(', ', $keywords);
 
 			$this->data[] = $data;
 		}
