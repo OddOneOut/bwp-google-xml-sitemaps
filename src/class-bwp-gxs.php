@@ -2056,7 +2056,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				$genres = $_POST[$term_genre_post_key];
 				$genres = array_map('trim', $genres);
 
-				$news_genres['cat_' . $term->term_id] = implode(', ', $genres);
+				$news_genres['term_' . $term->term_id] = implode(', ', $genres);
 			}
 		}
 

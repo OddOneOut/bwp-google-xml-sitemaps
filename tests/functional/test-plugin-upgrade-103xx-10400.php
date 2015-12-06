@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @preserveGlobalState disabled
+ */
 class BWP_Sitemaps_Plugin_Upgrade_Functional_Test extends BWP_Sitemaps_PHPUnit_WP_Functional_TestCase
 {
 	protected static $current_version = '1.3.1';
@@ -94,9 +97,9 @@ class BWP_Sitemaps_Plugin_Upgrade_Functional_Test extends BWP_Sitemaps_PHPUnit_W
 
 	/**
 	 * @runInSeparateProcess
-	 * @dataProvider get_keyword_type
+	 * @dataProvider get_keyword_types
 	 */
-	public function test_should_upgrade_google_news_setting_correctly($keyword_type, $expected_keyword_source)
+	public function test_should_upgrade_select_news_keyword_type_correctly($keyword_type, $expected_keyword_source)
 	{
 		$this->plugin->options['select_news_keyword_type'] = $keyword_type;
 
@@ -108,12 +111,47 @@ class BWP_Sitemaps_Plugin_Upgrade_Functional_Test extends BWP_Sitemaps_PHPUnit_W
 		$this->assertEquals($expected_keyword_source, $new_options['select_news_keyword_source']);
 	}
 
-	public function get_keyword_type()
+	public function get_keyword_types()
 	{
 		return array(
 			array('', 'category'),
 			array('cat', 'category'),
 			array('tag', 'tag')
+		);
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @dataProvider get_input_news_genres
+	 */
+	public function test_should_upgrade_input_news_genres_correctly($current_news_genres, $expected_news_genres)
+	{
+		$this->plugin->options['input_news_genres'] = $current_news_genres;
+
+		$this->upgrade_plugin();
+
+		$this->assertEquals($expected_news_genres, $this->plugin->options['input_news_genres']);
+
+		$new_options = get_option(BWP_GXS_GOOGLE_NEWS);
+		$this->assertEquals($expected_news_genres, $new_options['input_news_genres']);
+	}
+
+	public function get_input_news_genres()
+	{
+		return array(
+			array(
+				array(
+					'cat_1'   => 'genre1,genre2,genre3',
+					'cat_2'   => 'genre1, genre2, genre3',
+					'cat_xyz' => 'genre1, genre2, genre3',
+					'cat'     => 'genre1, genre2, genre3',
+					'cat123'  => 'genre1, genre2, genre3'
+				),
+				array(
+					'term_1' => 'genre1,genre2,genre3',
+					'term_2' => 'genre1, genre2, genre3'
+				)
+			)
 		);
 	}
 

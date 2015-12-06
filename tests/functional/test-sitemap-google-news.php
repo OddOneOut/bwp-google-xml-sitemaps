@@ -201,9 +201,9 @@ class BWP_Sitemaps_Sitemap_Google_News_Functional_Test extends BWP_Sitemaps_PHPU
 			'select_news_taxonomy'  => $taxonomy,
 			'select_news_cats' => '1,2,3',
 			'input_news_genres' => array(
-				'cat_1' => 'PressRelease, Satire',
-				'cat_2' => 'Blog, OpEd',
-				'cat_3' => 'Opinion, UserGenerated'
+				'term_1' => 'PressRelease, Satire',
+				'term_2' => 'Blog, OpEd',
+				'term_3' => 'Opinion, UserGenerated'
 			)
 		));
 

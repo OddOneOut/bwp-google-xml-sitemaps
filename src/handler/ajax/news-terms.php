@@ -65,8 +65,8 @@ class BWP_Sitemaps_Handler_Ajax_NewsTermsHandler extends BWP_Sitemaps_Handler_Aj
 
 				foreach ($genres as $genre) {
 					$item_genre_selected = false;
-					if (isset($this->news_genres['cat_' . $term->term_id])
-						&& stripos($this->news_genres['cat_' . $term->term_id], $genre) !== false
+					if (isset($this->news_genres['term_' . $term->term_id])
+						&& stripos($this->news_genres['term_' . $term->term_id], $genre) !== false
 					) {
 						$item_genre_selected = true;
 					}

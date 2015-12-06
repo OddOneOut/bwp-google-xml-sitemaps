@@ -15,7 +15,7 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 	}
 
 	/**
-	 * Process the posts if Multi-cat mode is enabled
+	 * Process the posts if Multi-term mode is enabled
 	 */
 	private static function process_posts($posts, $news_terms, $news_term_action)
 	{
@@ -24,7 +24,7 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 		// here by IDs
 		$ord_num = 0;
 
-		$excluded_cats = 'inc' == $news_term_action ? array() : explode(',', $news_terms);
+		$excluded_terms = 'inc' == $news_term_action ? array() : explode(',', $news_terms);
 
 		$processed_posts = array();
 
@@ -46,10 +46,10 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 				if ($current_post->ID != $ord_num)
 					continue;
 
-				// users choose to exclude cats, and this $post is assigned to
-				// one of those excluded cats
-				if (in_array($post->term_id, $excluded_cats)
-					|| in_array($current_post->terms[0], $excluded_cats)
+				// users choose to exclude terms, and this $post is assigned to
+				// one of those excluded terms
+				if (in_array($post->term_id, $excluded_terms)
+					|| in_array($current_post->terms[0], $excluded_terms)
 				) {
 					array_pop($processed_posts);
 				}
@@ -119,9 +119,9 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 		if ($news_term_action == 'inc' && empty($news_terms))
 		{
-			// if we have to look for news post in certain categories, but
-			// news term list is empty, nothing to do. This should stop the
-			// SQL cycling btw.
+			// if we have to look for news post with certain terms, but news
+			// term list is empty, nothing to do. This should stop the SQL
+			// cycling btw.
 			return false;
 		}
 
@@ -170,7 +170,7 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 		if ('yes' == $bwp_gxs->options['enable_news_multicat'])
 		{
-			// if Multi-cat mode is enabled we will need to process fetched posts
+			// if Multi-term mode is enabled we will need to process fetched posts
 			$latest_posts = self::process_posts($latest_posts, $news_terms, $news_term_action);
 		}
 
@@ -207,8 +207,8 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 					foreach ($post->terms as $term_id)
 					{
-						$cur_genres = !empty($news_genres['cat_' . $term_id])
-							? explode(', ', $news_genres['cat_' . $term_id])
+						$cur_genres = !empty($news_genres['term_' . $term_id])
+							? explode(', ', $news_genres['term_' . $term_id])
 							: '';
 
 						if (is_array($cur_genres))
@@ -224,8 +224,8 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 			}
 			else
 			{
-				$data['genres'] = !empty($news_genres['cat_' . $post->term_id])
-					? $news_genres['cat_' . $post->term_id]
+				$data['genres'] = !empty($news_genres['term_' . $post->term_id])
+					? $news_genres['term_' . $post->term_id]
 					: '';
 			}
 
