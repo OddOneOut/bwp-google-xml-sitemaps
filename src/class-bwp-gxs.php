@@ -1948,6 +1948,17 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				$excluded_taxonomies[] = $taxonomy->name;
 		}
 
+		// @since 1.4.0 remove temporary options so they're not saved into db
+		foreach ($options as $key => $value)
+		{
+			if (strpos($key, 'ept_') === 0
+				|| strpos($key, 'eppt_') === 0
+				|| strpos($key, 'etax_') === 0
+			) {
+				unset($options[$key]);
+			}
+		}
+
 		$options['input_exclude_post_type']      = implode(',', $excluded_post_types);
 		$options['input_exclude_post_type_ping'] = implode(',', $excluded_post_types_ping);
 		$options['input_exclude_taxonomy']       = implode(',', $excluded_taxonomies);
