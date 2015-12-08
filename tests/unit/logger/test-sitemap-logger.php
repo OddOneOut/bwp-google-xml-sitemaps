@@ -32,9 +32,12 @@ class BWP_Sitemaps_Logger_SitemapLogger_Test extends PHPUnit_Framework_TestCase
 	 */
 	public function test_should_log_new_item_correctly()
 	{
-		$item1 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug1', '2015-10-05 12:00:00 GMT');
-		$item2 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug2', '2015-10-05 13:00:00 GMT');
-		$item3 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug1', '2015-10-05 14:00:00 GMT');
+		$datetime = $this->create_datetime();
+		$datetime_format = 'Y-m-d H:i:s e';
+
+		$item1 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug1', $datetime->format($datetime_format));
+		$item2 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug2', $datetime->modify('+1 hour')->format($datetime_format));
+		$item3 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug1', $datetime->modify('+1 hour')->format($datetime_format));
 
 		$this->logger->log($item1);
 		$this->logger->log($item2);
@@ -44,7 +47,7 @@ class BWP_Sitemaps_Logger_SitemapLogger_Test extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals(array(
 			'slug'     => 'slug1',
-			'datetime' => '2015-10-05 14:00:00'
+			'datetime' => $datetime->format('Y-m-d H:i:s')
 		), $this->logger->get_sitemap_log_item('slug1')->get_item_data());
 
 		return $this->logger;
@@ -71,7 +74,7 @@ class BWP_Sitemaps_Logger_SitemapLogger_Test extends PHPUnit_Framework_TestCase
 
 		$this->assertFalse(in_array(array(
 			'slug'     => 'slug1',
-			'datetime' => '2015-10-05 12:00:00'
+			'datetime' => $this->create_datetime_formatted()
 		), $logger->get_log_items()), 'item1 should have been removed from logged items');
 	}
 
@@ -84,11 +87,11 @@ class BWP_Sitemaps_Logger_SitemapLogger_Test extends PHPUnit_Framework_TestCase
 		$this->assertEquals(array(
 			array(
 				'slug'     => 'slug1',
-				'datetime' => '2015-10-05 14:00:00'
+				'datetime' => $this->create_datetime_formatted('+2 hours')
 			),
 			array(
 				'slug'     => 'slug2',
-				'datetime' => '2015-10-05 13:00:00'
+				'datetime' => $this->create_datetime_formatted('+1 hours')
 			),
 		), $logger->get_log_item_data());
 	}
@@ -105,7 +108,7 @@ class BWP_Sitemaps_Logger_SitemapLogger_Test extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals(array(
 			'slug'     => 'slug1',
-			'datetime' => '2015-10-05 14:00:00'
+			'datetime' => $this->create_datetime_formatted('+2 hours')
 		), $item->get_item_data());
 	}
 
@@ -114,15 +117,15 @@ class BWP_Sitemaps_Logger_SitemapLogger_Test extends PHPUnit_Framework_TestCase
 	 */
 	public function test_get_log_items_should_filter_out_obsolete_items()
 	{
-		$item1 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug1', '2015-10-05 12:00:00 GMT');
-		$item2 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug2', '2015-09-05 13:00:00 GMT');
+		$item1 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug1', $this->create_datetime_formatted());
+		$item2 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug2', $this->create_datetime_formatted('-1 month'));
 
 		$this->logger->log($item1);
 		$this->logger->log($item2);
 
 		$this->assertEquals(
 			array('slug1' => $item1),
-			$this->logger->get_log_items(), 'item2 is obsolete, it should be filtered out'
+			$this->logger->get_log_items(), 'item2 is obsolete (1 month old), it should be filtered out'
 		);
 	}
 
@@ -131,8 +134,8 @@ class BWP_Sitemaps_Logger_SitemapLogger_Test extends PHPUnit_Framework_TestCase
 	 */
 	public function test_get_log_item_data_should_filter_out_obsolete_items()
 	{
-		$item1 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug1', '2015-10-05 12:00:00 GMT');
-		$item2 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug2', '2015-09-05 13:00:00 GMT');
+		$item1 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug1', $this->create_datetime_formatted());
+		$item2 = new BWP_Sitemaps_Logger_Sitemap_LogItem('slug2', $this->create_datetime_formatted('-1 month'));
 
 		$this->logger->log($item1);
 		$this->logger->log($item2);
@@ -141,5 +144,18 @@ class BWP_Sitemaps_Logger_SitemapLogger_Test extends PHPUnit_Framework_TestCase
 			array($item1->get_item_data()),
 			$this->logger->get_log_item_data(), 'item2 is obsolete, it should be filtered out'
 		);
+	}
+
+	protected function create_datetime()
+	{
+		return new DateTime('today 12:00:00', new DateTimeZone('UTC'));
+	}
+
+	protected function create_datetime_formatted($modify = '')
+	{
+		$datetime = $this->create_datetime();
+		$datetime = $modify ? $datetime->modify($modify) : $datetime;
+
+		return $datetime->format('Y-m-d H:i:s');
 	}
 }
