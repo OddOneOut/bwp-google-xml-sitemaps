@@ -244,14 +244,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	public $sitemap_cache;
 
 	/**
-	 * Directory to store cached sitemap
-	 *
-	 * @var string
-	 * @since 1.3.0
-	 */
-	public $cache_directory = '';
-
-	/**
 	 * Time to keep cached sitemap files
 	 *
 	 * @var integer
@@ -501,7 +493,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	protected function init_properties()
 	{
-		$this->cache_directory = $this->_get_cache_directory();
 		$this->cache_time  = (int) $this->options['input_cache_age'] * (int) $this->options['select_time_type'];
 
 		// init directories where modules live
@@ -624,9 +615,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 * particular order)
 	 *
 	 * @since 1.3.0
-	 * @access private
 	 */
-	private function _get_cache_directory()
+	public function get_cache_directory()
 	{
 		// get cache dir from constant
 		$cache_dir = $this->_get_cache_directory_from_constant();
@@ -1891,25 +1881,20 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function show_option_pages()
 	{
-		$page = $this->get_current_admin_page();
-
-		if ($page == BWP_GXS_GENERATOR)
+		if ($this->options['enable_cache'] == 'yes')
 		{
-			if ($this->options['enable_cache'] == 'yes')
-			{
-				// show a warning if caching is enabled but cache directory is
-				// not writable
-				$this->cache_directory = $this->_get_cache_directory();
+			// show a warning if caching is enabled but cache directory is
+			// not writable
+			$cache_directory = $this->get_cache_directory();
 
-				if (!@file_exists($this->cache_directory) || !@is_writable($this->cache_directory))
-				{
-					$this->add_notice(
-						'<strong>' . __('Warning') . ':</strong> '
-						. sprintf(__('Cache directory (<code>%s</code>) does not exist or is not writable. '
-						. 'Please try CHMODing it to either 755 or 777, or disable caching to hide '
-						. 'this warning (not recommended).', $this->domain), $this->cache_directory)
-					);
-				}
+			if (!@file_exists($cache_directory) || !@is_writable($cache_directory))
+			{
+				$this->add_notice(
+					'<strong>' . __('Warning') . ':</strong> '
+					. sprintf(__('Cache directory (<code>%s</code>) does not exist or is not writable. '
+					. 'Please try CHMODing it to either 755 or 777, or disable caching to hide '
+					. 'this warning (not recommended).', $this->domain), $cache_directory)
+				);
 			}
 		}
 
@@ -2071,7 +2056,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	public function flush_cache()
 	{
 		$deleted = false;
-		$dir     = trailingslashit($this->_get_cache_directory());
+		$dir     = trailingslashit($this->get_cache_directory());
 
 		if (is_dir($dir))
 		{
@@ -3015,12 +3000,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			return false;
 		}
 
-		if (!@is_writable($this->cache_directory))
+		$cache_directory = $this->get_cache_directory();
+
+		if (!@is_writable($cache_directory))
 		{
 			$this->log_error(sprintf(
 				__('Cache directory <strong>%s</strong> is not writable, '
 				. 'no cache file was created.' , $this->domain),
-				$this->cache_directory
+				$cache_directory
 			));
 
 			return false;
@@ -3032,7 +3019,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		{
 			$this->log_error(sprintf(
 				__('Could not write sitemap file to cache directory <strong>%s</strong>' , $this->domain),
-			$this->cache_directory));
+			$cache_directory));
 
 			return false;
 		}

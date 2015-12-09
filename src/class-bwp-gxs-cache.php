@@ -12,7 +12,6 @@ class BWP_GXS_CACHE
 	var $module_name  = '';
 	var $sitemap_name = '';
 
-	var $cache_dir     = '';
 	var $cache_file    = '';
 	var $cache_time    = 0;
 	var $cache_headers = array();
@@ -20,13 +19,12 @@ class BWP_GXS_CACHE
 	var $gzip         = false;
 	var $now;
 
-	public function __construct($main)
+	public function __construct(BWP_Sitemaps $main)
 	{
 		// Init necessary config to work with the cache
 		$this->main    = $main;
 		$this->options = $main->options;
 
-		$this->cache_dir  = $this->main->cache_directory;
 		$this->gzip       = 'yes' == $this->options['enable_gzip'] ? true : false;
 		$this->cache_time = (int) $this->options['input_cache_age'] * (int) $this->options['select_time_type'];
 

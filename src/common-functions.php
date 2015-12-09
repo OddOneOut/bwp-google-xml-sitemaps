@@ -10,7 +10,7 @@ function bwp_gxs_get_filename($sitemap_name)
 	$filename  = 'gxs_' . md5($sitemap_name . '_' . home_url());
 	$filename .= '.xml.gz';
 
-	return trailingslashit($bwp_gxs->cache_directory) . $filename;
+	return trailingslashit($bwp_gxs->get_cache_directory()) . $filename;
 }
 
 function bwp_gxs_format_header_time($time)
