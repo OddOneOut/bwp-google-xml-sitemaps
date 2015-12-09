@@ -33,15 +33,11 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 
 		$this->plugin->set_post_excluder($this->excluder);
 		$this->plugin->set_term_excluder($this->excluder);
-
-		$_SERVER['HTTP_HOST'] = 'example.com';
 	}
 
 	protected function tearDown()
 	{
 		parent::tearDown();
-
-		$_SERVER['HTTP_HOST'] = null;
 	}
 
 	/**
@@ -64,6 +60,88 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 
 		$this->assertEquals('http://example.com/wp-content/plugins/bwp-google-xml-sitemaps/assets/xsl/bwp-sitemap.xsl', $this->plugin->xslt);
 		$this->assertEquals('http://example.com/wp-content/plugins/bwp-google-xml-sitemaps/assets/xsl/bwp-sitemapindex.xsl', $this->plugin->xslt_index);
+	}
+
+	/**
+	 * @covers BWP_Sitemaps::init_properties
+	 * @dataProvider get_test_xslt_stylesheet_should_use_same_http_host_as_sitemap_url_cases
+	 */
+	public function test_xslt_stylesheet_should_use_same_http_host_as_sitemap_url($http_host, $home_url, $custom_xslt, $expected_xslt_urls)
+	{
+		$this->plugin->options['enable_xslt']       = 'yes';
+		$this->plugin->options['input_custom_xslt'] = $custom_xslt;
+
+		$_SERVER['HTTP_HOST'] = $http_host;
+
+		$this->bridge
+			->shouldReceive('site_url')
+			->andReturn($home_url)
+			->byDefault();
+
+		$plugin_wp_url = $home_url . '/wp-content/plugins/' . $this->plugin_slug . '/';
+		$this->bridge->shouldReceive('plugins_url')->andReturn($plugin_wp_url)->byDefault();
+		$this->bridge->shouldReceive('plugin_dir_url')->andReturn($plugin_wp_url)->byDefault();
+
+		$this->call_protected_method('build_wp_properties');
+		$this->call_protected_method('init_properties');
+
+		$this->assertEquals($expected_xslt_urls[0], $this->plugin->xslt);
+		$this->assertEquals($expected_xslt_urls[1], $this->plugin->xslt_index);
+	}
+
+	public function get_test_xslt_stylesheet_should_use_same_http_host_as_sitemap_url_cases()
+	{
+		return array(
+			'all settings correct' => array(
+				'domain.com',
+				'http://domain.com',
+				'',
+				array(
+					'http://domain.com/wp-content/plugins/bwp-google-xml-sitemaps/assets/xsl/bwp-sitemap.xsl',
+					'http://domain.com/wp-content/plugins/bwp-google-xml-sitemaps/assets/xsl/bwp-sitemapindex.xsl'
+				)
+			),
+
+			'http host and home url are different' => array(
+				'www.domain.com',
+				'http://domain.com',
+				'',
+				array(
+					'http://www.domain.com/wp-content/plugins/bwp-google-xml-sitemaps/assets/xsl/bwp-sitemap.xsl',
+					'http://www.domain.com/wp-content/plugins/bwp-google-xml-sitemaps/assets/xsl/bwp-sitemapindex.xsl'
+				)
+			),
+
+			'http host and home url are different #2' => array(
+				'domain.com',
+				'http://www.domain.com',
+				'',
+				array(
+					'http://domain.com/wp-content/plugins/bwp-google-xml-sitemaps/assets/xsl/bwp-sitemap.xsl',
+					'http://domain.com/wp-content/plugins/bwp-google-xml-sitemaps/assets/xsl/bwp-sitemapindex.xsl'
+				)
+			),
+
+			'custom xslt stylesheet correct setting' => array(
+				'domain.com',
+				'http://domain.com',
+				'http://domain.com/sitemap.xsl',
+				array(
+					'http://domain.com/sitemap.xsl',
+					'http://domain.com/sitemapindex.xsl'
+				)
+			),
+
+			'custom xslt stylesheet and http host are differnet' => array(
+				'www.domain.com',
+				'http://domain.com',
+				'http://domain.com/sitemap.xsl',
+				array(
+					'http://www.domain.com/sitemap.xsl',
+					'http://www.domain.com/sitemapindex.xsl'
+				)
+			),
+		);
 	}
 
 	/**

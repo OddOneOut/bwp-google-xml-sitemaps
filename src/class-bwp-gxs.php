@@ -737,7 +737,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		// sitemaps - @since 1.1.0
 		$user_host = strtolower($_SERVER['HTTP_HOST']);
 
-		$blog_home = @parse_url($this->bridge->home_url());
+		$blog_home = @parse_url($this->bridge->site_url());
 		$blog_host = strtolower($blog_home['host']);
 
 		$this->xslt = !empty($this->options['input_custom_xslt'])
@@ -746,7 +746,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 		$this->xslt = strcmp($user_host, $blog_host) == 0
 			? $this->xslt
-			: str_replace($blog_host, $user_host, $this->xslt);
+			: preg_replace('#(^https?://)[^/]+/#i', '$1' . $user_host . '/', $this->xslt);
 
 		// @since 1.3.0 allow the use of dynamic xslt stylesheet
 		$this->xslt       = $this->bridge->apply_filters('bwp_gxs_xslt', $this->xslt);
