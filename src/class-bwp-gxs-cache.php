@@ -21,7 +21,7 @@ class BWP_GXS_CACHE
 
 	public function __construct(BWP_Sitemaps $main)
 	{
-		// Init necessary config to work with the cache
+		// init necessary config to work with the cache
 		$this->main    = $main;
 		$this->options = $main->options;
 
