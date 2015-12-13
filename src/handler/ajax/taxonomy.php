@@ -24,6 +24,29 @@ class BWP_Sitemaps_Handler_Ajax_TaxonomyHandler extends BWP_Sitemaps_Handler_Aja
 	}
 
 	/**
+	 * Get taxonomies action
+	 *
+	 * Response should contain ESCAPED contents.
+	 */
+	public function get_taxonomies_action()
+	{
+		$items = array();
+
+		if ($post_type = BWP_Framework_Util::get_request_var('post_type')) {
+			$taxonomies = $this->provider->get_taxonomies($post_type);
+
+			foreach ($taxonomies as $taxonomy) {
+				$items[] = array(
+					'name'  => esc_attr($taxonomy->name),
+					'title' => esc_html($taxonomy->labels->singular_name)
+				);
+			}
+		}
+
+		$this->response_with($items);
+	}
+
+	/**
 	 * Get terms action
 	 *
 	 * Response should contain UNESCAPED contents.

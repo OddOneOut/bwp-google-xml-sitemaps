@@ -290,7 +290,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'enable_news_ping'             => '',
 			'enable_news_multicat'         => '',
 			'select_news_lang'             => 'en',
-			'select_news_keyword_type'     => 'cat',
+			'select_news_post_type'        => 'post', // @since 1.4.0
+			'select_news_taxonomy'         => 'category', // @since 1.4.0
+			'select_news_keyword_type'     => 'cat', // @deprecated 1.4.0
+			'select_news_keyword_source'   => '', // @since 1.4.0
 			'select_news_cat_action'       => 'inc',
 			'select_news_cats'             => '',
 			'input_news_name'              => '', // @since 1.3.1
@@ -413,6 +416,11 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				$this->frequencies,
 				$this->priorities,
 				$this->get_current_timezone()
+			),
+			'news_terms' => new BWP_Sitemaps_Handler_Ajax_NewsTermsHandler(
+				$this->get_provider('taxonomy'),
+				explode(',', $this->options['select_news_cats']),
+				$this->options['input_news_genres']
 			)
 		);
 
@@ -486,6 +494,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			add_action('wp_ajax_bwp-gxs-submit-external-page', array($this->get_ajax_handler('external_page'), 'save_external_page_action'));
 			add_action('wp_ajax_bwp-gxs-remove-external-page', array($this->get_ajax_handler('external_page'), 'remove_external_page_action'));
 
+			add_action('wp_ajax_bwp-gxs-get-object-taxonomies', array($this->get_ajax_handler('taxonomy'), 'get_taxonomies_action'));
+			add_action('wp_ajax_bwp-gxs-get-news-term-genres', array($this->get_ajax_handler('news_terms'), 'get_term_genres_action'));
+
 			// filter post queries in admin
 			add_filter('posts_where', array($this, 'add_post_title_like_query_variable'), 10, 2);
 		}
@@ -552,6 +563,19 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					)
 				));
 			}
+		}
+		elseif ($this->is_admin_page(BWP_GXS_GOOGLE_NEWS))
+		{
+			$style_deps = array('bwp-datatables', 'bwp-option-page');
+
+			$this->enqueue_media_file('bwp-gxs-admin-news',
+				BWP_GXS_JS . '/admin-news.js',
+				array(
+					'bwp-datatables',
+					'bwp-op'
+				), false,
+				BWP_GXS_DIST . '/js/script.min.js'
+			);
 		}
 
 		if ($this->is_admin_page())
@@ -846,8 +870,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	{
 		$upgrade_path = dirname(__FILE__) . '/upgrades/db';
 
-		// @since 1.4.0 change log formats
-		if (version_compare($from, '1.4.0', '<')) include_once $upgrade_path . '/r2.php';
+		if (version_compare($from, '1.4.0', '<'))
+		{
+			// @since 1.4.0 change log formats
+			include_once $upgrade_path . '/r2.php';
+
+			// @since 1.4.0 change google news settings
+			include_once $upgrade_path . '/r3.php';
+		}
 	}
 
 	public function init_upgrade_plugin($from, $to)
@@ -1116,13 +1146,16 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		return $choices;
 	}
 
-	private function _get_taxonomies_as_choices($placeholder = true)
+	private function _get_taxonomies_as_choices($post_type = null, $placeholder = true)
 	{
+		$placeholder_text = is_string($placeholder)
+			? $placeholder : __('Select a taxonomy', $this->domain);
+
 		$choices = $placeholder
-			? array(__('Select a taxonomy', $this->domain) => '')
+			? array($placeholder_text => '')
 			: array();
 
-		$taxonomies = $this->get_provider('taxonomy')->get_taxonomies();
+		$taxonomies = $this->get_provider('taxonomy')->get_taxonomies($post_type);
 
 		foreach ($taxonomies as $taxonomy)
 			$choices[$taxonomy->labels->singular_name] = $taxonomy->name;
@@ -1455,16 +1488,18 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 			$form = array(
 				'items' => array(
-					'heading',
+					'heading', // add google news sitemap
 					'checkbox',
 					'input',
 					'select',
 					'checkbox',
+					'heading', // news contents
+					'select',
+					'select',
 					'select',
 					'checkbox',
+					'select',
 					'checkbox',
-					'heading',
-					'select'
 				),
 				'item_labels' => array
 				(
@@ -1472,27 +1507,31 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Enable news sitemap', $this->domain),
 					__('News name', $this->domain),
 					__('News language', $this->domain),
-					__('Enable keywords support', $this->domain),
-					__('Get keywords from', $this->domain),
-					__('Enable multi-category support', $this->domain),
 					__('Enable pinging', $this->domain),
-					__('News categories', $this->domain),
-					__('The Google News sitemap will', $this->domain)
+					__('Sitemap Contents', $this->domain),
+					__('News post type', $this->domain),
+					__('News taxonomy', $this->domain),
+					__('Generator\'s mode', $this->domain),
+					__('Enable keywords support', $this->domain),
+					__('Keyword source', $this->domain),
+					__('Enable multi-term support', $this->domain),
 				),
 				'item_names' => array(
-					'h1',
+					'heading_add',
 					'enable_news_sitemap',
 					'input_news_name',
 					'select_news_lang',
-					'enable_news_keywords',
-					'select_news_keyword_type',
-					'enable_news_multicat',
 					'enable_news_ping',
-					'h2',
-					'select_news_cat_action'
+					'heading_contents',
+					'select_news_post_type',
+					'select_news_taxonomy',
+					'select_news_cat_action',
+					'enable_news_keywords',
+					'select_news_keyword_source',
+					'enable_news_multicat',
 				),
 				'heading' => array(
-					'h1' => '<em>'
+					'heading_add' => '<em>'
 						. __('A Google News Sitemap is a file that '
 						. 'allows you to control which content '
 						. 'you submit to Google News. By creating and '
@@ -1500,24 +1539,27 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						. 'to help Google News discover and crawl your site\'s news articles '
 						. '&mdash; http://support.google.com/', $this->domain)
 						. '</em>',
-					'h2' => '<em>'
-						. __('Below you will be able to choose what categories '
-						. 'to use (or not use) in the news sitemap. '
-						. 'You can also assign genres to a specific category.', $this->domain)
+					'heading_contents' => '<em>'
+						. __('Customize how you want to generate your news sitemap.', $this->domain)
 						. '</em>'
 				),
-				'post' => array(
-					'select_news_cat_action' => __('below selected categories in the news sitemap.', $this->domain)
-				),
 				'select' => array(
+					'select_news_post_type' => $this->_get_post_types_as_choices(),
+					'select_news_taxonomy' => $this->_get_taxonomies_as_choices(
+						$this->options['select_news_post_type']
+							? $this->options['select_news_post_type']
+							: null
+					),
 					'select_news_lang' => $this->_get_news_languages_as_choices(),
 					'select_news_cat_action' => array(
-						__('include', $this->domain) => 'inc',
-						__('exclude', $this->domain) => 'exc'
+						__('Include', $this->domain) => 'inc',
+						__('Exclude', $this->domain) => 'exc'
 					),
-					'select_news_keyword_type' => array(
-						__('News categories', $this->domain) => 'cat',
-						__('News tags', $this->domain) => 'tag'
+					'select_news_keyword_source' => $this->_get_taxonomies_as_choices(
+						$this->options['select_news_post_type']
+							? $this->options['select_news_post_type']
+							: null,
+						__('Use the selected "News taxonomy"', $this->domain)
 					)
 				),
 				'input' => array(
@@ -1528,20 +1570,29 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'checkbox' => array(
 					'enable_news_sitemap'  => array(sprintf(__('A <code>post_google_news.xml</code> sitemap will be added to the main <a href="%s" target="_blank">sitemapindex.xml</a>. It is strongly recommended that you take a look at <a href="%s" target="_blank">Google\'s guidelines</a> before enabling this feature.', $this->domain), $this->get_sitemap_index_url(), 'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines') => ''),
 					'enable_news_keywords' => array('' => ''),
-					'enable_news_ping'     => array(__('Ping search engines when a news article is published', $this->domain) => ''),
-					'enable_news_multicat' => array(__('Enable this if you have posts assigned to more than one categories.', $this->domain) => '')
+					'enable_news_ping'     => array(__('Ping search engines when a news article is published.', $this->domain) => ''),
+					'enable_news_multicat' => array(__('Enable this if you have posts assigned to more than one terms.', $this->domain) => '')
 				),
 				'inline_fields' => array(
 				),
 				'post' => array(
+					'select_news_cat_action' => '&nbsp;<em>'
+						. __('selected terms.', $this->domain)
+						. '</em>&nbsp; '
+						. '<button type="button" class="button-secondary bwp-switch-button" '
+							. 'id="button-toggle-selected-term-genres" '
+							. 'data-target="wrapper-selected-term-genres" '
+							. 'data-loader="loader-selected-term-genres" '
+							. 'data-callback="bwp_button_view_selected_term_genres_cb"'
+						. '>'
+						. __('Show/Hide selected terms', $this->domain)
+						. '</button>'
+						. '<span style="display: none;" id="loader-selected-term-genres"> '
+						. '<em>' . __('... loading', $this->domain) . '</em>'
+						. '</span>'
 				),
 				'container' => array(
-					'select_news_cat_action' => $this->get_news_cats(),
-					'enable_news_sitemap' => '<em><strong>' . __('Note', $this->domain) . ':</strong> '
-						. __('The Google News sitemap is an extension (or sub-module) of '
-						. 'the <code>post.xml</code> sitemap, which means it also uses posts from '
-						. 'the <strong>Post</strong> post type, but only from categories that are selected.', $this->domain)
-						. '</em>'
+					'select_news_cat_action' => $this->get_template_contents('templates/provider/admin/news-contents.html.php')
 				),
 				'helps' => array(
 					'input_news_name' => array(
@@ -1549,32 +1600,52 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						'content' => __('Set a different name for your news sitemap. '
 							. 'By default, your <em>Site Title</em> is used.', $this->domain)
 					),
+					'select_news_taxonomy' => array(
+						'target'  => 'icon',
+						'content' => __('Due to performance reason, it is advised '
+							. 'to NOT use a tag-like taxonomy (such as <em>Post Tag</em>) '
+							. 'as the news taxonomy.', $this->domain)
+					),
 					'enable_news_keywords' => array(
-						'type' => 'link',
+						'type'    => 'link',
 						'content' => 'https://support.google.com/news/publisher/answer/116037?hl=en&ref_topic=4359874'
 					),
 					'enable_news_ping' => array(
 						'content' => __('This ping works separately from the sitemap index ping, '
-						. 'and only occurs when you publish an article '
-						. 'in one of the news categories set below.', $this->domain)
+							. 'and only occurs when you publish an article '
+							. 'in one of the news categories set below.', $this->domain)
 					)
 				),
 				'attributes' => array(
+					'input_news_name' => array(
+						'placeholder' => get_bloginfo('title')
+					),
+					'select_news_post_type' => array(
+						'class'         => 'bwp-switch-select',
+						/* 'data-target'         => 'select_news_taxonomy', */
+						'data-callback' => 'bwp_select_news_post_type_cb'
+					),
+					'select_news_taxonomy' => array(
+						'class'         => 'bwp-switch-select',
+						'data-target'   => 'select_news_cat_action',
+						'data-callback' => 'bwp_select_news_taxonomy_cb'
+					),
 					'enable_news_keywords' => array(
 						'class'       => 'bwp-switch-on-load bwp-switch-select',
-						'data-target' => 'select_news_keyword_type'
+						'data-target' => 'select_news_keyword_source'
 					)
 				)
 			);
 
-			// Get the options
 			$form_options = array(
 				'enable_news_sitemap',
 				'enable_news_ping',
 				'enable_news_keywords',
 				'enable_news_multicat',
+				'select_news_post_type',
+				'select_news_taxonomy',
 				'select_news_lang',
-				'select_news_keyword_type',
+				'select_news_keyword_source',
 				'select_news_cat_action',
 				'select_news_cats',
 				'input_news_name',
@@ -1960,31 +2031,32 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function handle_dynamic_google_news_options(array $options)
 	{
-		// save google news categories and genres
-		$news_cats   = array();
+		// only do this if we can actually submit
+		if (empty($_POST['term_genre_can_submit']))
+			return $options;
+
+		$news_terms  = array();
 		$news_genres = array();
 
-		$categories = get_categories(array('hide_empty' => 0));
+		$terms = $this->get_provider('taxonomy')->get_all_terms($options['select_news_taxonomy']);
 
-		foreach ($categories as $category)
+		foreach ($terms as $term)
 		{
-			if (!empty($_POST[$category->slug]))
-				$news_cats[] = $category->term_id;
+			if (!empty($_POST['term_' . $term->term_id]))
+				$news_terms[] = $term->term_id;
 
-			if (isset($_POST[$category->slug . '_genres'])
-				&& is_array($_POST[$category->slug . '_genres'])
+			$term_genre_post_key = 'term_' . $term->term_id . '_genres';
+			if (isset($_POST[$term_genre_post_key])
+				&& is_array($_POST[$term_genre_post_key])
 			) {
-				$genres = $_POST[$category->slug . '_genres'];
-				$genres_string = array();
+				$genres = $_POST[$term_genre_post_key];
+				$genres = array_map('trim', $genres);
 
-				foreach ($genres as $genre)
-					$genres_string[] = trim($genre);
-
-				$news_genres['cat_' . $category->term_id] = implode(', ', $genres_string);
+				$news_genres['term_' . $term->term_id] = implode(', ', $genres);
 			}
 		}
 
-		$options['select_news_cats']  = implode(',', $news_cats);
+		$options['select_news_cats']  = implode(',', $news_terms);
 		$options['input_news_genres'] = $news_genres;
 
 		return $options;
@@ -2464,75 +2536,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		}
 
 		return $where;
-	}
-
-	private function get_news_cats()
-	{
-		// News categories
-		$news_cats  = explode(',', $this->options['select_news_cats']);
-		$categories = get_categories(array('hide_empty' => 0));
-
-		// News genres
-		$news_genres = $this->options['input_news_genres'];
-
-		// Genres taken from here: http://support.google.com/news/publisher/bin/answer.py?hl=en&answer=93992
-		$genres = array(
-			'PressRelease',
-			'Satire',
-			'Blog',
-			'OpEd',
-			'Opinion',
-			'UserGenerated'
-		);
-
-		$return  = '<table class="wp-list-table widefat striped bwp-table bwp-table-lg bwp-table-inline">' . "\n";
-		$return .= '<thead>' . "\n"
-			. '<tr><th><span>#</span></th><th><span>'
-			. __('Category\'s name', $this->domain) . '</span></th><th>'
-			. sprintf(__('<span>Genres used for this category</span>'
-				. ' (more info <a href="%s" target="_blank">here</a>)', $this->domain),
-				'http://support.google.com/news/publisher/bin/answer.py?hl=en&answer=93992')
-			. '</th></tr>' . "\n"
-			. '</thead>';
-		$return .= '<tbody>' . "\n";
-
-		foreach ($categories as $category)
-		{
-			$return .= '<tr>' . "\n";
-
-			$genres_cbs = '';
-
-			foreach ($genres as $genre)
-			{
-				$checked = '';
-
-				if (isset($news_genres['cat_' . $category->term_id]))
-				{
-					$genres_ary = explode(', ', $news_genres['cat_' . $category->term_id]);
-					$checked    = in_array($genre, $genres_ary) ? ' checked="checked" ' : '';
-				}
-
-				$genres_cbs .= '<input type="checkbox" '
-					. 'name="' . esc_attr($category->slug) . '_genres[]" '
-					. 'value="' . $genre . '"' . $checked . '/> '
-					. $genre . ' &nbsp;&nbsp;&nbsp;&nbsp;';
-			}
-
-			$checked = in_array($category->term_id, $news_cats) ? ' checked="checked" ' : '';
-
-			$return .= '<td><input type="checkbox" name="' . esc_attr($category->slug) . '" '
-				. 'value="' . esc_attr($category->slug) . '"' . $checked . ' /></td>' . "\n"
-				. '<td class="bwp_gxs_news_cat_td">' . esc_html($category->name) . '</td>' . "\n"
-				. '<td>' . $genres_cbs . '</td>' . "\n";
-
-			$return .= '</tr>' . "\n";
-		}
-
-		$return .= '</tbody>' . "\n";
-		$return .= '</table>' . "\n";
-
-		return $return;
-
 	}
 
 	/**

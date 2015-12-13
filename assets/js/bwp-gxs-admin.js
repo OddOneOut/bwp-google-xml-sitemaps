@@ -73,8 +73,8 @@ function bwp_view_excluded_items($, $t, hide_loader_cb, type) {
 	// init datatable if not already done so
 	if (! $.fn.dataTable.isDataTable('#table-excluded-' + type)) {
 		$.get(ajaxurl, {
-				action: 'bwp-gxs-get-excluded-' + type,
-				group: $('#' + select_id).val()
+			action: 'bwp-gxs-get-excluded-' + type,
+			group: $('#' + select_id).val()
 		}, function(r) {
 			var tbl = $('#table-excluded-' + type).DataTable({
 				deferRender: true,

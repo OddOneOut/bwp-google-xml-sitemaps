@@ -11,17 +11,24 @@
 class BWP_Sitemaps_Provider_Taxonomy extends BWP_Sitemaps_Provider
 {
 	/**
-	 * Get all public taxonomies, except for post_format
+	 * Get all public taxonomies, optionally filtered by post type
 	 *
+	 * This should never return post format
+	 *
+	 * @param string $post_type optional, default to get all taxonomies
 	 * @return array
 	 */
-	public function get_taxonomies()
+	public function get_taxonomies($post_type = null)
 	{
 		$taxonomies = array();
-		$all_taxonomies = $this->bridge->get_taxonomies(array('public' => true), 'objects');
+
+		$all_taxonomies = !empty($post_type)
+			? $this->bridge->get_object_taxonomies($post_type, 'objects')
+			: $this->bridge->get_taxonomies(array('public' => true), 'objects');
 
 		foreach ($all_taxonomies as $taxonomy) {
-			if ('post_format' === $taxonomy->name) {
+			// do not return post format or private taxonomy
+			if ('post_format' === $taxonomy->name || !$taxonomy->public) {
 				continue;
 			}
 
@@ -54,6 +61,17 @@ class BWP_Sitemaps_Provider_Taxonomy extends BWP_Sitemaps_Provider
 		));
 
 		return $terms;
+	}
+
+	/**
+	 * Get all terms of a specific taxonomy, without a limit
+	 *
+	 * @param string $taxonomy
+	 * @return array
+	 */
+	public function get_all_terms($taxonomy)
+	{
+		return $this->get_terms($taxonomy, array(), array(), 0);
 	}
 
 	/**

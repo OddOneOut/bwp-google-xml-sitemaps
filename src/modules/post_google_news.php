@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Copyright (c) 2014 Khang Minh <betterwp.net>
+ * Copyright (c) 2015 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  * @package BWP Google XML Sitemaps
  */
@@ -14,16 +15,16 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 	}
 
 	/**
-	 * Process the posts if Multi-cat mode is enabled
+	 * Process the posts if Multi-term mode is enabled
 	 */
-	private static function process_posts($posts, $news_cats, $news_cat_action)
+	private static function process_posts($posts, $news_terms, $news_term_action)
 	{
 		// this $post array surely contains duplicate posts, fortunately they
 		// are already sorted by post_date_gmt and ID, so we can group them
 		// here by IDs
 		$ord_num = 0;
 
-		$excluded_cats = 'inc' == $news_cat_action ? array() : explode(',', $news_cats);
+		$excluded_terms = 'inc' == $news_term_action ? array() : explode(',', $news_terms);
 
 		$processed_posts = array();
 
@@ -45,10 +46,10 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 				if ($current_post->ID != $ord_num)
 					continue;
 
-				// users choose to exclude cats, and this $post is assigned to
-				// one of those excluded cats
-				if (in_array($post->term_id, $excluded_cats)
-					|| in_array($current_post->terms[0], $excluded_cats)
+				// users choose to exclude terms, and this $post is assigned to
+				// one of those excluded terms
+				if (in_array($post->term_id, $excluded_terms)
+					|| in_array($current_post->terms[0], $excluded_terms)
 				) {
 					array_pop($processed_posts);
 				}
@@ -88,38 +89,52 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 		return $news_post_date->format('Y-m-d H:i:s');
 	}
 
-	protected function generate_data()
+	/**
+	 * Map keyword in site language to its English counterpart
+	 */
+	private static function map_keyword($keyword)
 	{
-		global $wpdb, $post, $bwp_gxs;
-
 		$keywords_map = apply_filters('bwp_gxs_news_keyword_map', array(
-			// This is an array to map foreign categories to its English counterpart
-			// Use category title (name) as the key
-			// Below is an example:
+			// Use keyword as the key, example:
 			// '電視台' => 'television',
 			// '名人'=> 'celebrities'
 		));
 
+		return !empty($keywords_map[$keyword]) ? trim($keywords_map[$keyword]) : $keyword;
+	}
+
+	protected function generate_data()
+	{
+		global $wpdb, $post, $bwp_gxs;
+
 		$lang = $bwp_gxs->options['select_news_lang'];
 
-		$news_genres     = $bwp_gxs->options['input_news_genres'];
-		$news_cats       = $bwp_gxs->options['select_news_cats'];
-		$news_cat_action = $bwp_gxs->options['select_news_cat_action'];
+		// @since 1.4.0 support custom post type for google news sitemap
+		$news_post_type = $bwp_gxs->options['select_news_post_type'];
+		$news_taxonomy  = $bwp_gxs->options['select_news_taxonomy'];
 
-		if ($news_cat_action == 'inc' && empty($news_cats))
+		$news_terms       = $bwp_gxs->options['select_news_cats'];
+		$news_term_action = $bwp_gxs->options['select_news_cat_action'];
+		$news_genres      = $bwp_gxs->options['input_news_genres'];
+
+		if ($news_term_action == 'inc' && empty($news_terms))
 		{
-			// if we have to look for news post in certain categories, but
-			// news category list is empty, nothing to do. This should stop the
-			// SQL cycling btw.
+			// if we have to look for news post with certain terms, but news
+			// term list is empty, nothing to do. This should stop the SQL
+			// cycling btw.
 			return false;
 		}
 
-		$cat_query = ' AND t.term_id NOT IN (' . $news_cats . ')';
-		$cat_query = $news_cat_action == 'inc'
-			? str_replace('NOT IN', 'IN', $cat_query) : $cat_query;
-		$cat_query = $news_cat_action != 'inc'
-			&& $bwp_gxs->options['enable_news_multicat'] == 'yes'
-			? '' : $cat_query;
+		$term_query = '';
+		if ($news_terms)
+		{
+			$term_query = ' AND t.term_id NOT IN (' . $news_terms . ')';
+			$term_query = $news_term_action == 'inc'
+				? str_replace('NOT IN', 'IN', $term_query) : $term_query;
+			$term_query = $news_term_action != 'inc'
+				&& $bwp_gxs->options['enable_news_multicat'] == 'yes'
+				? '' : $term_query;
+		}
 
 		$group_by = empty($bwp_gxs->options['enable_news_multicat'])
 			? ' GROUP BY p.ID' : '';
@@ -129,26 +144,34 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 			FROM ' . $wpdb->term_relationships . ' tr
 			INNER JOIN ' . $wpdb->posts . ' p
 				ON tr.object_id = p.ID' . "
+				AND p.post_type = %s
 				AND p.post_status = 'publish'
 				AND p.post_password = ''" . '
 				AND p.post_date_gmt > %s
 			INNER JOIN ' . $wpdb->term_taxonomy . ' tt
 				ON tr.term_taxonomy_id = tt.term_taxonomy_id' . "
-				AND tt.taxonomy = 'category'" . '
+				AND tt.taxonomy = %s" . '
 			INNER JOIN ' . $wpdb->terms . ' t
 				ON tt.term_id = t.term_id
 			WHERE 1 = 1 '
-				. $cat_query
+				. $term_query
 				. $group_by . '
 			ORDER BY p.post_date_gmt, p.ID DESC
 			LIMIT 0, ' . $this->limit;
 
-		$latest_posts = $wpdb->get_results($wpdb->prepare($latest_post_query, self::news_time()));
+		$latest_posts = $wpdb->get_results(
+			$wpdb->prepare(
+				$latest_post_query,
+				$news_post_type,
+				self::news_time(),
+				$news_taxonomy
+			)
+		);
 
 		if ('yes' == $bwp_gxs->options['enable_news_multicat'])
 		{
-			// if Multi-cat mode is enabled we will need to process fetched posts
-			$latest_posts = self::process_posts($latest_posts, $news_cats, $news_cat_action);
+			// if Multi-term mode is enabled we will need to process fetched posts
+			$latest_posts = self::process_posts($latest_posts, $news_terms, $news_term_action);
 		}
 
 		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
@@ -173,7 +196,6 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 			$data['language'] = $lang;
 
-			// multi-cat support for genres and keywords
 			if (isset($post->terms))
 			{
 				$genres_cache_key = md5(implode('|', $post->terms));
@@ -185,15 +207,16 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 					foreach ($post->terms as $term_id)
 					{
-						$cur_genres = !empty($news_genres['cat_' . $term_id])
-							? explode(', ', $news_genres['cat_' . $term_id])
+						$cur_genres = !empty($news_genres['term_' . $term_id])
+							? explode(', ', $news_genres['term_' . $term_id])
 							: '';
 
-						if (is_array($cur_genres)) :
+						if (is_array($cur_genres))
+						{
 							foreach ($cur_genres as $cur_genre)
 								if (!in_array($cur_genre, $genres_cache[$genres_cache_key]))
 									$genres_cache[$genres_cache_key][] = $cur_genre;
-						endif;
+						}
 					}
 				}
 
@@ -201,8 +224,8 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 			}
 			else
 			{
-				$data['genres'] = !empty($news_genres['cat_' . $post->term_id])
-					? $news_genres['cat_' . $post->term_id]
+				$data['genres'] = !empty($news_genres['term_' . $post->term_id])
+					? $news_genres['term_' . $post->term_id]
 					: '';
 			}
 
@@ -210,44 +233,49 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 				? $this->format_lastmod(strtotime($post->post_date_gmt), false)
 				: $this->format_lastmod(strtotime($post->post_date));
 
-			$data['title'] = $post->post_title;
+			$data['title']    = $post->post_title;
+			$data['keywords'] = '';
 
-			// multi-cat support for news categories as keywords
-			if ('cat' == $bwp_gxs->options['select_news_keyword_type'] && isset($post->term_names))
+			// stop here if we do not need to add keywords
+			if ('yes' != $bwp_gxs->options['enable_news_keywords'])
 			{
-				$keywords = array();
-
-				foreach ($post->term_names as $term_name)
-					$keywords[] = (!empty($keywords_map[$term_name])) ? trim($keywords_map[$term_name]) : $term_name;
-
-				$keywords = implode(', ', $keywords);
+				$this->data[] = $data;
+				continue;
 			}
-			else if ('tag' == $bwp_gxs->options['select_news_keyword_type'])
+
+			$keywords       = array();
+			$keyword_source = $bwp_gxs->options['select_news_keyword_source'];
+
+			// if we take keywords from the selected news taxonomy, or the
+			// selected keyword source is the same as the selected news
+			// taxonomy, they have already been fetched
+			if (empty($keyword_source) || $keyword_source == $news_taxonomy)
 			{
-				// temporary support for news tags as keywords
-				$keywords = array();
-				$tags     = get_the_tags($post->ID);
-
-				if (is_array($tags)) :
-					foreach (get_the_tags($post->ID) as $tag)
-					{
-						$keywords[] = !empty($keywords_map[$tag->name])
-							? trim($keywords_map[$tag->name])
-							: $tag->name;
-					}
-				endif;
-
-				$keywords = implode(', ', $keywords);
+				// we have multiple terms to use as keywords
+				if (isset($post->term_names))
+				{
+					foreach ($post->term_names as $term_name)
+						$keywords[] = self::map_keyword($term_name);
+				}
+				else
+				{
+					// only one term, so only one keyword
+					$keywords[] = self::map_keyword($post->name);
+				}
 			}
 			else
 			{
-				$keywords = !empty($keywords_map[$post->name])
-					? trim($keywords_map[$post->name])
-					: $post->name;
+				$terms = get_the_terms($post->ID, $keyword_source);
+
+				if (is_array($terms))
+				{
+					foreach ($terms as $term)
+						$keywords[] = self::map_keyword($term->name);
+				}
 			}
 
-			$data['keywords'] = 'yes' == $bwp_gxs->options['enable_news_keywords']
-				? $keywords : '';
+
+			$data['keywords'] = implode(', ', $keywords);
 
 			$this->data[] = $data;
 		}
