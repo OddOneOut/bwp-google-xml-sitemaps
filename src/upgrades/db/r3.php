@@ -5,6 +5,11 @@ if (!defined('ABSPATH')) { exit; }
 // r3 2015-12-03
 $news_keyword_source = '';
 
+// no google news settings
+if (! $this->is_option_key_valid(BWP_GXS_GOOGLE_NEWS)) {
+	return;
+}
+
 // change 'select_news_keyword_type' to 'select_news_keyword_source'
 if (isset($this->options['select_news_keyword_type'])) {
 	$news_keyword_source = $this->options['select_news_keyword_type'] == 'tag'

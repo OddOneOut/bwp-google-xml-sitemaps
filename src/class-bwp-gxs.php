@@ -298,7 +298,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'select_news_cats'             => '',
 			'input_news_name'              => '', // @since 1.3.1
 			'input_news_genres'            => array(),
-			// End of Google news options
+			// end of Google news options
 			'input_exclude_post_type'      => '',
 			'input_exclude_post_type_ping' => '', // @since 1.3.0
 			'input_exclude_taxonomy'       => 'post_tag',
@@ -338,8 +338,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		$this->add_option_key('BWP_GXS_GENERATOR', 'bwp_gxs_generator',
 			$this->bridge->t('XML Sitemaps', $this->domain));
 
-		$this->add_option_key('BWP_GXS_GOOGLE_NEWS', 'bwp_gxs_google_news',
-			$this->bridge->t('Google News Sitemap', $this->domain));
+		$this->add_option_key('BWP_GXS_EXTENSIONS', 'bwp_gxs_extensions',
+			$this->bridge->t('Extensions', $this->domain));
+
+		// @since 1.4.0 backward compat for google news option key
+		if (!defined('BWP_GXS_GOOGLE_NEWS'))
+		{
+			define('BWP_GXS_GOOGLE_NEWS', 'bwp_gxs_google_news');
+		}
 
 		$this->add_extra_option_key('BWP_GXS_GENERATOR_ADVANCED', 'bwp_gxs_generator_advanced',
 			$this->bridge->t('Advanced Options', $this->domain));
@@ -564,7 +570,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				));
 			}
 		}
-		elseif ($this->is_admin_page(BWP_GXS_GOOGLE_NEWS))
+		elseif ($this->is_admin_page(BWP_GXS_EXTENSIONS))
 		{
 			$style_deps = array('bwp-datatables', 'bwp-option-page');
 
@@ -875,6 +881,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 			// @since 1.4.0 change google news settings
 			include_once $upgrade_path . '/r3.php';
+
+			// @since 1.4.0 merge google news settings into extensions
+			// this MUST come after r3 for the upgrade to work properly
+			include_once $upgrade_path . '/r4.php';
 		}
 	}
 
@@ -903,9 +913,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			);
 			add_options_page(
 				__('BWP Google News XML Sitemap', $this->domain),
-				__('Google News Sitemap', $this->domain),
+				__('XML Sitemaps - Extensions', $this->domain),
 				BWP_GXS_CAPABILITY,
-				BWP_GXS_GOOGLE_NEWS,
+				BWP_GXS_EXTENSIONS,
 				array($this, 'show_option_pages')
 			);
 			add_options_page(
@@ -944,9 +954,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			add_submenu_page(
 				BWP_GXS_GENERATOR,
 				__('Better WordPress Google News XML Sitemap', $this->domain),
-				__('Google News Sitemap', $this->domain),
+				__('Extensions', $this->domain),
 				BWP_GXS_CAPABILITY,
-				BWP_GXS_GOOGLE_NEWS,
+				BWP_GXS_EXTENSIONS,
 				array($this, 'show_option_pages')
 			);
 			add_submenu_page(
@@ -1477,66 +1487,66 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			// build options dynamically
 			add_filter('bwp_option_page_submit_options', array($this, 'handle_dynamic_generator_options'));
 		}
-		elseif ($page == BWP_GXS_GOOGLE_NEWS)
+		elseif ($page == BWP_GXS_EXTENSIONS)
 		{
 			$option_page->set_current_tab(2);
 
 			$form = array(
 				'items' => array(
-					'heading', // add google news sitemap
+					'heading', // google news sitemap
 					'checkbox',
+					'checkbox',
+					'heading4', // news contents
 					'input',
 					'select',
-					'checkbox',
-					'heading', // news contents
 					'select',
 					'select',
 					'select',
 					'checkbox',
-					'select',
 					'checkbox',
+					'select',
 				),
 				'item_labels' => array
 				(
-					__('Add Google News Sitemap to your Sitemap Index', $this->domain),
-					__('Enable news sitemap', $this->domain),
-					__('News name', $this->domain),
-					__('News language', $this->domain),
+					__('Google News Sitemap', $this->domain),
+					__('Enable extension', $this->domain),
 					__('Enable pinging', $this->domain),
 					__('Sitemap Contents', $this->domain),
+					__('News name', $this->domain),
+					__('News language', $this->domain),
 					__('News post type', $this->domain),
 					__('News taxonomy', $this->domain),
-					__('Generator\'s mode', $this->domain),
+					__('News terms and genres', $this->domain),
+					__('Enable multi-term support', $this->domain),
 					__('Enable keywords support', $this->domain),
 					__('Keyword source', $this->domain),
-					__('Enable multi-term support', $this->domain),
 				),
 				'item_names' => array(
-					'heading_add',
+					'heading_news',
 					'enable_news_sitemap',
-					'input_news_name',
-					'select_news_lang',
 					'enable_news_ping',
 					'heading_contents',
+					'input_news_name',
+					'select_news_lang',
 					'select_news_post_type',
 					'select_news_taxonomy',
 					'select_news_cat_action',
+					'enable_news_multicat',
 					'enable_news_keywords',
 					'select_news_keyword_source',
-					'enable_news_multicat',
 				),
 				'heading' => array(
-					'heading_add' => '<em>'
+					'heading_news' => '<em>'
 						. __('A Google News Sitemap is a file that '
 						. 'allows you to control which content '
 						. 'you submit to Google News. By creating and '
 						. 'submitting a Google News Sitemap, you\'re able '
 						. 'to help Google News discover and crawl your site\'s news articles '
 						. '&mdash; http://support.google.com/', $this->domain)
-						. '</em>',
-					'heading_contents' => '<em>'
-						. __('Customize how you want to generate your news sitemap.', $this->domain)
 						. '</em>'
+				),
+				'heading4' => array(
+					'heading_contents' => ''
 				),
 				'select' => array(
 					'select_news_post_type' => $this->_get_post_types_as_choices(),
