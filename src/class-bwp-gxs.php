@@ -284,7 +284,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'enable_robots'                => 'yes',
 			'enable_global_robots'         => '',
 			'enable_gmt'                   => 'yes',
-			// Google news options
+			// image sitemap options @since 1.4.0
+			'enable_image_sitemap'         => '',
+			'input_image_post_types'       => '',
+			// google news options
 			'enable_news_sitemap'          => '',
 			'enable_news_keywords'         => '',
 			'enable_news_ping'             => '',
@@ -978,7 +981,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		}
 	}
 
-	private function _add_checkboxes_to_form($for, $key_prefix, &$form, &$form_options)
+	private function _add_checkboxes_to_generator_form($for, $key_prefix, &$form, &$form_options)
 	{
 		$options = &$this->options;
 
@@ -1028,6 +1031,39 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					$form_options[] = $key;
 
 					if (!in_array($taxonomy->name, $exclude_options['taxonomies']))
+						$options[$key] = 'yes';
+					else
+						$options[$key] = '';
+				}
+
+				break;
+		}
+	}
+
+	private function _add_checkboxes_to_image_sitemap_form($for, $key_prefix, &$form, &$form_options)
+	{
+		$options = &$this->options;
+		$include_options = explode(',', $options['input_image_post_types']);
+
+		switch ($for)
+		{
+			case 'sec_image_post_types':
+				$post_types = $this->get_provider('post')->get_post_types();
+
+				foreach ($post_types as $post_type)
+				{
+					// post type needs to have thumbnail enabled first
+					if (! post_type_supports($post_type->name, 'thumbnail'))
+						continue;
+
+					$key = $key_prefix . $post_type->name;
+
+					$form[$for][] = array('checkbox', 'name' => $key);
+					$form['checkbox'][$key] = array(__($post_type->labels->singular_name) => $key);
+
+					$form_options[] = $key;
+
+					if (in_array($post_type->name, $include_options))
 						$options[$key] = 'yes';
 					else
 						$options[$key] = '';
@@ -1477,9 +1513,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			add_action('bwp_option_page_custom_action_exclude_posts', array($this, 'handle_exclude_posts'));
 			add_action('bwp_option_page_custom_action_exclude_terms', array($this, 'handle_exclude_terms'));
 
-			$this->_add_checkboxes_to_form('sec_post', 'ept_', $form, $form_options);
-			$this->_add_checkboxes_to_form('sec_tax', 'etax_', $form, $form_options);
-			$this->_add_checkboxes_to_form('sec_post_ping', 'eppt_', $form, $form_options);
+			$this->_add_checkboxes_to_generator_form('sec_post', 'ept_', $form, $form_options);
+			$this->_add_checkboxes_to_generator_form('sec_tax', 'etax_', $form, $form_options);
+			$this->_add_checkboxes_to_generator_form('sec_post_ping', 'eppt_', $form, $form_options);
 
 			// add extra forms
 			add_action('bwp_option_action_after_form', array($this, 'add_external_page_modal'));
@@ -1493,6 +1529,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 			$form = array(
 				'items' => array(
+					'heading', // image sitemap
+					'checkbox',
+					'section',
 					'heading', // google news sitemap
 					'checkbox',
 					'checkbox',
@@ -1508,6 +1547,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				),
 				'item_labels' => array
 				(
+					__('Google Image Sitemap', $this->domain),
+					__('Enable extension', $this->domain),
+					__('Enable for following post types', $this->domain),
 					__('Google News Sitemap', $this->domain),
 					__('Enable extension', $this->domain),
 					__('Enable pinging', $this->domain),
@@ -1522,6 +1564,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Keyword source', $this->domain),
 				),
 				'item_names' => array(
+					'heading_image',
+					'enable_image_sitemap',
+					'sec_image_post_types',
 					'heading_news',
 					'enable_news_sitemap',
 					'enable_news_ping',
@@ -1536,6 +1581,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'select_news_keyword_source',
 				),
 				'heading' => array(
+					'heading_image' => '<em>'
+						. __('Add featured images to existing post-based sitemaps.', $this->domain)
+						. '</em>',
 					'heading_news' => '<em>'
 						. __('A Google News Sitemap is a file that '
 						. 'allows you to control which content '
@@ -1573,11 +1621,13 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					),
 				),
 				'checkbox' => array(
-					'enable_news_sitemap'  => array(sprintf(__('A <code>post_google_news.xml</code> sitemap will be added to the main <a href="%s" target="_blank">sitemapindex.xml</a>. It is strongly recommended that you take a look at <a href="%s" target="_blank">Google\'s guidelines</a> before enabling this feature.', $this->domain), $this->get_sitemap_index_url(), 'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines') => ''),
+					'enable_image_sitemap' => array(__('Add an <code>&lt;image:image&gt;</code> entry to each sitemap item when possible.', $this->domain) => ''),
+					'enable_news_sitemap'  => array(sprintf(__('Add <code>post_google_news.xml</code> to the main <a href="%s" target="_blank">sitemapindex.xml</a>. Please take a look at <a href="%s" target="_blank">Google\'s guidelines</a> before enabling this feature.', $this->domain), $this->get_sitemap_index_url(), 'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines') => ''),
 					'enable_news_keywords' => array('' => ''),
 					'enable_news_ping'     => array(__('Ping search engines when a news article is published.', $this->domain) => ''),
 					'enable_news_multicat' => array(__('Enable this if you have posts assigned to more than one terms.', $this->domain) => '')
 				),
+				'sec_image_post_types' => array(),
 				'inline_fields' => array(
 				),
 				'post' => array(
@@ -1597,13 +1647,47 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						. '</span>'
 				),
 				'container' => array(
-					'select_news_cat_action' => $this->get_template_contents('templates/provider/admin/news-contents.html.php')
+					'sec_image_post_types'   => '<strong>'
+						. __('Note:', $this->domain)
+						. '</strong> '
+						. sprintf(
+							__('You can only select post types that <a href="%s" target="_blank">support the thumbnail feature</a>.', $this->domain),
+							'http://codex.wordpress.org/Function_Reference/register_post_type#supports'
+						),
+					'select_news_cat_action' => $this->get_template_contents('templates/provider/admin/news-contents.html.php'),
 				),
 				'helps' => array(
+					'enable_image_sitemap' => array(
+						'type'    => 'switch',
+						'target'  => 'icon',
+						'content' =>
+							sprintf(
+								__('Please make sure you have enabled the '
+								. '<a href="%s" target="_blank">Post Thumbnails feature</a> in your theme before '
+								. 'enabling this extension.', $this->domain),
+								'http://codex.wordpress.org/Post_Thumbnails'
+							)
+							. '<br /><br />'
+							. sprintf(
+								__('Learn more about <a href="%s" target="_blank">Image sitemaps</a>.', $this->domain),
+								'https://support.google.com/webmasters/answer/178636?hl=en'
+							)
+							. '<br /><br />'
+							. '<strong>' . __('Important', $this->domain) . ':</strong> '
+							. __('This extension has an effect on performance, '
+							. 'if you notice any slowdown please try disabling '
+							. 'it first.', $this->domain)
+					),
 					'input_news_name' => array(
 						'type'    => 'focus',
 						'content' => __('Set a different name for your news sitemap. '
 							. 'By default, your <em>Site Title</em> is used.', $this->domain)
+					),
+					'select_news_post_type' => array(
+						'target'  => 'icon',
+						'content' => __('If you enable the "Google Image Extension" for '
+							. 'selected post type, featured image will also be '
+							. 'added automatically to the news sitemap.', $this->domain)
 					),
 					'select_news_taxonomy' => array(
 						'target'  => 'icon',
@@ -1643,6 +1727,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			);
 
 			$form_options = array(
+				'enable_image_sitemap',
 				'enable_news_sitemap',
 				'enable_news_ping',
 				'enable_news_keywords',
@@ -1657,7 +1742,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'input_news_genres'
 			);
 
+			$this->_add_checkboxes_to_image_sitemap_form('sec_image_post_types', 'ipt_', $form, $form_options);
+
 			// build options dynamically
+			add_filter('bwp_option_page_submit_options', array($this, 'handle_dynamic_image_sitemap_options'));
 			add_filter('bwp_option_page_submit_options', array($this, 'handle_dynamic_google_news_options'));
 
 			// handle option changes
@@ -2030,6 +2118,28 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 		$options['input_split_limit_post'] = 50000 < $options['input_split_limit_post']
 			? 50000 : $options['input_split_limit_post'];
+
+		return $options;
+	}
+
+	public function handle_dynamic_image_sitemap_options(array $options)
+	{
+		$post_types = $this->get_provider('post')->get_post_types();
+		$included_post_types = array();
+
+		foreach ($post_types as $post_type)
+		{
+			if (array_key_exists('ipt_' . $post_type->name, $_POST))
+				$included_post_types[] = $post_type->name;
+		}
+
+		foreach ($options as $key => $value)
+		{
+			if (strpos($key, 'ipt_') === 0)
+				unset($options[$key]);
+		}
+
+		$options['input_image_post_types'] = implode(',', $included_post_types);
 
 		return $options;
 	}
