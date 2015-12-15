@@ -584,8 +584,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				BWP_GXS_CSS . '/style.css', $style_deps, false,
 				BWP_GXS_DIST . '/css/style.min.css'
 			);
-
-			wp_enqueue_script('bwp-op');
 		}
 	}
 
@@ -1060,9 +1058,6 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	private function _get_formatted_message_logs()
 	{
-		if ($this->message_logger->is_empty())
-			return strtoupper(__('No log yet!', $this->domain)) . "\n";
-
 		$data = array(
 			'items' => array_reverse($this->message_logger->get_log_items())
 		);
@@ -1922,7 +1917,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			{
 				// no log is found, or logging is disabled, hide sidebar and
 				// save changes button to save space
-				add_filter('bwp_info_showable', create_function('', 'return "";'));
+				add_filter('bwp_feed_showable', create_function('', 'return "";'));
 				add_filter('bwp_option_submit_button', create_function('', 'return "";'));
 			}
 			else
@@ -2111,7 +2106,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	public function add_clear_log_button($button)
 	{
-		$button = '<p>'
+		$button = '<p class="submit">'
 			. '<input type="submit" class="button-primary action" name="clear_log" value="'
 			. __('Clear Message Log', $this->domain) . '" />'
 			. '</p>';

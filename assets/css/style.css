@@ -3,10 +3,13 @@
 }
 
 .bwp-gxs-log {
+	/* width: 72%; */
+	margin-top: 1.5em;
+
 	font-size: 0.95em;
 	background-color: #ffffff;
 	padding: 5px 10px; padding-top: 0px;
-	width: 72%;
+
 	border: 1px solid #cccccc;
 	overflow: auto;
 }

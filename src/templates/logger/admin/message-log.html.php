@@ -1,5 +1,6 @@
 <?php if (!defined('ABSPATH')) { exit; } ?>
 
+<?php if (count($data['items']) > 0) : ?>
 <ul class="bwp-gxs-log bwp-gxs-log-big">
 <?php
 	/* @var $item BWP_Sitemaps_Logger_Message_LogItem */
@@ -17,3 +18,8 @@
 	endforeach;
 ?>
 </ul>
+<?php else : ?>
+<p>
+	<?php _e('No log yet!', $this->domain); ?>
+</p>
+<?php endif; ?>
