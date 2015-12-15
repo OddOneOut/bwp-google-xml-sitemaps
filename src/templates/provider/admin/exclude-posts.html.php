@@ -1,6 +1,6 @@
 <?php if (!defined('ABSPATH')) { exit; } ?>
 
-<div id="wrapper-exclude-posts" class="bwp-inline-form-wrapper bwp-inline-form-wrapper-md bwp-no-display">
+<div id="wrapper-exclude-posts" class="bwp-inline-form-wrapper bwp-inline-form-wrapper-lg bwp-no-display">
 	<div class="bwp-form-group bwp-form-group-first">
 		<select data-placeholder="<?php _e('Search for posts to exclude', $this->domain); ?>"
 			class="bwp-typeahead" name="select-exclude-posts[]" id="select-exclude-posts"

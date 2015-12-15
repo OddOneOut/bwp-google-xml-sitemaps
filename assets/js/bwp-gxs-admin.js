@@ -158,7 +158,7 @@ function bwp_button_view_external_pages_cb($, $t, hide_loader_cb) {
 				],
 				columns: [{
 					data: 'url',
-					width: '40%',
+					width: '55%',
 					render: function(data) {
 						return '<a target="_blank" href="'
 							+ data + '">'
