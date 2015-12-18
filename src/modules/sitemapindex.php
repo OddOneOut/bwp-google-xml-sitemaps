@@ -14,6 +14,8 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 		// this contains a list of all sitemaps that need to be included in the
 		// sitemapindex, along with their data
 		$this->requested_modules = $requested;
+
+		$this->type = 'index';
 	}
 
 	/**

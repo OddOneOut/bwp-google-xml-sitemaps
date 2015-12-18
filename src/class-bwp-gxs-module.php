@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 Khang Minh <betterwp.net>
+ * Copyright (c) 2015 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE VERSION 3.0 OR LATER
  * @package BWP Google XML Sitemaps
  */
@@ -153,7 +153,7 @@ class BWP_GXS_MODULE
 
 		if (!is_object($item))
 		{
-			 // determine score by change frequency
+			// determine score by change frequency
 			$score = $this->freq_to_pri[$freq];
 		}
 		else
@@ -191,7 +191,6 @@ class BWP_GXS_MODULE
 	 * `gmt_offset`.
 	 *
 	 * @since 1.3.0
-	 * @access protected
 	 */
 	protected function get_lastmod($post)
 	{
@@ -586,7 +585,6 @@ class BWP_GXS_MODULE
 	 * actual sitemap data
 	 *
 	 * @since 1.3.0
-	 * @access protected
 	 */
 	protected function init_properties()
 	{
@@ -639,7 +637,6 @@ class BWP_GXS_MODULE
 	 * generated.
 	 *
 	 * @since 1.3.0
-	 * @access public
 	 */
 	public function build_sitemap_data()
 	{
@@ -670,6 +667,40 @@ class BWP_GXS_MODULE
 			: $module_data['module'];
 
 		$this->part = !empty($module_data['part']) ? (int) $module_data['part'] : 0;
+	}
+
+	/**
+	 * Whether this is a post-based module
+	 *
+	 * @since 1.4.0
+	 */
+	public function is_post_module()
+	{
+		return strpos($this->module_data['module_name'], 'post') === 0;
+	}
+
+	/**
+	 * Whether this module allows Google image tag
+	 *
+	 * @since 1.4.0
+	 * @return bool
+	 */
+	public function is_image_allowed()
+	{
+		if (! $this->is_post_module())
+			return false;
+
+		global $bwp_gxs;
+
+		$post_type = $this->type == 'news'
+			? $bwp_gxs->options['select_news_post_type']
+			: $this->requested;
+
+		// no valid post type could be detected
+		if (! $post_type)
+			return false;
+
+		return $bwp_gxs->is_image_sitemap_allowed_for($post_type);
 	}
 
 	public function get_data()
