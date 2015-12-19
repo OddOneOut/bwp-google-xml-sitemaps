@@ -55,7 +55,7 @@ class BWP_Sitemaps_Sitemap_Output_Functional_Test extends BWP_Sitemaps_PHPUnit_W
 
 		$this->assertCount(
 			0,
-			$crawler->filter(sprintf('default|sitemapindex default|sitemap default|loc:contains(%s\:\/\/)', $incorrect_scheme)),
+			$crawler->filter(sprintf('default|urlset default|url default|loc:contains(%s\:\/\/)', $incorrect_scheme)),
 			sprintf('regular sitemaps should not contain sitemap items with incorrect scheme "%s"', $incorrect_scheme)
 		);
 	}
