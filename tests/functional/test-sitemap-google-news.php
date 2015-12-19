@@ -17,7 +17,7 @@ class BWP_Sitemaps_Sitemap_Google_News_Functional_Test extends BWP_Sitemaps_PHPU
 			'enable_cache' => ''
 		));
 
-		self::update_option(BWP_GXS_GOOGLE_NEWS, array(
+		self::update_option(BWP_GXS_EXTENSIONS, array(
 			'select_news_cat_action'     => 'inc',
 			'enable_news_sitemap'        => 'yes',
 			'enable_news_keywords'       => 'yes',
@@ -40,7 +40,7 @@ class BWP_Sitemaps_Sitemap_Google_News_Functional_Test extends BWP_Sitemaps_PHPU
 	 */
 	public function test_should_generate_news_sitemap_correctly($post_type, $taxonomy, $multi_term = false)
 	{
-		self::set_options(BWP_GXS_GOOGLE_NEWS, array(
+		self::set_options(BWP_GXS_EXTENSIONS, array(
 			'enable_news_multicat' => $multi_term ? 'yes' : ''
 		));
 
@@ -73,7 +73,7 @@ class BWP_Sitemaps_Sitemap_Google_News_Functional_Test extends BWP_Sitemaps_PHPU
 	 */
 	public function test_should_generate_news_sitemap_with_correct_keywords_from_news_taxonomy($post_type, $taxonomy, $multi_term, $expected_keywords)
 	{
-		self::set_options(BWP_GXS_GOOGLE_NEWS, array(
+		self::set_options(BWP_GXS_EXTENSIONS, array(
 			'enable_news_multicat' => $multi_term ? 'yes' : ''
 		));
 
@@ -114,7 +114,7 @@ class BWP_Sitemaps_Sitemap_Google_News_Functional_Test extends BWP_Sitemaps_PHPU
 	 */
 	public function test_should_generate_news_sitemap_with_correct_keywords($post_type, $taxonomy, $keyword_source, $multi_term, $expected_keywords)
 	{
-		self::set_options(BWP_GXS_GOOGLE_NEWS, array(
+		self::set_options(BWP_GXS_EXTENSIONS, array(
 			'enable_news_multicat'       => $multi_term ? 'yes' : '',
 			'select_news_keyword_source' => $keyword_source
 		));
@@ -196,7 +196,7 @@ class BWP_Sitemaps_Sitemap_Google_News_Functional_Test extends BWP_Sitemaps_PHPU
 			$this->factory->term->add_post_terms($post_id, array_slice($terms, 4), $taxonomy);
 		}
 
-		self::set_options(BWP_GXS_GOOGLE_NEWS, array(
+		self::set_options(BWP_GXS_EXTENSIONS, array(
 			'select_news_post_type' => $post_type,
 			'select_news_taxonomy'  => $taxonomy,
 			'select_news_cats' => '1,2,3',

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright (c) 2014 Khang Minh <betterwp.net>
+ * Copyright (c) 2015 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  * @package BWP Google XML Sitemaps
  */
 
-class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE
+class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE_POST
 {
 	public function __construct()
 	{
@@ -46,6 +46,9 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE
 
 		$data = array();
 
+		// @since 1.4.0 try to get image ids as well
+		$image_ids = $this->get_image_ids_from_posts($latest_posts);
+
 		for ($i = 0; $i < sizeof($latest_posts); $i++)
 		{
 			$post = $latest_posts[$i];
@@ -64,6 +67,10 @@ class BWP_GXS_MODULE_PAGE extends BWP_GXS_MODULE
 			$data['lastmod']  = $this->get_lastmod($post);
 			$data['freq']     = $this->cal_frequency($post);
 			$data['priority'] = $this->cal_priority($post, $data['freq']);
+
+			// prepare an image if there's any
+			if (isset($image_ids[$post->ID]))
+				$data['image'] = $this->get_image_data($image_ids[$post->ID]);
 
 			$this->data[] = $data;
 		}

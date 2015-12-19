@@ -6,7 +6,7 @@
  * @package BWP Google XML Sitemaps
  */
 
-class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
+class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE_POST
 {
 	public function __construct()
 	{
@@ -103,6 +103,90 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 		return !empty($keywords_map[$keyword]) ? trim($keywords_map[$keyword]) : $keyword;
 	}
 
+	private function get_genres_from_post($post)
+	{
+		global $bwp_gxs;
+
+		$genres_cache = array();
+		$news_genres  = $bwp_gxs->options['input_news_genres'];
+
+		if (isset($post->terms))
+		{
+			$genres_cache_key = md5(implode('|', $post->terms));
+
+			if (!isset($genres_cache[$genres_cache_key])
+				|| !is_array($genres_cache[$genres_cache_key])
+			) {
+				$genres_cache[$genres_cache_key] = array();
+
+				foreach ($post->terms as $term_id)
+				{
+					$cur_genres = !empty($news_genres['term_' . $term_id])
+						? explode(', ', $news_genres['term_' . $term_id])
+						: '';
+
+					if (is_array($cur_genres))
+					{
+						foreach ($cur_genres as $cur_genre)
+							if (!in_array($cur_genre, $genres_cache[$genres_cache_key]))
+								$genres_cache[$genres_cache_key][] = $cur_genre;
+					}
+				}
+			}
+
+			return implode(', ', $genres_cache[$genres_cache_key]);
+		}
+		else
+		{
+			return !empty($news_genres['term_' . $post->term_id])
+				? $news_genres['term_' . $post->term_id]
+				: '';
+		}
+	}
+
+	private function get_keywords_from_post($post)
+	{
+		global $bwp_gxs;
+
+		if ('yes' != $bwp_gxs->options['enable_news_keywords'])
+			return;
+
+		$news_taxonomy  = $bwp_gxs->options['select_news_taxonomy'];
+
+		$keywords       = array();
+		$keyword_source = $bwp_gxs->options['select_news_keyword_source'];
+
+		// if we take keywords from the selected news taxonomy, or the
+		// selected keyword source is the same as the selected news
+		// taxonomy, they have already been fetched
+		if (empty($keyword_source) || $keyword_source == $news_taxonomy)
+		{
+			// we have multiple terms to use as keywords
+			if (isset($post->term_names))
+			{
+				foreach ($post->term_names as $term_name)
+					$keywords[] = self::map_keyword($term_name);
+			}
+			else
+			{
+				// only one term, so only one keyword
+				$keywords[] = self::map_keyword($post->name);
+			}
+		}
+		else
+		{
+			$terms = get_the_terms($post->ID, $keyword_source);
+
+			if (is_array($terms))
+			{
+				foreach ($terms as $term)
+					$keywords[] = self::map_keyword($term->name);
+			}
+		}
+
+		return implode(', ', $keywords);
+	}
+
 	protected function generate_data()
 	{
 		global $wpdb, $post, $bwp_gxs;
@@ -115,7 +199,6 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 		$news_terms       = $bwp_gxs->options['select_news_cats'];
 		$news_term_action = $bwp_gxs->options['select_news_cat_action'];
-		$news_genres      = $bwp_gxs->options['input_news_genres'];
 
 		if ($news_term_action == 'inc' && empty($news_terms))
 		{
@@ -179,7 +262,8 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 		$using_permalinks = $this->using_permalinks();
 
-		$genres_cache = array();
+		// @since 1.4.0 try to get image ids as well
+		$image_ids = $this->get_image_ids_from_posts($latest_posts);
 
 		for ($i = 0; $i < sizeof($latest_posts); $i++)
 		{
@@ -196,86 +280,19 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE
 
 			$data['language'] = $lang;
 
-			if (isset($post->terms))
-			{
-				$genres_cache_key = md5(implode('|', $post->terms));
-
-				if (!isset($genres_cache[$genres_cache_key])
-					|| !is_array($genres_cache[$genres_cache_key])
-				) {
-					$genres_cache[$genres_cache_key] = array();
-
-					foreach ($post->terms as $term_id)
-					{
-						$cur_genres = !empty($news_genres['term_' . $term_id])
-							? explode(', ', $news_genres['term_' . $term_id])
-							: '';
-
-						if (is_array($cur_genres))
-						{
-							foreach ($cur_genres as $cur_genre)
-								if (!in_array($cur_genre, $genres_cache[$genres_cache_key]))
-									$genres_cache[$genres_cache_key][] = $cur_genre;
-						}
-					}
-				}
-
-				$data['genres'] = implode(', ', $genres_cache[$genres_cache_key]);
-			}
-			else
-			{
-				$data['genres'] = !empty($news_genres['term_' . $post->term_id])
-					? $news_genres['term_' . $post->term_id]
-					: '';
-			}
+			$data['genres'] = $this->get_genres_from_post($post);
 
 			$data['pub_date'] = $bwp_gxs->options['enable_gmt']
 				? $this->format_lastmod(strtotime($post->post_date_gmt), false)
 				: $this->format_lastmod(strtotime($post->post_date));
 
-			$data['title']    = $post->post_title;
-			$data['keywords'] = '';
+			$data['title'] = $post->post_title;
 
-			// stop here if we do not need to add keywords
-			if ('yes' != $bwp_gxs->options['enable_news_keywords'])
-			{
-				$this->data[] = $data;
-				continue;
-			}
+			$data['keywords'] = $this->get_keywords_from_post($post);
 
-			$keywords       = array();
-			$keyword_source = $bwp_gxs->options['select_news_keyword_source'];
-
-			// if we take keywords from the selected news taxonomy, or the
-			// selected keyword source is the same as the selected news
-			// taxonomy, they have already been fetched
-			if (empty($keyword_source) || $keyword_source == $news_taxonomy)
-			{
-				// we have multiple terms to use as keywords
-				if (isset($post->term_names))
-				{
-					foreach ($post->term_names as $term_name)
-						$keywords[] = self::map_keyword($term_name);
-				}
-				else
-				{
-					// only one term, so only one keyword
-					$keywords[] = self::map_keyword($post->name);
-				}
-			}
-			else
-			{
-				$terms = get_the_terms($post->ID, $keyword_source);
-
-				if (is_array($terms))
-				{
-					foreach ($terms as $term)
-						$keywords[] = self::map_keyword($term->name);
-				}
-			}
-
-
-			$data['keywords'] = implode(', ', $keywords);
+			// prepare an image if there's any
+			if (isset($image_ids[$post->ID]))
+				$data['image'] = $this->get_image_data($image_ids[$post->ID]);
 
 			$this->data[] = $data;
 		}

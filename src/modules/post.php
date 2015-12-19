@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 Khang Minh <betterwp.net>
+ * Copyright (c) 2015 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  * @package BWP Google XML Sitemaps
  *
@@ -48,6 +48,70 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 	protected function init_module_properties()
 	{
 		$this->post_type = get_post_type_object($this->requested);
+	}
+
+	/**
+	 * Get ids of the images attached with latest posts
+	 *
+	 * @param WP_Post[] $posts
+	 * @return array
+	 * @since 1.4.0
+	 */
+	protected function get_image_ids_from_posts(array $posts)
+	{
+		$post_ids = array();
+		foreach ($posts as $post)
+			$post_ids[] = $post->ID;
+
+		if ($post_ids && $this->is_image_allowed())
+		{
+			global $wpdb;
+
+			$image_query = "
+				SELECT
+					pm.post_id,
+					pm.meta_value as image_id
+				FROM $wpdb->postmeta pm
+				WHERE pm.meta_key = '_thumbnail_id'
+					AND pm.post_id IN (" . implode(',', $post_ids) . ")
+			";
+
+			// this will be an array that have:
+			// 1. post id as key
+			// 2. an object with image_id property which is the image id we need
+			$image_ids = $wpdb->get_results($image_query, OBJECT_K);
+
+			// convert image ids to a simple array of post id => image id
+			foreach ($image_ids as $key => $value)
+				$image_ids[$key] = $value->image_id;
+
+			// get posts without storing the returnd values, this is done to
+			// warm up the cache for later image-related operation
+			get_posts(array(
+				'post_type' => 'attachment',
+				'include'   => array_values($image_ids)
+			));
+
+			return $image_ids;
+		}
+	}
+
+	/**
+	 * Get actual image data from a single post
+	 *
+	 * @param int $image_id
+	 * @return mixed null|array that should have 'location', 'title' and 'caption'
+	 * @since 1.4.0
+	 */
+	protected function get_image_data($image_id)
+	{
+		$image = get_post($image_id);
+
+		return array(
+			'location' => wp_get_attachment_thumb_url($image->ID),
+			'title'    => $image->post_title,
+			'caption'  => $image->post_excerpt
+		);
 	}
 
 	/**
@@ -133,8 +197,12 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 		// always init your $data
 		$data = array();
 
+		// @since 1.4.0 try to get image ids as well
+		$image_ids = $this->get_image_ids_from_posts($latest_posts);
+
 		for ($i = 0; $i < sizeof($latest_posts); $i++)
 		{
+			/* @var $post WP_Post */
 			$post = $latest_posts[$i];
 
 			// init your $data with the previous item's data. This makes sure
@@ -153,7 +221,11 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 			$data['freq']     = $this->cal_frequency($post);
 			$data['priority'] = $this->cal_priority($post, $data['freq']);
 
-			// Pass data back to the plugin to handle
+			// prepare an image if there's any
+			if (isset($image_ids[$post->ID]))
+				$data['image'] = $this->get_image_data($image_ids[$post->ID]);
+
+			// pass data back to the plugin to handle
 			$this->data[] = $data;
 		}
 
