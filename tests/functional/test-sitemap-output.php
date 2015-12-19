@@ -195,4 +195,29 @@ class BWP_Sitemaps_Sitemap_Output_Functional_Test extends BWP_Sitemaps_PHPUnit_W
 			array('gzip, deflate', 1)
 		);
 	}
+
+	/**
+	 * @dataProvider get_blank_sitemap_names
+	 */
+	public function test_should_send_404_not_found_response_status_when_sitemap_is_blank($sitemap_name)
+	{
+		if ($sitemap_name == 'post') {
+			self::reset_posts();
+		} else {
+			self::reset_terms();
+		}
+
+		$client = self::get_client(false);
+		$client->request('GET', $this->plugin->get_sitemap_url($sitemap_name));
+
+		$this->assertEquals(404, $client->getResponse()->getStatus());
+	}
+
+	public function get_blank_sitemap_names()
+	{
+		return array(
+			array('post'),
+			array('taxonomy_category')
+		);
+	}
 }
