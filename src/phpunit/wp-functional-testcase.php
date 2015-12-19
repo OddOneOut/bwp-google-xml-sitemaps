@@ -29,6 +29,13 @@ abstract class BWP_Sitemaps_PHPUnit_WP_Functional_TestCase extends BWP_Framework
 		);
 	}
 
+	protected function create_post($post_type = 'post')
+	{
+		return $this->factory->post->create_and_get(array(
+			'post_type' => $post_type
+		));
+	}
+
 	protected function create_posts($post_type = 'post', $count = 5)
 	{
 		return $this->factory->post->create_many($count, array(

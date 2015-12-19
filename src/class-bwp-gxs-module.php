@@ -43,6 +43,11 @@ class BWP_GXS_MODULE
 	protected $data = array();
 
 	/**
+	 * @var bool
+	 */
+	protected $image_allowed;
+
+	/**
 	 * Priority mapping
 	 *
 	 * @var array
@@ -676,7 +681,8 @@ class BWP_GXS_MODULE
 	 */
 	public function is_post_module()
 	{
-		return strpos($this->module_data['module_name'], 'post') === 0;
+		return strpos($this->module_data['module_name'], 'post') === 0
+			|| $this->requested == 'page';
 	}
 
 	/**
@@ -687,6 +693,9 @@ class BWP_GXS_MODULE
 	 */
 	public function is_image_allowed()
 	{
+		if (! is_null($this->image_allowed))
+			return $this->image_allowed;
+
 		if (! $this->is_post_module())
 			return false;
 
@@ -700,7 +709,9 @@ class BWP_GXS_MODULE
 		if (! $post_type)
 			return false;
 
-		return $bwp_gxs->is_image_sitemap_allowed_for($post_type);
+		$this->image_allowed = $bwp_gxs->is_image_sitemap_allowed_for($post_type);
+
+		return $this->image_allowed;
 	}
 
 	public function get_data()
