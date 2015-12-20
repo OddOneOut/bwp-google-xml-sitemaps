@@ -90,25 +90,14 @@ class BWP_Sitemaps_Sitemap_Provider
 			return false;
 		}
 
-		// if scheme is set for the url being checked, the url should be local
-		// only when it shares the same host with blog's url
-		if (isset($url['scheme'])) {
-			// normalize all the hosts before comparing
-			// @fixme host does not contain scheme so this does not work
-			$url_host  = str_replace('https://', 'http://', $url['host']);
-			$blog_host = str_replace('https://', 'http://', $blog_url['host']);
-
-			// according to sitemap protocol the host must be exactly the same
-			// @link http://www.sitemaps.org/protocol.html#location
-			// @todo allow logging all invalid urls so they can be fixed if needed
-			if (0 <> strcmp($url_host, $blog_host)) {
-				return false;
-			}
-
-			return true;
-		} else {
-			return true;
+		// according to sitemap protocol the host must be exactly the same
+		// @link http://www.sitemaps.org/protocol.html#location
+		// @todo allow logging all invalid urls so they can be fixed if needed
+		if (0 <> strcmp($url['host'], $blog_url['host'])) {
+			return false;
 		}
+
+		return true;
 	}
 
 	private function is_url_valid($url)
@@ -116,6 +105,14 @@ class BWP_Sitemaps_Sitemap_Provider
 		$url = trim($url);
 
 		if ('#' == $url || 0 !== strpos($url, 'http') || ! $this->is_local($url)) {
+			return false;
+		}
+
+		// url must use the current scheme
+		$is_ssl = $this->bridge->is_ssl();
+		if (($is_ssl && strpos($url, 'https') !== 0)
+			|| (! $is_ssl && strpos($url, 'https') === 0)
+		) {
 			return false;
 		}
 
