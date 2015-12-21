@@ -122,13 +122,6 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 				// should not be checked for splitting functionalty
 				$post_type = $item['sub_module'];
 
-				if (empty($post_count_array[$post_type]))
-				{
-					// @since 1.3.0 if this post sitemap does not any item,
-					// ignore it completely
-					continue;
-				}
-
 				$split_limit = empty($bwp_gxs->options['input_split_limit_post'])
 					? $bwp_gxs->options['input_item_limit']
 					: $bwp_gxs->options['input_split_limit_post'];
