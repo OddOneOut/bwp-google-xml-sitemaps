@@ -182,102 +182,127 @@ class BWP_GXS_MODULE
 	}
 
 	/**
-	 * Get last modified date from post object
+	 * Get datetime from a post object's field
 	 *
-	 * Sometimes post_modified is not set due to improper data import into
-	 * database, we will have to use post_date. If post_date is invalid too,
-	 * we're out of luck.
+	 * @param object $post
+	 * @param bool $publish whether to get the publish date or the last
+	 *                      modified date, default to false
 	 *
-	 * By default lastmod is in GMT so `post_date_gmt` and `post_modified_gmt`
-	 * will be used. If local time is used `post_date` and `post_modified`
-	 * will be used instead. Because modified times can come from various
-	 * sources and not all sources have a GMT equivalent, we expect other
-	 * modified times to be in local time and will be converted to GMT using
-	 * `gmt_offset`.
+	 * @return string
+	 * @since 1.4.0
+	 */
+	protected function get_datetime_from_post($post, $publish = false)
+	{
+		global $bwp_gxs;
+
+		$utc_timezone     = new DateTimeZone('UTC');
+		$current_timezone = $bwp_gxs->get_current_timezone();
+
+		// support for manually entered lastmod, for example for an external page
+		if (isset($post->lastmod))
+		{
+			$datetime  = $post->lastmod;
+
+			// manual lastmod is expected to be in local time
+			$timezone = $current_timezone;
+		}
+		else
+		{
+			$datetime_field = $publish ? 'post_date_gmt' : 'post_modified_gmt';
+
+			// get datetime from $datetime_field or fallback to 'post_date_gmt'
+			$datetime = isset($post->$datetime_field) && $post->$datetime_field !== '0000-00-00 00:00:00'
+				? $post->$datetime_field
+				: null;
+			$datetime = ! $datetime && isset($post->post_date_gmt) ? $post->post_date_gmt : $datetime;
+
+			$timezone = $utc_timezone;
+		}
+
+		// no valid datetime to continue
+		if (! $datetime)
+			return '';
+
+		// try creating a valid datetime object with proper timezone from datetime
+		try {
+			$datetime = new DateTime($datetime, $timezone);
+
+			// set timezone to GMT/UTC or local timezone depending on setting
+			$datetime->setTimezone(
+				$bwp_gxs->options['enable_gmt'] == 'yes' ? $utc_timezone : $current_timezone
+			);
+		} catch (Exception $e) {
+			return '';
+		}
+
+		return $this->format_datetime_designator($datetime->format('c'));
+	}
+
+	/**
+	 * Get formatted last modified datetime of a post
 	 *
+	 * @param object $post
 	 * @since 1.3.0
 	 */
 	protected function get_lastmod($post)
 	{
-		global $bwp_gxs;
-
-		$lastmod  = '';
-
-		// handle GMT using `post_date_gmt`, `post_modified_gmt` and
-		// `gmt_offset` if `date_default_timezone_set` function does exist
-		$need_gmt = $bwp_gxs->options['enable_gmt'] == 'yes'
-			&& function_exists('date_default_timezone_set')
-			? true : false;
-
-		$post_modified_field = $need_gmt ? 'post_modified_gmt' : 'post_modified';
-		$post_date_field     = $need_gmt ? 'post_date_gmt' : 'post_date';
-
-		if (isset($post->lastmod))
-		{
-			// lastmod is expected to be in local time
-			$lastmod = strtotime($post->lastmod);
-			$lastmod = $need_gmt ? $lastmod - get_option('gmt_offset') * 3600 : $lastmod;
-		}
-		elseif (isset($post->$post_modified_field))
-		{
-			$lastmod = strtotime($post->$post_modified_field);
-		}
-
-		$post_date = isset($post->$post_date_field) ? strtotime($post->$post_date_field) : '';
-
-		$lastmod  = empty($lastmod) || $lastmod < 0 ? $post_date : $lastmod;
-		$lastmod  = empty($lastmod) || $lastmod < 0 ? '' : $lastmod;
-
-		return !empty($lastmod) ? $this->format_lastmod($lastmod, false) : '';
+		return $this->get_datetime_from_post($post);
 	}
 
-	protected function format_lastmod($lastmod, $expect_local = true)
+	/**
+	 * Get formatted published datetime of a post
+	 *
+	 * @param object $post
+	 * @since 1.3.0
+	 */
+	protected function get_published_datetime($post)
+	{
+		return $this->get_datetime_from_post($post, true);
+	}
+
+	/**
+	 * Format a provided timestamp with correct timezone info
+	 *
+	 * @param int $datetime unix timestamp of datetime
+	 */
+	protected function format_datetime($datetime)
 	{
 		global $bwp_gxs;
 
-		$need_gmt   = $bwp_gxs->options['enable_gmt'] == 'yes' ? true : false;
-		$gmt_offset = (float) get_option('gmt_offset');
-
-		if ($lastmod < 0)
+		if (! $datetime)
 			return '';
 
-		if (!function_exists('date_default_timezone_set'))
-		{
-			// prior to PHP 5.1.0 this function is not available, so we will
-			// have to reply on date functions entirely, and the incoming
-			// `$lastmod` is the original datetime value without any modifications
-			// from `gmt_offset` and/or WordPress's GMT datetime fields
-			return $need_gmt ? gmdate('Y-m-d\TH:i:s\Z', (int) $lastmod) : date('c', (int) $lastmod);
+		try {
+			// convert datetime to a DateTime object with UTC timezone
+			$datetime = new DateTime('@' . $datetime);
+
+			// need local timezone
+			if ($bwp_gxs->options['enable_gmt'] != 'yes') {
+				$datetime->setTimezone($bwp_gxs->get_current_timezone());
+			}
+
+			return $this->format_datetime_designator($datetime->format('c'));
+		} catch (Exception $e) {
+			return '';
 		}
+	}
 
-		// lastmod is expected to be in local time, make it GMT/UTC if needed
-		$lastmod = $expect_local && $need_gmt ? $lastmod - $gmt_offset * 3600 : $lastmod;
+	/**
+	 * @deprecated 1.4.0 use BWP_GXS_MODULE::format_datetime() instead
+	 */
+	protected function format_lastmod($lastmod)
+	{
+		return $this->format_datetime($lastmod);
+	}
 
-		// WordPress uses 'UTC' as its timezone for date function but other
-		// plugins might change this so it's best to set to 'UTC' here and
-		// assing the current timezone back later on. This is to ensure that
-		// the `date` function does not manage timezone on its own.
-		$current_timezone = date_default_timezone_get();
-		date_default_timezone_set('UTC');
-
-		$date = date('c', (int) $lastmod);
-
-		if ($need_gmt)
-		{
-			// use GMT/UTC for sitemap
-			return str_replace('+00:00', 'Z', $date);
-		}
-
-		// calculate the UTC designator, e.g. '+07:00'
-		$sign = $gmt_offset > 0 ? '+' : '-';
-
-		$gmt_offset = abs($gmt_offset);
-
-		$hour   = intval($gmt_offset);
-		$minute = $gmt_offset - $hour;
-		$minute = $minute * 60;
-
-		return str_replace('+00:00', $sign . sprintf('%02d:%02d', $hour, $minute), $date);
+	/**
+	 * Use Z for timezone designator instead of offset
+	 *
+	 * @since 1.4.0
+	 */
+	private function format_datetime_designator($datetime)
+	{
+		return str_replace('+00:00', 'Z', $datetime);
 	}
 
 	protected function post_type_uses($post_type, $taxonomy_object)

@@ -279,15 +279,9 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE_POST
 				$data['location'] = $this->get_permalink();
 
 			$data['language'] = $lang;
-
-			$data['genres'] = $this->get_genres_from_post($post);
-
-			$data['pub_date'] = $bwp_gxs->options['enable_gmt']
-				? $this->format_lastmod(strtotime($post->post_date_gmt), false)
-				: $this->format_lastmod(strtotime($post->post_date));
-
-			$data['title'] = $post->post_title;
-
+			$data['genres']   = $this->get_genres_from_post($post);
+			$data['pub_date'] = $this->get_published_datetime($post);
+			$data['title']    = $post->post_title;
 			$data['keywords'] = $this->get_keywords_from_post($post);
 
 			// prepare an image if there's any
