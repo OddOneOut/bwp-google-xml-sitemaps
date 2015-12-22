@@ -148,7 +148,7 @@ class BWP_Sitemaps_Logger_SitemapLogger_Test extends PHPUnit_Framework_TestCase
 
 	protected function create_datetime()
 	{
-		return new DateTime('today 12:00:00', new DateTimeZone('UTC'));
+		return new DateTime(null, new DateTimeZone('UTC'));
 	}
 
 	protected function create_datetime_formatted($modify = '')
