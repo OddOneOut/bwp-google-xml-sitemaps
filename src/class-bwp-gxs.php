@@ -553,8 +553,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		{
 			$style_deps = array('bwp-datatables', 'bwp-option-page');
 
-			$this->enqueue_media_file('bwp-gxs-admin-news',
-				BWP_GXS_JS . '/admin-news.js',
+			$this->enqueue_media_file('bwp-gxs-admin-extensions',
+				BWP_GXS_JS . '/admin-extensions.js',
 				array(
 					'bwp-datatables',
 					'bwp-op'
