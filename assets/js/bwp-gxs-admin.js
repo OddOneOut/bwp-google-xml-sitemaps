@@ -32,7 +32,7 @@ function bwp_reset_exclude_form($, $t, type) {
 
 	// reset datatable if needed
 	if ($.fn.dataTable.isDataTable('#table-excluded-' + type)) {
-		$('#table-excluded-' + type).DataTable().destroy();
+		$('#table-excluded-' + type).DataTable().clear().destroy();
 		$('#wrapper-excluded-' + type).addClass('bwp-no-display');
 	}
 }
