@@ -1094,7 +1094,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			return __('It appears that no sitemap has been generated yet', $this->domain)
 				. ', '
 				. '<a href="#" target="_blank" class="button-secondary button-inline" '
-				. 'onclick="this.href=\'' . $this->get_sitemap_url('sitemapindex') . '\';">'
+				. 'onclick="this.href=\'' . $this->get_sitemap_url('sitemapindex')
+				. '?generate=1&t=' . time() . '\';">'
 				. __('click to generate your Sitemap Index', $this->domain)
 				. '</a>'
 				. ' .'
