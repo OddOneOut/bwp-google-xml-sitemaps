@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 Khang Minh <betterwp.net>
+ * Copyright (c) 2015 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  * @package BWP Google XML Sitemaps
  */
@@ -29,7 +29,7 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 
 		// try to find last modified timestamp from a log entry in db
 		if ($sitemap_log = $bwp_gxs->get_sitemap_logger()->get_sitemap_log_item($sitemap_name))
-			return $sitemap_log->get_timestamp();
+			return $sitemap_log->get_local_timestamp();
 
 		// if we can get a last modified Unix timestamp from the filesystem,
 		// use that one as a last resort
@@ -145,7 +145,7 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 							$data['location'] = $this->get_sitemap_url($sitemap_name);
 
 							$lastmod = $this->_get_sitemap_lastmod($sitemap_name);
-							$data['lastmod'] = $lastmod ? $this->format_lastmod($lastmod) : '';
+							$data['lastmod'] = $lastmod ? $this->format_local_datetime($lastmod) : '';
 							$data['lastmod'] = apply_filters('bwp_gxs_sitemap_lastmod', $data['lastmod'], $lastmod, $item, $i);
 
 							$this->data[] = $data;
@@ -163,7 +163,7 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 				// modified date for a sitemap file.
 				$lastmod = $this->_get_sitemap_lastmod($sitemap_name);
 
-				$data['lastmod'] = $lastmod ? $this->format_lastmod($lastmod) : '';
+				$data['lastmod'] = $lastmod ? $this->format_local_datetime($lastmod) : '';
 				$data['lastmod'] = apply_filters('bwp_gxs_sitemap_lastmod', $data['lastmod'], $lastmod, $item, 0);
 
 				$this->data[] = $data;

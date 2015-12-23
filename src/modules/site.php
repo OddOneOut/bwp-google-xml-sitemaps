@@ -98,7 +98,7 @@ class BWP_GXS_MODULE_SITE extends BWP_GXS_MODULE
 				$path = $blog->path;
 
 				$data['location'] = $scheme . $blog->domain . $path;
-				$data['lastmod']  = $this->format_lastmod(strtotime($blog->last_updated));
+				$data['lastmod']  = $this->format_local_datetime($blog->last_updated);
 
 				$data['freq'] = apply_filters('bwp_gxs_freq_site',
 					$this->cal_frequency(false, $blog->last_updated), $blog->blog_id

@@ -44,7 +44,7 @@ class BWP_GXS_MODULE_PAGE_EXTERNAL extends BWP_GXS_MODULE
 			$data = $this->init_data($data);
 
 			$data['location'] = $page['location'];
-			$data['lastmod']  = $this->format_lastmod(strtotime($page['lastmod']));
+			$data['lastmod']  = $this->format_local_datetime($page['lastmod']);
 
 			// @since 1.4.0 use manually set frequency if any
 			$data['freq']     = empty($page['freq']) || $page['freq'] == 'auto'

@@ -198,7 +198,7 @@ class BWP_GXS_MODULE
 		$utc_timezone     = new DateTimeZone('UTC');
 		$current_timezone = $bwp_gxs->get_current_timezone();
 
-		// support for manually entered lastmod, for example for an external page
+		// use the $post's lastmod if already set
 		if (isset($post->lastmod))
 		{
 			$datetime  = $post->lastmod;
@@ -261,9 +261,11 @@ class BWP_GXS_MODULE
 	}
 
 	/**
-	 * Format a provided timestamp with correct timezone info
+	 * Format a provided datetime with correct timezone info
 	 *
-	 * @param int $datetime unix timestamp of datetime
+	 * @param mixed string|int|DateTime $datetime datetime of all formats that
+	 *                                            PHP supports, expected in the
+	 *                                            UTC timezone
 	 */
 	protected function format_datetime($datetime)
 	{
@@ -272,9 +274,16 @@ class BWP_GXS_MODULE
 		if (! $datetime)
 			return '';
 
+		// convert provided datetime to unix timestamp format if it's an integer
+		if (is_numeric($datetime))
+			$datetime = '@' . $datetime;
+
 		try {
-			// convert datetime to a DateTime object with UTC timezone
-			$datetime = new DateTime('@' . $datetime);
+			// convert $datetime to a DateTime object with UTC timezone when
+			// $datetime is not already a DateTime object
+			$datetime = ! ($datetime instanceof DateTime)
+				? new DateTime($datetime, new DateTimeZone('UTC'))
+				: $datetime;
 
 			// need local timezone
 			if ($bwp_gxs->options['enable_gmt'] != 'yes') {
@@ -288,11 +297,51 @@ class BWP_GXS_MODULE
 	}
 
 	/**
+	 * Format a local datetime with correct timezone info
+	 *
+	 * @param mixed string|int|DateTime $datetime datetime of all formats that
+	 *                                            PHP supports, expected in the
+	 *                                            local timezone
+	 */
+	protected function format_local_datetime($datetime)
+	{
+		global $bwp_gxs;
+
+		$utc_timezone = new DateTimeZone('UTC');
+		$current_timezone = $bwp_gxs->get_current_timezone();
+
+		// if $datetime is a Unix Timestamp, need to convert it to a proper
+		// datetime first
+		if (is_numeric($datetime))
+		{
+			// WordPress sets the default timezone to UTC (in wp-settings.php) so
+			// we need to temporarily switch to the local timezone here because
+			// $datetime is in local time
+			@date_default_timezone_set($current_timezone->getName());
+
+			$datetime = date('Y-m-d H:i:s', $datetime);
+
+			// switch default timezone back to UTC
+			@date_default_timezone_set('UTC');
+		}
+
+		// need to convert $datetime to UTC timezone
+		$datetime = new DateTime($datetime, $current_timezone);
+		$datetime->setTimezone($utc_timezone);
+
+		return $this->format_datetime($datetime);
+	}
+
+	/**
+	 * This function is here to remain BC only, and is not used in any default modules
+	 *
 	 * @deprecated 1.4.0 use BWP_GXS_MODULE::format_datetime() instead
+	 *
+	 * @param int $lastmod last modified datetime in unix timestamp, expected in local time
 	 */
 	protected function format_lastmod($lastmod)
 	{
-		return $this->format_datetime($lastmod);
+		return $this->format_local_datetime($lastmod);
 	}
 
 	/**

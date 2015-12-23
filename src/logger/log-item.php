@@ -60,11 +60,23 @@ abstract class BWP_Sitemaps_Logger_LogItem
 	}
 
 	/**
+	 * Get datetime of this item, in Unix Timestamp and UTC
+	 *
 	 * @return int
 	 */
 	public function get_timestamp()
 	{
 		return $this->datetime->getTimestamp();
+	}
+
+	/**
+	 * Same as get_timestamp() but the result is in local timezone
+	 *
+	 * @return int
+	 */
+	public function get_local_timestamp()
+	{
+		return $this->get_datetime()->getTimestamp();
 	}
 
 	/**
