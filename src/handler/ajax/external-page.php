@@ -50,7 +50,9 @@ class BWP_Sitemaps_Handler_Ajax_ExternalPageHandler extends BWP_Sitemaps_Handler
 	{
 		$this->bridge->check_ajax_referer('bwp_gxs_manage_external_page');
 
-		$required = array('url', 'frequency', 'priority', 'last_modified');
+		// 'frequency' and 'priority' are not technically required, but if a
+		// page is submitted via the form, they are always set anyway
+		$required = array('url', 'frequency', 'priority');
 		$values   = array();
 
 		// return error if any required field is missing
@@ -80,33 +82,37 @@ class BWP_Sitemaps_Handler_Ajax_ExternalPageHandler extends BWP_Sitemaps_Handler
 			));
 		}
 
-		// frequency and priority must be valid
+		// frequency and priority must be valid if provided
 		if (!in_array($frequency, $this->frequencies)
 			|| !in_array($priority, $this->priorities)
 		) {
 			$this->response_with(array(
 				'error'   => 1,
-				'message' => __('Invalid frequency or priority', $this->domain)
+				'message' => __('Invalid frequency or priority.', $this->domain)
 			));
 		}
 
-		// last_modified must be valid
-		try {
-			// expect last modified date time in local timezone, but we will
-			// save it in UTC timezone
-			$last_modified = new DateTime($last_modified, $this->timezone);
-			$last_modified->setTimezone(new DateTimeZone('UTC'));
-		} catch (Exception $e) {
-			$this->response_with(array(
-				'error'   => 1,
-				'message' => __('Please provide a valid last modified date time.', $this->domain)
-			));
+		$last_modified = isset($last_modified) ? $last_modified : null;
+
+		// last_modified must be valid if provided
+		if (isset($last_modified)) {
+			try {
+				// expect last modified date time in local timezone, but we will
+				// save it in UTC timezone
+				$last_modified = new DateTime($last_modified, $this->timezone);
+				$last_modified->setTimezone(new DateTimeZone('UTC'));
+			} catch (Exception $e) {
+				$this->response_with(array(
+					'error'   => 1,
+					'message' => __('Please provide a valid last modified date time.', $this->domain)
+				));
+			}
 		}
 
 		$data = array(
 			'frequency'     => $frequency,
 			'priority'      => $priority,
-			'last_modified' => $last_modified->format($this->date_format)
+			'last_modified' => $last_modified ? $last_modified->format($this->date_format) : null
 		);
 
 		if ($result = $this->save($url, $data)) {
@@ -114,8 +120,10 @@ class BWP_Sitemaps_Handler_Ajax_ExternalPageHandler extends BWP_Sitemaps_Handler
 
 			// always display in local timezone
 			$data['last_modified'] = $last_modified
-				->setTimezone($this->timezone)
-				->format($this->date_format);
+				? $last_modified
+					->setTimezone($this->timezone)
+					->format($this->date_format)
+				: null;
 
 			$this->response_with(array(
 				'data'    => $data,

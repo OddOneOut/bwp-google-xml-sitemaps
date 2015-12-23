@@ -68,7 +68,8 @@ class BWP_Sitemaps_Provider_ExternalPage_Test extends BWP_Sitemaps_PHPUnit_Provi
 				'frequency'     => 'hourly',
 				'priority'      => '0.8',
 				'last_modified' => '2015-10-20 12:00'
-			)
+			),
+			'page3-only-url' => array()
 		);
 
 		$this->bridge
@@ -94,6 +95,12 @@ class BWP_Sitemaps_Provider_ExternalPage_Test extends BWP_Sitemaps_PHPUnit_Provi
 				'frequency'     => 'hourly',
 				'priority'      => 0.8,
 				'last_modified' => '2015-10-20 19:00'
+			),
+			'page3-only-url' => array(
+				'url'           => 'page3-only-url',
+				'frequency'     => null,
+				'priority'      => null,
+				'last_modified' => null
 			)
 		), $this->provider->get_pages_for_display());
 	}

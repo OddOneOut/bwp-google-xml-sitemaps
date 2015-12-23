@@ -52,20 +52,25 @@ class BWP_Sitemaps_Provider_ExternalPage
 		$items = array();
 
 		foreach ($pages as $url => $page) {
-			try {
-				// expect UTC timezone from db, convert to local timezone
-				$last_modified = new DateTime($page['last_modified'], new DateTimeZone('UTC'));
-				$last_modified->setTimezone($this->plugin->get_current_timezone());
-			} catch (Exception $e) {
-				// invalid last modified, do not return this item
-				continue;
+			$last_modified = isset($page['last_modified']) ? $page['last_modified'] : null;
+
+			if (isset($last_modified)) {
+				try {
+					// expect UTC timezone from db, convert to local timezone
+					$last_modified = new DateTime($page['last_modified'], new DateTimeZone('UTC'));
+					$last_modified->setTimezone($this->plugin->get_current_timezone());
+				} catch (Exception $e) {
+					// invalid datetime, ignore because last modified is optional
+				}
 			}
 
 			$items[$url] = array(
 				'url'           => $url,
-				'frequency'     => $page['frequency'],
-				'priority'      => (float) $page['priority'],
-				'last_modified' => $last_modified->format('Y-m-d H:i') // @todo remove this date format duplication
+				'frequency'     => isset($page['frequency']) ? $page['frequency'] : null,
+				'priority'      => isset($page['priority']) ? (float) $page['priority'] : null,
+				'last_modified' => isset($last_modified)
+					? $last_modified->format('Y-m-d H:i') // @todo remove this date format duplication
+					: null
 			);
 		}
 

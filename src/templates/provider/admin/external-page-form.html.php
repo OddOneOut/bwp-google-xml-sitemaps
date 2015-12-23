@@ -14,7 +14,7 @@
 
 <form action="" method="POST" accept-charset="utf-8">
 	<div class="bwp-form-group">
-		<label for="external-page-url"><?php _e('Absolute URL to page', $this->domain); ?></label>
+		<label class="bwp-label-required" for="external-page-url"><?php _e('Absolute URL to page', $this->domain); ?></label>
 		<input class="bwp-form-control bwp-popover-focus" type="text" name="url"
 			data-content="<?php _e('Each page must have a unique URL, '
 				. 'so if you provide an existing URL, '

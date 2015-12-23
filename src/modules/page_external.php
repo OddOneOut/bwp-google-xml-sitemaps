@@ -41,17 +41,25 @@ class BWP_GXS_MODULE_PAGE_EXTERNAL extends BWP_GXS_MODULE
 		for ($i = 0; $i < sizeof($external_pages); $i++)
 		{
 			$page = $external_pages[$i];
-			$data = $this->init_data($data);
 
 			$data['location'] = $page['location'];
-			$data['lastmod']  = $this->format_local_datetime($page['lastmod']);
 
-			// @since 1.4.0 use manually set frequency if any
-			$data['freq']     = empty($page['freq']) || $page['freq'] == 'auto'
-				? $this->cal_frequency(false, $page['lastmod'])
-				: $page['freq'];
+			$data['lastmod']  = isset($page['lastmod'])
+				? $this->format_local_datetime($page['lastmod'])
+				: null;
 
-			$data['priority'] = $page['priority'];
+			if (isset($page['freq']))
+			{
+				$data['freq'] = $page['freq'] == 'auto'
+					? $this->cal_frequency(false, $page['lastmod'])
+					: $page['freq'];
+			}
+			else
+			{
+				$data['freq'] = null;
+			}
+
+			$data['priority'] = isset($page['priority']) ? $page['priority'] : null;
 
 			$this->data[] = $data;
 		}
