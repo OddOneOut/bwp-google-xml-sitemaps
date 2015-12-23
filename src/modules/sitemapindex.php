@@ -169,5 +169,22 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 				$this->data[] = $data;
 			}
 		}
+
+		// @since 1.4.0 support for external sitemaps, i.e. sitemaps that are
+		// not handled by BWP
+		$external_sitemaps = (array) apply_filters('bwp_gxs_external_sitemaps', array());
+		foreach ($external_sitemaps as $external_sitemap)
+		{
+			$data = array();
+
+			if (empty($external_sitemap['location']))
+				continue;
+
+			$data['location'] = $external_sitemap['location'];
+			$data['lastmod']  = !empty($external_sitemap['lastmod'])
+				? $this->format_local_datetime($external_sitemap['lastmod']) : '';
+
+			$this->data[] = $data;
+		}
 	}
 }
