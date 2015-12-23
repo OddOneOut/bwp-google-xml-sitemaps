@@ -1444,7 +1444,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				),
 				'attributes' => array(
 					'enable_sitemap_external' => array(
-						'class'       => 'bwp-switch-select',
+						'class'       => 'bwp-switch-select bwp-switch-on-load',
 						'data-target' => 'external-pages',
 					),
 					'select_exclude_post_type' => array(
