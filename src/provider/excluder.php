@@ -37,10 +37,13 @@ class BWP_Sitemaps_Excluder
 	 * @param string $group default to get all, when expected items are posts,
 	 *                      $group is actually post type, when expected items
 	 *                      are terms, $group is taxonomy.
+	 *        bool $flatten whether to flatten the items into a one dimensional
+	 *                      array of ids instead of grouping by $group. To use
+	 *                      this $group must be set to NULL.
 	 * @return array of item ids if $group is provided
 	 *         array of group => array of item ids otherwise
 	 */
-	public function get_excluded_items($group = null)
+	public function get_excluded_items($group = null, $flatten = false)
 	{
 		if (! ($excluded_items = $this->cache->get($this->cache_key))) {
 			if (! ($excluded_items = $this->bridge->get_option($this->storage_key))) {
@@ -53,6 +56,25 @@ class BWP_Sitemaps_Excluder
 
 		// return all excluded items with group if no group is specified
 		if (is_null($group)) {
+			// need to flatten into a one dimensional array
+			if ($flatten) {
+				$excluded_items_flattened = array();
+
+				foreach ($excluded_items as $_group => $_group_items) {
+					// group has no items, nothing to do
+					if (! $_group_items) {
+						continue;
+					}
+
+					$excluded_items_flattened = array_merge(
+						$excluded_items_flattened,
+						array_map('intval', explode(',', $_group_items))
+					);
+				}
+
+				return $excluded_items_flattened;
+			}
+
 			return $excluded_items;
 		}
 

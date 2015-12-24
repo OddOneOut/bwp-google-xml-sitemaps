@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2015 Khang Minh <betterwp.net>
+ * Copyright (c) 2015 Khang Minh <contact@betterwp.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,63 +254,64 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 		// default options
 		$options = array(
-			'enable_cache'                 => '', // @since 1.3.0 off by default
-			'enable_cache_auto_gen'        => 'yes',
-			'enable_gzip'                  => '',
-			'enable_xslt'                  => '', // @since 1.4.0 off by default
-			'enable_sitemap_date'          => '',
-			'enable_sitemap_taxonomy'      => 'yes',
-			'enable_sitemap_external'      => '',
-			'enable_sitemap_split_post'    => 'yes',
-			'enable_sitemap_author'        => '',
-			'enable_sitemap_site'          => 'yes',
-			'enable_stats'                 => 'yes',
-			'enable_credit'                => 'yes',
-			'enable_ping'                  => 'yes',
-			'enable_ping_google'           => 'yes',
-			'enable_ping_bing'             => 'yes',
-			'enable_log'                   => 'yes',
-			'enable_debug'                 => '',
-			'enable_debug_extra'           => '', // @since 1.3.0
-			'enable_robots'                => 'yes',
-			'enable_global_robots'         => '',
-			'enable_gmt'                   => 'yes',
+			'enable_cache'                  => '', // @since 1.3.0 off by default
+			'enable_cache_auto_gen'         => 'yes',
+			'enable_gzip'                   => '',
+			'enable_xslt'                   => '', // @since 1.4.0 off by default
+			'enable_sitemap_date'           => '',
+			'enable_sitemap_taxonomy'       => 'yes',
+			'enable_sitemap_external'       => '',
+			'enable_sitemap_split_post'     => 'yes',
+			'enable_sitemap_author'         => '',
+			'enable_sitemap_site'           => 'yes',
+			'enable_stats'                  => 'yes',
+			'enable_credit'                 => 'yes',
+			'enable_ping'                   => 'yes',
+			'enable_ping_google'            => 'yes',
+			'enable_ping_bing'              => 'yes',
+			'enable_log'                    => 'yes',
+			'enable_debug'                  => '',
+			'enable_debug_extra'            => '', // @since 1.3.0
+			'enable_robots'                 => 'yes',
+			'enable_global_robots'          => '',
+			'enable_gmt'                    => 'yes',
+			'enable_exclude_posts_by_terms' => '', // @since 1.4.0
 			// image sitemap options @since 1.4.0
-			'enable_image_sitemap'         => '',
-			'input_image_post_types'       => '',
+			'enable_image_sitemap'          => '',
+			'input_image_post_types'        => '',
 			// google news options
-			'enable_news_sitemap'          => '',
-			'enable_news_keywords'         => '',
-			'enable_news_ping'             => '',
-			'enable_news_multicat'         => '',
-			'select_news_lang'             => 'en',
-			'select_news_post_type'        => 'post', // @since 1.4.0
-			'select_news_taxonomy'         => 'category', // @since 1.4.0
-			'select_news_keyword_type'     => 'cat', // @deprecated 1.4.0
-			'select_news_keyword_source'   => '', // @since 1.4.0
-			'select_news_cat_action'       => 'inc',
-			'select_news_cats'             => '',
-			'input_news_name'              => '', // @since 1.3.1
-			'input_news_genres'            => array(),
+			'enable_news_sitemap'           => '',
+			'enable_news_keywords'          => '',
+			'enable_news_ping'              => '',
+			'enable_news_multicat'          => '',
+			'select_news_lang'              => 'en',
+			'select_news_post_type'         => 'post', // @since 1.4.0
+			'select_news_taxonomy'          => 'category', // @since 1.4.0
+			'select_news_keyword_type'      => 'cat', // @deprecated 1.4.0
+			'select_news_keyword_source'    => '', // @since 1.4.0
+			'select_news_cat_action'        => 'inc',
+			'select_news_cats'              => '',
+			'input_news_name'               => '', // @since 1.3.1
+			'input_news_genres'             => array(),
 			// end of Google news options
-			'input_exclude_post_type'      => '',
-			'input_exclude_post_type_ping' => '', // @since 1.3.0
-			'input_exclude_taxonomy'       => 'post_tag',
-			'input_cache_age'              => 1,
-			'input_item_limit'             => 5000,
-			'input_split_limit_post'       => 0,
-			'input_alt_module_dir'         => '', // @since 1.3.0 default to empty
-			'input_oldest'                 => 7,
-			'input_sql_limit'              => 1000,
-			'input_custom_xslt'            => '',
-			'input_ping_limit'             => 100, // @since 1.3.0 per day ping limit for each SE
-			'select_output_type'           => 'concise',
-			'select_time_type'             => 3600,
-			'select_oldest_type'           => 16400,
-			'select_default_freq'          => 'daily',
-			'select_default_pri'           => 1.0,
-			'select_min_pri'               => 0.1,
-			'input_cache_dir'              => '', // @since 1.3.0 make this editable and allow overriden using constant or filters
+			'input_exclude_post_type'       => '',
+			'input_exclude_post_type_ping'  => '', // @since 1.3.0
+			'input_exclude_taxonomy'        => 'post_tag',
+			'input_cache_age'               => 1,
+			'input_item_limit'              => 5000,
+			'input_split_limit_post'        => 0,
+			'input_alt_module_dir'          => '', // @since 1.3.0 default to empty
+			'input_oldest'                  => 7,
+			'input_sql_limit'               => 1000,
+			'input_custom_xslt'             => '',
+			'input_ping_limit'              => 100, // @since 1.3.0 per day ping limit for each SE
+			'select_output_type'            => 'concise',
+			'select_time_type'              => 3600,
+			'select_oldest_type'            => 16400,
+			'select_default_freq'           => 'daily',
+			'select_default_pri'            => 1.0,
+			'select_min_pri'                => 0.1,
+			'input_cache_dir'               => '', // @since 1.3.0 make this editable and allow overriden using constant or filters
 		);
 
 		// super admin only options
@@ -433,8 +434,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 		// @since 1.4.0 add excluded items from admin, use a relatively low
 		// priority so they can be merged with excluded items from user's filters
-		add_filter('bwp_gxs_excluded_posts', array($this, 'add_excluded_posts'), 999, 2);
-		add_filter('bwp_gxs_excluded_terms', array($this, 'add_excluded_terms'), 999, 2);
+		add_filter('bwp_gxs_excluded_posts', array($this, 'add_excluded_posts'), 999, 3);
+		add_filter('bwp_gxs_excluded_terms', array($this, 'add_excluded_terms'), 999, 3);
 
 		// @since 1.4.0 add external pages from admin, use a relatively low
 		// priority so they can be merged with external pages from user's filters
@@ -1205,6 +1206,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'heading', // exclude items
 					'select',
 					'select',
+					'checkbox',
 					'heading', // external pages
 					'heading', // item limits
 					'input',
@@ -1233,6 +1235,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Exclude items', $this->domain),
 					__('Exclude posts', $this->domain),
 					__('Exclude terms', $this->domain),
+					__('Exclude posts by terms', $this->domain),
 					__('External pages', $this->domain),
 					__('Item limits', $this->domain),
 					__('Global limit', $this->domain),
@@ -1261,6 +1264,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'heading_exclude',
 					'select_exclude_post_type',
 					'select_exclude_taxonomy',
+					'enable_exclude_posts_by_terms',
 					'heading_external_pages',
 					'heading_limit',
 					'input_item_limit',
@@ -1356,17 +1360,18 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'select_exclude_taxonomy' => $this->_get_taxonomies_as_choices()
 				),
 				'checkbox' => array(
-					'enable_sitemap_taxonomy'   => array(__('Taxonomy (including custom taxonomies)', $this->domain) => ''),
-					'enable_sitemap_date'       => array(__('Date archives', $this->domain) => ''),
-					'enable_sitemap_author'     => array(__('Author archives', $this->domain) => ''),
-					'enable_sitemap_external'   => array(__('External (non-WordPress) pages.', $this->domain) => ''),
-					'enable_credit'             => array(__('some copyrighted info is added to your sitemaps.', $this->domain) => ''),
-					'enable_xslt'               => array(__('Default XSLT stylesheets will be used. Set your custom stylesheets below or filter the <code>bwp_gxs_xslt</code> hook.', $this->domain) => ''),
-					'enable_sitemap_split_post' => array(__('Sitemaps like <code>post.xml</code> are split into <code>post_part1.xml</code>, <code>post_part2.xml</code>, etc. when limit reached.', $this->domain) => ''),
-					'enable_sitemap_site'       => array(__('Site Address', $this->domain) => ''),
-					'enable_ping'               => array(__('Ping search engines when you publish new posts.', $this->domain) => ''),
-					'enable_ping_google'        => array(__('Google', $this->domain) => ''),
-					'enable_ping_bing'          => array(__('Bing', $this->domain) => ''),
+					'enable_sitemap_taxonomy'       => array(__('Taxonomy (including custom taxonomies)', $this->domain) => ''),
+					'enable_sitemap_date'           => array(__('Date archives', $this->domain) => ''),
+					'enable_sitemap_author'         => array(__('Author archives', $this->domain) => ''),
+					'enable_sitemap_external'       => array(__('External (non-WordPress) pages.', $this->domain) => ''),
+					'enable_exclude_posts_by_terms' => array(__('Also exclude posts that belong to excluded terms.', $this->domain) => ''),
+					'enable_credit'                 => array(__('Some copyrighted info is added to your sitemaps.', $this->domain) => ''),
+					'enable_xslt'                   => array(__('Default XSLT stylesheets will be used. Set your custom stylesheets below or filter the <code>bwp_gxs_xslt</code> hook.', $this->domain) => ''),
+					'enable_sitemap_split_post'     => array(__('Sitemaps like <code>post.xml</code> are split into <code>post_part1.xml</code>, <code>post_part2.xml</code>, etc. when limit reached.', $this->domain) => ''),
+					'enable_sitemap_site'           => array(__('Site Address', $this->domain) => ''),
+					'enable_ping'                   => array(__('Ping search engines when you publish new posts.', $this->domain) => ''),
+					'enable_ping_google'            => array(__('Google', $this->domain) => ''),
+					'enable_ping_bing'              => array(__('Bing', $this->domain) => ''),
 				),
 				'input' => array(
 					'input_item_limit' => array(
@@ -1414,9 +1419,15 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				),
 				'helps' => array(
 					'enable_sitemap_site' => array(
-						'content' => 'For a multi-site installation of WordPress, '
-							. 'this sitemap will list all appropriate blogs\' addresses within your network, '
-							. 'not just the main blog\'s.',
+						'content' => __('For a multi-site installation of WordPress, '
+						. 'this sitemap will list all appropriate blogs\' addresses within your network, '
+						. 'not just the main blog\'s.', $this->domain),
+					),
+					'enable_exclude_posts_by_terms' => array(
+						'target'  => 'icon',
+						'content' => __('When a post belongs to multiple terms, '
+							. 'it will be excluded if <strong>ANY</strong> of those terms '
+							. 'is currently excluded.', $this->domain)
 					),
 					'select_default_freq' => array(
 						'type'    => 'link',
@@ -1469,17 +1480,18 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'input_split_limit_post',
 				'input_custom_xslt',
 				'input_ping_limit',
-				'enable_xslt',
-				'enable_credit',
-				'enable_sitemap_split_post',
 				'enable_sitemap_date',
 				'enable_sitemap_taxonomy',
 				'enable_sitemap_external',
 				'enable_sitemap_author',
 				'enable_sitemap_site',
+				'enable_exclude_posts_by_terms',
+				'enable_sitemap_split_post',
 				'enable_ping',
 				'enable_ping_google',
 				'enable_ping_bing',
+				'enable_xslt',
+				'enable_credit',
 				'select_default_freq',
 				'select_default_pri',
 				'select_min_pri'
@@ -2569,19 +2581,19 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		return $output;
 	}
 
-	public function add_excluded_posts($excluded_items, $post_type)
+	public function add_excluded_posts($excluded_items, $post_type, $flatten = false)
 	{
 		$excluded_items = array_merge(
-			$excluded_items, $this->post_excluder->get_excluded_items($post_type)
+			$excluded_items, $this->post_excluder->get_excluded_items($post_type, $flatten)
 		);
 
 		return array_values(array_unique($excluded_items));
 	}
 
-	public function add_excluded_terms($excluded_items, $taxonomy)
+	public function add_excluded_terms($excluded_items, $taxonomy, $flatten = false)
 	{
 		$excluded_items = array_merge(
-			$excluded_items, $this->term_excluder->get_excluded_items($taxonomy)
+			$excluded_items, $this->term_excluder->get_excluded_items($taxonomy, $flatten)
 		);
 
 		return array_values(array_unique($excluded_items));

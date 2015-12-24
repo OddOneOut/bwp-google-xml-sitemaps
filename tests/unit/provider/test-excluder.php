@@ -74,6 +74,25 @@ class BWP_Sitemaps_Excluder_Test extends BWP_Sitemaps_PHPUnit_Provider_Unit_Test
 	 * @covers BWP_Sitemaps_Excluder::get_excluded_items
 	 * @dataProvider get_excluded_items
 	 */
+	public function test_get_excluded_items_should_flatten_all_groups_when_needed(array $excluded_items)
+	{
+		$this->cache
+			->shouldReceive('set')
+			->byDefault();
+
+		$this->bridge
+			->shouldReceive('get_option')
+			->with('storage_key')
+			->andReturn($excluded_items)
+			->byDefault();
+
+		$this->assertEquals(array(1,2,3,4,5,6,7,8), $this->excluder->get_excluded_items(null, true));
+	}
+
+	/**
+	 * @covers BWP_Sitemaps_Excluder::get_excluded_items
+	 * @dataProvider get_excluded_items
+	 */
 	public function test_get_excluded_items_should_cache_all_excluded_items_and_return_excluded_items_for_specified_group_only(array $excluded_items)
 	{
 		$this->cache

@@ -130,7 +130,38 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 		$requested = $this->requested;
 
 		// @since 1.3.0 use a different filter hook that expects an array instead
-		$excluded_posts   = apply_filters('bwp_gxs_excluded_posts', array(), $requested);
+		$excluded_posts = apply_filters('bwp_gxs_excluded_posts', array(), $requested);
+		$excluded_posts = $excluded_posts && is_array($excluded_posts) ? $excluded_posts : array();
+
+		// @since 1.4.0 if we need to exclude posts by terms, find all the
+		// posts that belong to excluded terms so we can later exclude them by
+		// their ids
+		$excluded_term_ids = apply_filters('bwp_gxs_excluded_terms', array(), null, true);
+		if ($bwp_gxs->options['enable_exclude_posts_by_terms'] == 'yes'
+			&& $excluded_term_ids && is_array($excluded_term_ids)
+		) {
+			$excluded_term_ids_sql = 'AND t.term_id IN (' . implode(',', $excluded_term_ids) . ')';
+
+			$excluded_posts_by_terms_sql = '
+				SELECT p.ID
+				FROM ' . $wpdb->posts . ' p
+				INNER JOIN ' . $wpdb->term_relationships . ' tr
+					ON tr.object_id = p.ID
+				INNER JOIN ' . $wpdb->term_taxonomy . ' tt
+					ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				INNER JOIN ' . $wpdb->terms . ' t
+					ON tt.term_id = t.term_id' . "
+				WHERE p.post_status = 'publish'
+					AND p.post_password = ''
+					AND p.post_type = %s
+					$excluded_term_ids_sql
+				GROUP BY p.ID
+				ORDER BY p.post_modified DESC";
+
+			$excluded_posts_by_terms = $wpdb->get_col($wpdb->prepare($excluded_posts_by_terms_sql, $requested));
+			$excluded_posts = array_merge($excluded_posts, $excluded_posts_by_terms);
+		}
+
 		$excluded_posts_sql = sizeof($excluded_posts) > 0
 			? ' AND p.ID NOT IN (' . implode(',', $excluded_posts) . ') '
 			: '';
@@ -142,11 +173,11 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 		// @since 1.3.0 use a different alias for post table
 		$sql_where = str_replace('wposts', 'p', $sql_where);
 
+		// If $requested is 'post' and this site uses %category% in
+		// permalink structure, we will have to use a complex SQL query so
+		// this plugin can scale up to millions of posts.
 		if ('post' == $requested && strpos($this->perma_struct, '%category%') !== false)
 		{
-			// If $requested is 'post' and this site uses %category% in
-			// permalink structure, we will have to use a complex SQL query so
-			// this plugin can scale up to millions of posts.
 			// @since 1.3.0 do not fetch posts that are password-protected
 			$latest_post_query = '
 				SELECT *
@@ -155,23 +186,23 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 					ON tr.object_id = p.ID' . "
 					AND p.post_status = 'publish'
 					AND p.post_password = ''
-					AND p.post_type = 'post'" . '
+					AND p.post_type = %s" . '
 				INNER JOIN ' . $wpdb->term_taxonomy . ' tt
 					ON tr.term_taxonomy_id = tt.term_taxonomy_id' . "
-					AND tt.taxonomy = 'category'" . '
-				INNER JOIN ' . $wpdb->terms . ' t
+					AND tt.taxonomy = 'category'
+				INNER JOIN $wpdb->terms t
 					ON tt.term_id = t.term_id
-				WHERE 1 = 1 '
-					. "$excluded_posts_sql"
-					. "$sql_where" . '
+				WHERE 1 = 1
+					$excluded_posts_sql
+					$sql_where
 				GROUP BY p.ID
-				ORDER BY p.post_modified, p.ID DESC';
+				ORDER BY p.post_modified, p.ID DESC";
 		}
 		else
 		{
 			// @since 1.3.0 do not fetch posts that are password-protected
 			$latest_post_query = '
-				SELECT *
+				SELECT p.*
 				FROM ' . $wpdb->posts . " p
 				WHERE p.post_status = 'publish'
 					AND p.post_password = ''

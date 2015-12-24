@@ -146,8 +146,9 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 
 	/**
 	 * @covers BWP_Sitemaps::add_excluded_posts
+	 * @dataProvider get_flatten_parameter
 	 */
-	public function test_add_excluded_posts()
+	public function test_add_excluded_posts($flatten)
 	{
 		$group = 'post';
 
@@ -155,19 +156,21 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 
 		$this->excluder
 			->shouldReceive('get_excluded_items')
-			->with($group)
+			->with($group, $flatten)
 			->andReturn(array(2,3,4,5,6))
 			->byDefault();
 
 		$this->assertEquals(
-			array(1,2,3,4,5,6), $this->plugin->add_excluded_posts($user_filtered_excluded_items, $group)
+			array(1,2,3,4,5,6),
+			$this->plugin->add_excluded_posts($user_filtered_excluded_items, $group, $flatten)
 		);
 	}
 
 	/**
 	 * @covers BWP_Sitemaps::add_excluded_terms
+	 * @dataProvider get_flatten_parameter
 	 */
-	public function test_add_excluded_terms()
+	public function test_add_excluded_terms($flatten)
 	{
 		$group = 'category';
 
@@ -175,12 +178,21 @@ class BWP_Sitemaps_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 
 		$this->excluder
 			->shouldReceive('get_excluded_items')
-			->with($group)
+			->with($group, $flatten)
 			->andReturn(array(2,3,4,5,6))
 			->byDefault();
 
 		$this->assertEquals(
-			array(1,2,3,4,5,6), $this->plugin->add_excluded_terms($user_filtered_excluded_items, $group)
+			array(1,2,3,4,5,6),
+			$this->plugin->add_excluded_terms($user_filtered_excluded_items, $group, $flatten)
+		);
+	}
+
+	public function get_flatten_parameter()
+	{
+		return array(
+			array(false),
+			array(true),
 		);
 	}
 
