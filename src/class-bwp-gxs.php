@@ -982,7 +982,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					$key = $key_prefix . $post_type->name;
 
 					$form[$for][] = array('checkbox', 'name' => $key);
-					$form['checkbox'][$key] = array(__($post_type->label) => $key);
+					$form['checkbox'][$key] = array(__($post_type->labels->singular_name) => $key);
 
 					$form_options[] = $key;
 
@@ -1002,7 +1002,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					$key = $key_prefix . $taxonomy->name;
 
 					$form[$for][] = array('checkbox', 'name' => $key);
-					$form['checkbox'][$key] = array(__($taxonomy->label) => $key);
+					$form['checkbox'][$key] = array(__($taxonomy->labels->singular_name) => $key);
 
 					$form_options[] = $key;
 
