@@ -1830,7 +1830,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						. '</em>',
 					'heading_module' => '<em>'
 						. sprintf(__('Extend this plugin using customizable modules. '
-							. 'More info <a href="%s#module_api">here</a>.', $this->domain),
+							. 'More info <a href="%s#module-api">here</a>.', $this->domain),
 							$this->plugin_url)
 						. '</em>',
 					'heading_debug' => ''
@@ -1845,7 +1845,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'enable_stats'          => array(__('Print useful information such as build time, memory usage, SQL queries, etc.', $this->domain) => ''),
 					'enable_log'            => array(sprintf(__('Log useful messages when sitemaps are generated. The log can be viewed <a href="%s">here</a>.', $this->domain), $this->get_admin_page_url(BWP_GXS_STATS)) => ''),
 					'enable_debug'          => array(__('When this is on, NO caching is used and <code>WP_DEBUG</code> is respected, useful when developing new modules.', $this->domain) => ''),
-					'enable_debug_extra'    => array(sprintf(__('When this is on, NO headers are sent and sitemaps are NOT compressed, useful when debugging <em>Content Encoding Error</em>. More info <a href="%s#sitemap_log_debug" target="_blank">here</a>.', $this->domain), $this->plugin_url) => ''),
+					'enable_debug_extra'    => array(sprintf(__('When this is on, NO headers are sent and sitemaps are NOT compressed, useful when debugging <em>Content Encoding Error</em>. More info <a href="%s#sitemap-log-debug" target="_blank">here</a>.', $this->domain), $this->plugin_url) => ''),
 				),
 				'input' => array(
 					'input_cache_age' => array(

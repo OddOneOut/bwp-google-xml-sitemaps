@@ -53,7 +53,7 @@
 
 	<span class="bwp-form-help-block bwp-form-help-block-last">
 		<strong><?php _e('Important', $this->domain); ?></strong>:
-		<?php printf(__('Please specify "Last modified" in your <a href="%s" target="_blank">local time</a>.', $this->domain), admin_url('options-general.php#timezone_string')); ?>
+		<?php printf(__('Please specify "Last modified" in your <a href="%s" target="_blank">local timezone</a>.', $this->domain), admin_url('options-general.php#timezone_string')); ?>
 	</span>
 
 	<input type="hidden" name="action" value="bwp-gxs-submit-external-page" />
