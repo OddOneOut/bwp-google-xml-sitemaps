@@ -1050,6 +1050,38 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		}
 	}
 
+	private function _disable_overridden_inputs(array &$inputs)
+	{
+		$overridden_text = strtoupper(__('overridden', $this->domain));
+
+		if (isset($inputs['input_custom_xslt']))
+		{
+			if (has_filter('bwp_gxs_xslt'))
+			{
+				$inputs['input_custom_xslt']['value'] = $overridden_text . ': ' . $this->xslt;
+				$inputs['input_custom_xslt']['disabled'] = 'disabled';
+			}
+		}
+
+		if (isset($inputs['input_cache_dir']))
+		{
+			if (has_filter('bwp_gxs_cache_dir') || $this->_get_cache_directory_from_constant())
+			{
+				$inputs['input_cache_dir']['value'] = $overridden_text . ': ' . $this->get_cache_directory();
+				$inputs['input_cache_dir']['disabled'] = 'disabled';
+			}
+		}
+
+		if (isset($inputs['input_alt_module_dir']))
+		{
+			if (has_filter('bwp_gxs_module_dir'))
+			{
+				$inputs['input_alt_module_dir']['value'] = $overridden_text . ': ' . $this->custom_module_directory;
+				$inputs['input_alt_module_dir']['disabled'] = 'disabled';
+			}
+		}
+	}
+
 	private function _get_frequencies_as_choices()
 	{
 		$choices = array();
@@ -1506,6 +1538,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			$this->_add_checkboxes_to_generator_form('sec_tax', 'etax_', $form, $form_options);
 			$this->_add_checkboxes_to_generator_form('sec_post_ping', 'eppt_', $form, $form_options);
 
+			$this->_disable_overridden_inputs($form['input']);
+
 			// add extra forms
 			add_action('bwp_option_action_after_form', array($this, 'add_external_page_modal'));
 
@@ -1853,11 +1887,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						'label' => '&mdash;'
 					),
 					'input_cache_dir' => array(
-						'size'     => 91,
-						'disabled' => $this->_get_cache_directory_from_constant()
-							? ' disabled="disabled" ' : '',
-						'value'    => $this->_get_cache_directory_from_constant()
-							? strtoupper(__('set via constant (BWP_GXS_CACHE_DIR)', $this->domain)) : null,
+						'size'     => 91
 					),
 					'input_alt_module_dir' => array(
 						'size' => 91
@@ -1964,6 +1994,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'enable_debug',
 				'enable_debug_extra',
 			);
+
+			$this->_disable_overridden_inputs($form['input']);
 
 			// use same option key as XML Sitemaps page
 			add_filter('bwp_option_page_submit_form_name', create_function('', "return BWP_GXS_GENERATOR;"));
