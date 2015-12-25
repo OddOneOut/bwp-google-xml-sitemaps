@@ -201,6 +201,11 @@ class BWP_Sitemaps_Sitemap_Output_Functional_Test extends BWP_Sitemaps_PHPUnit_W
 	 */
 	public function test_should_send_404_not_found_response_status_when_sitemap_is_blank($sitemap_name)
 	{
+		self::set_options(BWP_GXS_GENERATOR, array(
+			'input_exclude_post_type' => '',
+			'input_exclude_taxonomy'  => ''
+		));
+
 		if ($sitemap_name == 'post') {
 			self::reset_posts();
 		} else {

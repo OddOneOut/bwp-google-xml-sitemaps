@@ -2725,13 +2725,16 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	/**
 	 * A convenient function to remove unwanted modules or sub modules
 	 *
-	 * When you filter the 'bwp_gxs_modules' hook it is recommended that you use this function.
+	 * When you filter the 'bwp_gxs_modules' hook it is recommended that you
+	 * use this function.
 	 *
-	 * @access public
+	 * @param string      $module name of the parent module
+	 * @param string|null $sub_module name of the sub module
 	 */
-	public function remove_module($module = '', $sub_module = '')
+	public function remove_module($module, $sub_module = null)
 	{
-		if (empty($module) || !isset($this->modules[$module]))
+		// submodule specified but does not exist
+		if (!isset($this->modules[$module]))
 			return false;
 
 		if (empty($sub_module))
@@ -2749,9 +2752,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				if ($sub_module == $subm)
 				{
 					unset($this->modules[$module][$key]);
-					return false;
+					break;
 				}
 			}
+
+			// @since 1.4.0 also remove the parent module if there's no
+			// submodules left
+			if (! $this->modules[$module])
+				unset($this->modules[$module]);
 		}
 	}
 
@@ -2762,8 +2770,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	 */
 	private function _build_sitemap_modules()
 	{
-		$modules       = array();
-		$this->modules = &$modules;
+		$this->modules = array();
 
 		// site home URL sitemap - @since 1.1.5
 		if ('yes' == $this->options['enable_sitemap_site'])
@@ -2780,9 +2787,15 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 		foreach ($this->post_types as $post_type)
 		{
-			// Page will have its own
-			if ('page' != $post_type->name && !in_array($post_type->name, $excluded_post_types))
-				$modules['post'][] = $post_type->name;
+			// handle page separately
+			if ($post_type->name == 'page')
+				continue;
+
+			// post type is excluded
+			if (in_array($post_type->name, $excluded_post_types))
+				continue;
+
+			$this->add_module('post', $post_type->name);
 		}
 
 		// google News module, @since 1.2.0
@@ -2791,11 +2804,14 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 		// add pages to module list
 		if (!in_array('page', $excluded_post_types))
-			$modules['page'] = array('page');
+			$this->add_module('page', 'page');
 
 		// add archive pages to module list
 		if ('yes' == $this->options['enable_sitemap_date'])
-			$modules['archive'] = array('monthly', 'yearly');
+		{
+			$this->add_module('archive', 'monthly');
+			$this->add_module('archive', 'yearly');
+		}
 
 		// add taxonomies to module list
 		$this->taxonomies = get_taxonomies(array('public' => true), '');
@@ -2804,7 +2820,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			foreach ($this->taxonomies as $taxonomy)
 			{
 				if (!in_array($taxonomy->name, $excluded_taxonomies))
-					$modules['taxonomy'][] = $taxonomy->name;
+					$this->add_module('taxonomy', $taxonomy->name);
 			}
 		}
 
@@ -2813,7 +2829,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		$this->remove_module('taxonomy', 'post_format');
 		$this->remove_module('taxonomy', 'nav_menu');
 
-		// add / Remove modules based on users' preferences
+		// add/remove modules based on users' preferences
 		if ('yes' == $this->options['enable_sitemap_author'])
 			$this->add_module('author');
 

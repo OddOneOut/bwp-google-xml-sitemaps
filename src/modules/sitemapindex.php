@@ -113,13 +113,13 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 				'page_external'
 			);
 
+			// handle normal post-based sitemaps, including the somewhat
+			// special 'page' sitemap, but excluding any custom modules,
+			// i.e. modules that are registered under post-based sitemap but
+			// should not be checked for splitting functionalty
 			if (in_array($item['module'], array('post', 'page'))
 				&& !in_array($module_name, $custom_modules)
 			) {
-				// handle normal post-based sitemaps, including the somewhat
-				// special 'page' sitemap, but excluding any custom modules,
-				// i.e. modules that are registered under post-based sitemap but
-				// should not be checked for splitting functionalty
 				$post_type = $item['sub_module'];
 
 				$split_limit = empty($bwp_gxs->options['input_split_limit_post'])
