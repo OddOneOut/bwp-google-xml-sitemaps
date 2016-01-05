@@ -38,6 +38,15 @@ class BWP_GXS_MODULE_SITE extends BWP_GXS_MODULE
 			$data['location'] = trailingslashit(home_url());
 			$data['lastmod']  = $this->get_lastmod($last_post);
 
+			/**
+			 * Filter the frequency of a website in the Site Address sitemap.
+			 *
+			 * @param string $frequency The change frequency to filter.
+			 * @param int $blog_id The current blog id.
+			 *
+			 * @return string Should be one of the change frequencies listed
+			 * here: http://www.sitemaps.org/protocol.html#changefreqdef
+			 */
 			$data['freq'] = apply_filters('bwp_gxs_freq_site',
 				$this->cal_frequency(false, $data['lastmod']), $blog_id
 			);

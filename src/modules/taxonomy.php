@@ -44,7 +44,18 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE
 		if (!isset($latest_posts) || 0 == sizeof($latest_posts))
 			return false;
 
-		// @since 1.3.0 exclude by term ids
+		/**
+		 * Filter terms that are added to a taxonomy-based sitemaps.
+		 *
+		 * @example hooks/filter_bwp_gxs_excluded_terms.php 2
+		 *
+		 * @param array $term_ids  Term IDs to exclude.
+		 * @param string $taxonomy The current taxonomy. See
+		 * http://codex.wordpress.org/Function_Reference/register_taxonomy for
+		 * more info.
+		 *
+		 * @since 1.3.0
+		 */
 		$excluded_term_ids = apply_filters('bwp_gxs_excluded_terms', array(), $requested);
 
 		$excluded_term_ids_sql = count($excluded_term_ids) > 0
@@ -53,7 +64,16 @@ class BWP_GXS_MODULE_TAXONOMY extends BWP_GXS_MODULE
 		// @deprecated 1.3.0, use `bwp_gxs_excluded_term_slugs` instead
 		$excluded_terms = apply_filters('bwp_gxs_term_exclude', array(), $requested);
 
-		// @since 1.4.0 use this to exclude terms programmatically using slugs
+		/**
+		 * Filter terms that are added to a taxonomy-based sitemaps using their slugs.
+		 *
+		 * @example hooks/filter_bwp_gxs_excluded_term_slugs.php 2
+		 *
+		 * @param array $term_slugs Term slugs to exclude, e.g. 'tag1', 'category-2' etc.
+		 * @param string $taxonomy The current taxonomy.
+		 *
+		 * @since 1.4.0
+		 */
 		$excluded_term_slugs = apply_filters('bwp_gxs_excluded_term_slugs', $excluded_terms, $requested);
 		$excluded_term_slugs_placeholders = array_fill(0, count($excluded_term_slugs), '%s');
 

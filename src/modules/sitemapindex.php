@@ -146,6 +146,18 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 
 							$lastmod = $this->_get_sitemap_lastmod($sitemap_name);
 							$data['lastmod'] = $lastmod ? $this->format_local_datetime($lastmod) : '';
+
+							/**
+							 * Filter last modified datetime of a sitemap entry in a sitemap index.
+							 *
+							 * @param string $formatted_lastmod Formatted last modified datetime, example: 2015-12-27 12:00:00.
+							 * @param int    $lastmod           Last modified datetime in [Unix Timestamp](http://google.com).
+							 * @param array  $item              The sitemap item being built.
+							 * @param int    $part              Current sitemap part (when splitting post-based sitemaps).
+							 *
+							 * @return string A valid datetime, for a list of supported datetime
+							 *                format, see http://php.net/manual/en/datetime.formats.php
+							 */
 							$data['lastmod'] = apply_filters('bwp_gxs_sitemap_lastmod', $data['lastmod'], $lastmod, $item, $i);
 
 							$this->data[] = $data;
@@ -170,8 +182,15 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 			}
 		}
 
-		// @since 1.4.0 support for external sitemaps, i.e. sitemaps that are
-		// not handled by BWP
+		/**
+		 * Filter external sitemaps to be added in the sitemap index.
+		 *
+		 * This filter hook allows you to add sitemaps that are not handled by
+		 * BWP GXS to the sitemap index.
+		 *
+		 * @param array $external_sitemaps Sitemaps to add.
+		 * @since 1.4.0
+		 */
 		$external_sitemaps = (array) apply_filters('bwp_gxs_external_sitemaps', array());
 		foreach ($external_sitemaps as $external_sitemap)
 		{

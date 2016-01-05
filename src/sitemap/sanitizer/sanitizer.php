@@ -30,7 +30,7 @@ abstract class BWP_Sitemaps_Sitemap_Sanitizer
 	 * This should always return a string representation of the value
 	 *
 	 * @param mixed $value
-	 * @return mixed string|null null if the sanitized value is not valid
+	 * @return string|null null if the sanitized value is not valid
 	 */
 	abstract public function sanitize($value);
 

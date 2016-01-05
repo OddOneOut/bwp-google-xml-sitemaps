@@ -32,16 +32,28 @@ class BWP_Sitemaps_Excluder
 	}
 
 	/**
-	 * Get currently excluded items
+	 * Get currently excluded items.
+	 *
+	 * The result of this function is cached using {@see BWP_Cache}.
 	 *
 	 * @param string $group default to get all, when expected items are posts,
-	 *                      $group is actually post type, when expected items
-	 *                      are terms, $group is taxonomy.
-	 *        bool $flatten whether to flatten the items into a one dimensional
-	 *                      array of ids instead of grouping by $group. To use
-	 *                      this $group must be set to NULL.
-	 * @return array of item ids if $group is provided
-	 *         array of group => array of item ids otherwise
+	 *                      `$group` is actually post type, when expected items
+	 *                      are terms, `$group` is taxonomy.
+	 * @param bool $flatten whether to flatten the items into a one dimensional
+	 *                      array of ids instead of grouping by `$group`. To use
+	 *                      this `$group` must be set to `NULL`.
+	 *
+	 * @return array
+	 * * An array of item ids if `$group` is provided
+	 * * An array of group => item ids string (comma separated) otherwise, example:
+	 *     ```
+	 *     array(
+	 *         'post'  => '1,2,3,4',
+	 *         'movie' => '5,6,7,8'
+	 *     )
+	 *     ```
+	 *
+	 * @uses BWP_Cache
 	 */
 	public function get_excluded_items($group = null, $flatten = false)
 	{
@@ -87,10 +99,10 @@ class BWP_Sitemaps_Excluder
 	}
 
 	/**
-	 * Update excluded items
+	 * Update excluded items.
 	 *
 	 * @param string $group
-	 * @param array $ids all item ids under specified $group that should be excluded
+	 * @param array $ids all item ids under specified `$group` that should be excluded
 	 */
 	public function update_excluded_items($group, array $ids)
 	{

@@ -74,6 +74,12 @@ class BWP_GXS_MODULE
 	 */
 	public $sort_column = false;
 
+	/**
+	 * Allows you to init the current item with previous item’s data.
+	 *
+	 * @param array $pre_data Previous item's data
+	 * @return array
+	 */
 	protected function init_data($pre_data = array())
 	{
 		global $bwp_gxs;
@@ -101,6 +107,16 @@ class BWP_GXS_MODULE
 		return $this->get_sitemap_url($slug);
 	}
 
+	/**
+	 * Get a sitemap's URL based on its slug.
+	 *
+	 * @param string $slug The sitemap slug, which is actually your module's
+	 *                     name (e.g. 'post', 'post_movie', etc.)
+	 *
+	 * @return string A valid sitemap URL with `.xml` extension appended.
+	 *
+	 * @since 1.3.0
+	 */
 	protected function get_sitemap_url($slug)
 	{
 		global $bwp_gxs;
@@ -109,18 +125,26 @@ class BWP_GXS_MODULE
 	}
 
 	/**
-	 * Calculate the change frequency for a specific item.
+	 * Calculate change frequency.
+	 *
+	 * This allows you to calculate change frequency based on item's last
+	 * modified time or a specific last modified time.
+	 *
+	 * @param object|null $item
+	 * @param string|null $lastmod Last modified datetime in local timezone.
+	 *                             This parameter is only used when `$item` is
+	 *                             not set.
 	 *
 	 * @copyright (c) 2006 - 2009 www.phpbb-seo.com
 	 */
-	protected function cal_frequency($item = '', $lastmod = '')
+	protected function cal_frequency($item = null, $lastmod = null)
 	{
 		global $bwp_gxs;
 
 		if (empty($this->now))
 			$this->now = $this->set_current_time();
 
-		$lastmod = is_object($item) ? $item->post_modified : $lastmod;
+		$lastmod = $item && is_object($item) ? $item->post_modified : $lastmod;
 
 		if (empty($lastmod))
 		{
@@ -139,15 +163,26 @@ class BWP_GXS_MODULE
 				: 'yearly';
 		}
 
+		/**
+		 * Filter the change frequency of a sitemap entry.
+		 *
+		 * @param string $frequency The change frequency to filter.
+		 * @param object|null $item The current item object or null
+		 *
+		 * @return string Should be one of the change frequencies listed
+		 * here: http://www.sitemaps.org/protocol.html#changefreqdef
+		 */
 		return apply_filters('bwp_gxs_freq', $freq, $item);
 	}
 
 	/**
 	 * Calculate the priority for a specific item.
 	 *
-	 * This is just a basic way to calculate priority and module should use its
-	 * own function instead. Search engines don't really care about priority
-	 * and change frequency much, do they ;)?
+	 * Allows you to calculate priority based on item's freshness, comment
+	 * count, and change frequency.
+	 *
+	 * @param object $item
+	 * @param string $freq The calculated change frequency.
 	 */
 	protected function cal_priority($item, $freq = 'daily')
 	{
@@ -178,6 +213,15 @@ class BWP_GXS_MODULE
 			? $bwp_gxs->options['select_min_pri']
 			: $score;
 
+		/**
+		 * Filter the priority of a sitemap entry.
+		 *
+		 * @param float $score The score to filter.
+		 * @param array $item The current item.
+		 * @param string $frequency The current change frequency.
+		 *
+		 * @return int See http://www.sitemaps.org/protocol.html#prioritydef
+		 */
 		return apply_filters('bwp_gxs_priority_score', $score, $item, $freq);
 	}
 
@@ -241,6 +285,8 @@ class BWP_GXS_MODULE
 	/**
 	 * Get formatted last modified datetime of a post
 	 *
+	 * This allows you to get the proper last modified date from a post object.
+	 *
 	 * @param object $post
 	 * @since 1.3.0
 	 */
@@ -297,11 +343,12 @@ class BWP_GXS_MODULE
 	}
 
 	/**
-	 * Format a local datetime with correct timezone info
+	 * Format a local datetime with correct timezone info.
 	 *
-	 * @param mixed string|int|DateTime $datetime datetime of all formats that
-	 *                                            PHP supports, expected in the
-	 *                                            local timezone
+	 * @param string|int|DateTime $datetime Datetime of all formats that PHP
+	 * supports, for example you can use `1215282385` (Unix Timestamp) or
+	 * `2015-12-12`. See http://php.net/manual/en/datetime.formats.php for
+	 * more info. This parameter is expected in **local timezone**.
 	 */
 	protected function format_local_datetime($datetime)
 	{

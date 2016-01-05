@@ -29,8 +29,13 @@ else
 	require_once dirname(__FILE__) . '/vendor/autoload.php';
 }
 
-// init plugin
-// @todo in 2.0.0 $bwp_gxs should be changed to $bwp_sitemaps
+/**
+ * Global instance of the plugin
+ *
+ * TODO in 2.0.0 `$bwp_gxs` should be changed to `$bwp_sitemaps`
+ *
+ * @var BwP_Sitemaps
+ */
 $bwp_gxs = new BWP_Sitemaps(array(
 	'title'   => 'Better WordPress Google XML Sitemaps',
 	'version' => '1.4.0',

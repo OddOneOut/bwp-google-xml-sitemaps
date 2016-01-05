@@ -1,11 +1,9 @@
 <?php
 /**
  * Copyright (c) 2014 Khang Minh <betterwp.net>
+ *
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  * @package BWP Google XML Sitemaps
- *
- * This is a sample custom module. Some if about the module developer here
- * would be nice!
  */
 
 class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE

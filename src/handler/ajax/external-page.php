@@ -183,7 +183,7 @@ class BWP_Sitemaps_Handler_Ajax_ExternalPageHandler extends BWP_Sitemaps_Handler
 	/**
 	 * @param string $url
 	 * @param array $data
-	 * @return mixed bool|int 1 if new, 2 if updated and false if failed
+	 * @return bool|int 1 if new, 2 if updated and false if failed
 	 */
 	protected function save($url, $data)
 	{

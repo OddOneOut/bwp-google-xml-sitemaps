@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Copyright (c) 2015 Khang Minh <betterwp.net>
+ * @copyright (c) 2014 Khang Minh <contact@betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
- * @package BWP Google XML Sitemaps
+ * @package BWP Google XML Sitemaps\Google News
  */
 
 class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE_POST
@@ -94,11 +94,21 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE_POST
 	 */
 	private static function map_keyword($keyword)
 	{
-		$keywords_map = apply_filters('bwp_gxs_news_keyword_map', array(
-			// Use keyword as the key, example:
-			// '電視台' => 'television',
-			// '名人'=> 'celebrities'
-		));
+		/**
+		 * Filter to map your categories in your language to Google News's
+		 * suggested categories in English.
+		 *
+		 * See https://support.google.com/news/publisher/answer/116037 for
+		 * more info.
+		 *
+		 * @example hooks/filter_bwp_gxs_news_keyword_map.php 2
+		 *
+		 * @param array $keywords_map List of mappings.
+		 *
+		 * @return array An array with your local keywords as keys and their
+		 * English counterparts as values.
+		 */
+		$keywords_map = apply_filters('bwp_gxs_news_keyword_map', array());
 
 		return !empty($keywords_map[$keyword]) ? trim($keywords_map[$keyword]) : $keyword;
 	}

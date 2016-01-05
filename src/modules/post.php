@@ -1,10 +1,9 @@
 <?php
 /**
  * Copyright (c) 2015 Khang Minh <betterwp.net>
+ *
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  * @package BWP Google XML Sitemaps
- *
- * You can take this as a sample module, it is documented rather well ;)
  */
 
 class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
@@ -129,7 +128,18 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 
 		$requested = $this->requested;
 
-		// @since 1.3.0 use a different filter hook that expects an array instead
+		/**
+		 * Filter posts that are added to a post-based sitemaps.
+		 *
+		 * @example hooks/filter_bwp_gxs_excluded_posts.php 2
+		 *
+		 * @param array $post_ids Post IDs to exclude.
+		 * @param string $post_type The post type being processed. See
+		 * http://codex.wordpress.org/Function_Reference/register_post_type
+		 * for more info.
+		 *
+		 * @since 1.3.0 Use a different filter hook that expects an array instead.
+		 */
 		$excluded_posts = apply_filters('bwp_gxs_excluded_posts', array(), $requested);
 		$excluded_posts = $excluded_posts && is_array($excluded_posts) ? $excluded_posts : array();
 
@@ -166,8 +176,22 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 			? ' AND p.ID NOT IN (' . implode(',', $excluded_posts) . ') '
 			: '';
 
-		// @since 1.3.0 this should be used to add other things to the SQL
-		// instead of excluding posts
+		/**
+		 * Filter the WHERE part of a post module's query.
+		 *
+		 * @example hooks/filter_bwp_gxs_post_where.php 2
+		 *
+		 * @param string $where The `WHERE` part.
+		 * @param string $post_type The current post type.
+		 *
+		 * @return string Make sure you use `p` as the table alias, for e.g.
+		 * `WHERE p.post_password = 'password'`. The `wposts` alias is kept
+		 * for backward-compatibility purpose only and can be removed without
+		 * notice.
+		 *
+		 * @since 1.3.0 This should be used to add other things to the SQL
+		 * instead of excluding posts.
+		 */
 		$sql_where = apply_filters('bwp_gxs_post_where', '', $requested);
 
 		// @since 1.3.0 use a different alias for post table

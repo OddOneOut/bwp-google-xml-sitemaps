@@ -495,7 +495,22 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		// init directories where modules live
 		$this->_init_module_directories();
 
-		// certain modules can use other modules to build data
+		/**
+		 * Filter to map a sitemap module to another sitemap module.
+		 *
+		 * When a module is mapped to another module, the generation of the
+		 * mapped module will be handled by the target module.
+		 *
+		 * @param array $mappings List of mappings.
+		 *
+		 * @return array An array with the module to be mapped as key and the
+		 * mapped-to module as value. Example:
+		 * ```
+		 * return array(
+		 *     'post_format => 'post_tag'
+		 * );
+		 * ```
+		 */
 		$module_map       = $this->bridge->apply_filters('bwp_gxs_module_mapping', array());
 		$this->module_map = $this->bridge->wp_parse_args($module_map, array(
 			'post_format' => 'post_tag'
@@ -600,7 +615,17 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'([a-z0-9]+)_([a-z0-9_-]+)\.xml$' => 'index.php?gxs_module=$matches[1]&gxs_sub_module=$matches[2]'
 		);
 
-		// @since 1.0.3
+		/**
+		 * Filter the rewrite rules used by this plugin.
+		 *
+		 * This is mostly useful when you want to add a custom sitemap or a
+		 * sitemap index. See http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#create-another-sitemap-index
+		 * for an example.
+		 *
+		 * @param array $rules List of rules to filter.
+		 *
+		 * @since 1.0.3
+		 */
 		$custom_rules = apply_filters('bwp_gxs_rewrite_rules', array());
 		$rules        = array_merge($custom_rules, $rewrite_rules, $rules);
 
@@ -635,7 +660,12 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		// get default cache dir
 		$cache_dir = empty($cache_dir) ? $this->_get_default_cache_directory() : $cache_dir;
 
-		// allow custom cache dirs using filters
+		/**
+		 * Filter sitemap cache directory.
+		 *
+		 * @param string $cache_dir
+		 * @return string A full path to a custom cache directory.
+		 */
 		return $this->bridge->apply_filters('bwp_gxs_cache_dir', $cache_dir);
 	}
 
@@ -653,6 +683,12 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		$this->custom_module_directory = !empty($this->options['input_alt_module_dir'])
 			? $this->options['input_alt_module_dir'] : null;
 
+		/**
+		 * Filter the custom sitemap module directory.
+		 *
+		 * @param string $custom_module_dir
+		 * @return string A full path to a custom module directory. See TODO
+		 */
 		$this->custom_module_directory = $this->bridge->trailingslashit(
 			$this->bridge->apply_filters('bwp_gxs_module_dir', $this->custom_module_directory)
 		);
@@ -695,6 +731,12 @@ class BWP_Sitemaps extends BWP_Framework_V3
 
 	private function _get_non_permalink_query_var()
 	{
+		/**
+		 * Filter the query variable to use when not using pretty permalink.
+		 *
+		 * @param string $query_variable Name of the query variable to use.
+		 * Default to 'bwpsitemap'.
+		 */
 		return $this->bridge->apply_filters('bwp_gxs_query_var_non_perma', 'bwpsitemap');
 	}
 
@@ -746,7 +788,17 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			? $this->xslt
 			: preg_replace('#(^https?://)[^/]+/#i', '$1' . $user_host . '/', $this->xslt);
 
-		// @since 1.3.0 allow the use of dynamic xslt stylesheet
+		/**
+		 * Filter the XSLT stylesheet used to "prettify" sitemaps.
+		 *
+		 * @param string $stylesheet
+		 * @return string A full URL to the stylesheet. Remember to use the
+		 * same host as your sitemaps'. Also make sure that you have a
+		 * stylesheet for the sitemap index in the same location (with the
+		 * suffix "index" added).
+		 *
+		 * @since 1.3.0
+		 */
 		$this->xslt       = $this->bridge->apply_filters('bwp_gxs_xslt', $this->xslt);
 		$this->xslt_index = empty($this->xslt) ? '' : substr_replace($this->xslt, 'index', -4, 0);
 	}
@@ -1096,7 +1148,13 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	{
 		$languages = include_once BWP_GXS_PLUGIN_SRC . '/provider/google-news/languages.php';
 
-		// @since 1.4.0 allow filtering news languages
+		/**
+		 * Filter the languages used for the Google News Sitemap.
+		 *
+		 * @param array $languages List of languages to filter.
+		 *
+		 * @since 1.4.0
+		 */
 		return (array) $this->bridge->apply_filters('bwp_gxs_news_languages', $languages);
 	}
 
@@ -2717,12 +2775,15 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	}
 
 	/**
-	 * A convenient function to add wanted modules or sub modules
+	 * Add sitemap modules or sub modules.
 	 *
-	 * When you filter the 'bwp_gxs_modules' hook it is recommended that you
-	 * use this function.
+	 * This can be used to add custom sitemaps to the built-in sitemap index via
+	 * the `bwp_gxs_modules_built` action hook.
 	 *
-	 * @access public
+	 * @example hooks/action_bwp_gxs_modules_built.php 2
+	 *
+	 * @param string      $module name of the parent module
+	 * @param string|null $sub_module name of the sub module
 	 */
 	public function add_module($module, $sub_module = '')
 	{
@@ -2757,8 +2818,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	/**
 	 * A convenient function to remove unwanted modules or sub modules
 	 *
-	 * When you filter the 'bwp_gxs_modules' hook it is recommended that you
-	 * use this function.
+	 * This can be used to remove sitemaps from the built-in sitemap index via
+	 * the `bwp_gxs_modules_built` action hook.
+	 *
+	 * @example hooks/action_bwp_gxs_modules_built.php 2
 	 *
 	 * @param string      $module name of the parent module
 	 * @param string|null $sub_module name of the sub module
@@ -2868,7 +2931,24 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		if ('yes' == $this->options['enable_sitemap_external'])
 			$this->add_module('page', 'external');
 
-		// hook for a custom module list
+		/**
+		 * Fire after all default modules are defined.
+		 *
+		 * You can use this action hook to add or remove sitemap modules dynamically.
+		 *
+		 * For a complete example, see
+		 * http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#modules-api
+		 *
+		 * @see BWP_Sitemaps::add_module() To add a sitemap module
+		 * @see BWP_Sitemaps::remove_module() To remove a sitemap module
+		 *
+		 * @example hooks/action_bwp_gxs_modules_built.php 2
+		 *
+		 * @param array $modules A list of default modules
+		 * @param array $post_types A list of public post types. This is the
+		 *                          output of https://codex.wordpress.org/Function_Reference/get_post_types
+		 * @param array $taxonomies A list of public taxonomies.
+		 */
 		do_action('bwp_gxs_modules_built', $this->modules, $this->post_types, $this->taxonomies);
 
 		return $this->modules;
@@ -3907,13 +3987,12 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	/**
 	 * Check whether image sitemap extension is allowed for a particular post type
 	 *
-	 * @since 1.4.0 we allow putting image entries in sitemaps, this checks
-	 * whether the following conditions are met:
-	 * 1. The current theme supports featured image
-	 * 2. Image extension is enabled (this is a Google-specific extension)
-	 *    @link https://support.google.com/webmasters/answer/178636?hl=en
+	 * This checks whether the following conditions are met:
+	 * 1. The current theme supports featured image.
+	 * 2. Image extension is enabled (this is a Google-specific extension, see
+	 *    https://support.google.com/webmasters/answer/178636?hl=en).
 	 * 3. The post type being checked supports featured image and is allowed to
-	 *    have image
+	 *    have image.
 	 *
 	 * @param string $post_type
 	 * @return bool
@@ -3950,6 +4029,11 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		$news_name = $this->options['input_news_name'];
 		$news_name = empty($news_name) ? $this->bridge->get_bloginfo('name') : $news_name;
 
+		/**
+		 * Filter the name used for the Google News Sitemap.
+		 *
+		 * @param string $news_name The name to filter.
+		 */
 		return $this->bridge->apply_filters('bwp_gxs_news_name', $news_name);
 	}
 }
