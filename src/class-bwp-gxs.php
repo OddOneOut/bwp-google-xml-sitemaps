@@ -1703,7 +1703,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				),
 				'checkbox' => array(
 					'enable_image_sitemap' => array(__('Add an <code>&lt;image:image&gt;</code> entry to each sitemap item when possible.', $this->domain) => ''),
-					'enable_news_sitemap'  => array(sprintf(__('Add <code>post_google_news.xml</code> to the main <a href="%s" target="_blank">sitemapindex.xml</a>. Please take a look at <a href="%s" target="_blank">Google\'s guidelines</a> before enabling this feature.', $this->domain), $this->get_sitemap_index_url(), 'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines') => ''),
+					'enable_news_sitemap'  => array(sprintf(__('Add <code>post_google_news.xml</code> to the main <a href="%s" target="_blank">sitemapindex.xml</a>.', $this->domain), $this->get_sitemap_index_url()) => ''),
 					'enable_news_keywords' => array('' => ''),
 					'enable_news_ping'     => array(__('Ping search engines when a news article is published.', $this->domain) => ''),
 					'enable_news_multicat' => array(__('Enable this if you have posts assigned to more than one terms.', $this->domain) => '')
@@ -1758,6 +1758,22 @@ class BWP_Sitemaps extends BWP_Framework_V3
 							. __('This extension has an effect on performance, '
 							. 'if you notice any slowdown please try disabling '
 							. 'it first.', $this->domain)
+					),
+					'enable_news_sitemap' => array(
+						'type' => 'switch',
+						'target' => 'icon',
+						'content' =>
+							sprintf(
+								__('Please take a look at <a href="%s" target="_blank">Google\'s guidelines</a> '
+								. 'before enabling this feature.', $this->domain),
+								'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines'
+							)
+							. '<br /><br />'
+							. sprintf(
+								__('Also, if you notice that some non-news contents are '
+								. 'indexed too, read <a href="%sfaq#google-news" target="_blank">this</a>.', $this->domain),
+								$this->plugin_url
+							)
 					),
 					'input_news_name' => array(
 						'type'    => 'focus',
