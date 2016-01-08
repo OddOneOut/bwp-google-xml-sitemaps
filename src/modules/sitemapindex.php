@@ -127,6 +127,7 @@ class BWP_GXS_MODULE_INDEX extends BWP_GXS_MODULE
 					: $bwp_gxs->options['input_split_limit_post'];
 
 				if ('yes' == $bwp_gxs->options['enable_sitemap_split_post']
+					&& !empty($post_count_array[$post_type])
 					&& $post_count_array[$post_type] > $split_limit
 				) {
 					// if we have a matching post_type and the total number
