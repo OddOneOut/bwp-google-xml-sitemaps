@@ -1182,11 +1182,11 @@ class BWP_Sitemaps extends BWP_Framework_V3
 	{
 		if ($this->sitemap_logger->is_empty())
 		{
+			$url = add_query_arg(array('generate' => 1, 't' => time()), $this->get_sitemap_url('sitemapindex'));
 			return __('It appears that no sitemap has been generated yet', $this->domain)
 				. ', '
 				. '<a href="#" target="_blank" class="button-secondary button-inline" '
-				. 'onclick="this.href=\'' . $this->get_sitemap_url('sitemapindex')
-				. '?generate=1&t=' . time() . '\';">'
+				. 'onclick="this.href=\'' . esc_attr($url) . '\';">'
 				. __('click to generate your Sitemap Index', $this->domain)
 				. '</a>'
 				. ' .'

@@ -37,7 +37,7 @@
 						<span class="dashicons dashicons-visibility"></span>
 					</a>
 					<a target="_blank" title="<?php _e('Click to regenerate', $this->domain); ?>"
-						href="<?php esc_attr_e($sitemap_url); ?>?generate=1&t=<?php echo time(); ?>"
+						href="<?php esc_attr_e(add_query_arg(array('generate' => 1, 't' => time()), $sitemap_url)); ?>"
 						class="button-secondary bwp-button">
 						<span class="dashicons dashicons-update"></span>
 					</a>
