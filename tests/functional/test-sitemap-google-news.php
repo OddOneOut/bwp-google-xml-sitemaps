@@ -36,6 +36,31 @@ class BWP_Sitemaps_Sitemap_Google_News_Functional_Test extends BWP_Sitemaps_PHPU
 	}
 
 	/**
+	 * @dataProvider get_news_date_restriction_setting
+	 */
+	public function test_should_generate_news_sitemap_with_or_without_date_restriction_correctly($news_age, $expected_news_items_count)
+	{
+		self::set_options(BWP_GXS_EXTENSIONS, array(
+			'input_news_age' => $news_age
+		));
+
+		$this->prepare_for_tests();
+
+		$crawler = self::get_crawler_from_url($this->plugin->get_sitemap_url('post_google_news'));
+
+		$this->assertCount($expected_news_items_count, $crawler->filter('default|urlset default|url default|loc'));
+	}
+
+	public function get_news_date_restriction_setting()
+	{
+		return array(
+			'no age restriction' => array(0, 9),
+			'last four days'     => array(4, 6),
+			'last two days'      => array(2, 3)
+		);
+	}
+
+	/**
 	 * @dataProvider get_news_post_type_and_taxonomy
 	 */
 	public function test_should_generate_news_sitemap_correctly($post_type, $taxonomy, $multi_term = false)
@@ -182,13 +207,23 @@ class BWP_Sitemaps_Sitemap_Google_News_Functional_Test extends BWP_Sitemaps_PHPU
 		$news_posts     = $this->create_posts($post_type, 3);
 		$not_news_posts = $this->create_posts($post_type, 3);
 
-		$two_days_ago = new DateTime('2 days 1 minute ago');
-		$outdated_news_posts = $this->create_posts($post_type, 3, $two_days_ago->format('Y-m-d H:i:s'));
+		// news posts that are outdated after two days
+		$two_days_ago = new DateTime('2 days 1 minute ago', new DateTimeZone('UTC'));
+		$two_days_outdated_news_posts = $this->create_posts($post_type, 3, $two_days_ago->format('Y-m-d H:i:s'));
+
+		// news posts that are outdated after four days
+		$four_days_ago = new DateTime('4 days 1 minute ago', new DateTimeZone('UTC'));
+		$four_days_outdated_news_posts = $this->create_posts($post_type, 3, $four_days_ago->format('Y-m-d H:i:s'));
 
 		// create 5 terms but only 3 will be used for news
 		$terms = $this->create_terms($taxonomy, 5);
 
-		foreach ($news_posts as $post_id) {
+		// add all news posts to selected news terms
+		foreach (array_merge(
+			$news_posts,
+			$two_days_outdated_news_posts,
+			$four_days_outdated_news_posts
+		) as $post_id) {
 			$this->factory->term->add_post_terms($post_id, array_slice($terms, 0, 3), $taxonomy);
 		}
 

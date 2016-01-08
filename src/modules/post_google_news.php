@@ -82,10 +82,11 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE_POST
 	 *
 	 * @link http://www.google.com/support/news_pub/bin/answer.py?answer=74288
 	 */
-	private static function news_time()
+	private static function news_time($age)
 	{
-		$news_post_date = new DateTime('-2 days', new DateTimeZone('UTC'));
-
+		$age = (int) $age;
+		$days = $age > 1 ? $age . ' days' : $age . ' day';
+		$news_post_date = new DateTime('-' . $days, new DateTimeZone('UTC'));
 		return $news_post_date->format('Y-m-d H:i:s');
 	}
 
@@ -229,6 +230,11 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE_POST
 				? '' : $term_query;
 		}
 
+		// publishing date restriction
+		$publishing_date_query = !empty($bwp_gxs->options['input_news_age'])
+			? $wpdb->prepare('AND p.post_date_gmt > %s', self::news_time($bwp_gxs->options['input_news_age']))
+			: '';
+
 		$group_by = empty($bwp_gxs->options['enable_news_multicat'])
 			? ' GROUP BY p.ID' : '';
 
@@ -239,8 +245,8 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE_POST
 				ON tr.object_id = p.ID' . "
 				AND p.post_type = %s
 				AND p.post_status = 'publish'
-				AND p.post_password = ''" . '
-				AND p.post_date_gmt > %s
+				AND p.post_password = ''
+				$publishing_date_query" . '
 			INNER JOIN ' . $wpdb->term_taxonomy . ' tt
 				ON tr.term_taxonomy_id = tt.term_taxonomy_id' . "
 				AND tt.taxonomy = %s" . '
@@ -256,7 +262,6 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE_POST
 			$wpdb->prepare(
 				$latest_post_query,
 				$news_post_type,
-				self::news_time(),
 				$news_taxonomy
 			)
 		);

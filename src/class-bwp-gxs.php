@@ -292,6 +292,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 			'select_news_cat_action'        => 'inc',
 			'select_news_cats'              => '',
 			'input_news_name'               => '', // @since 1.3.1
+			'input_news_age'                => 2, // @since 1.4.0
 			'input_news_genres'             => array(),
 			// end of Google news options
 			'input_exclude_post_type'       => '',
@@ -1619,6 +1620,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'heading4', // news contents
 					'input',
 					'select',
+					'input',
 					'select',
 					'select',
 					'select',
@@ -1637,6 +1639,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					__('Sitemap Contents', $this->domain),
 					__('News name', $this->domain),
 					__('News language', $this->domain),
+					__('News age', $this->domain),
 					__('News post type', $this->domain),
 					__('News taxonomy', $this->domain),
 					__('News terms and genres', $this->domain),
@@ -1654,6 +1657,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'heading_contents',
 					'input_news_name',
 					'select_news_lang',
+					'input_news_age',
 					'select_news_post_type',
 					'select_news_taxonomy',
 					'select_news_cat_action',
@@ -1700,6 +1704,10 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'input_news_name' => array(
 						'size'  => 70
 					),
+					'input_news_age' => array(
+						'size' => 3,
+						'label' => __('day(s).', $this->domain)
+					)
 				),
 				'checkbox' => array(
 					'enable_image_sitemap' => array(__('Add an <code>&lt;image:image&gt;</code> entry to each sitemap item when possible.', $this->domain) => ''),
@@ -1709,8 +1717,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 					'enable_news_multicat' => array(__('Enable this if you have posts assigned to more than one terms.', $this->domain) => '')
 				),
 				'sec_image_post_types' => array(),
-				'inline_fields' => array(
-				),
+				'inline_fields' => array(),
 				'post' => array(
 					'select_news_cat_action' => '&nbsp;<em>'
 						. __('selected terms.', $this->domain)
@@ -1764,7 +1771,8 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						'target' => 'icon',
 						'content' =>
 							sprintf(
-								__('Please take a look at <a href="%s" target="_blank">Google\'s guidelines</a> '
+								__('Please take a look at '
+								. '<a href="%s" target="_blank">Google News\'s guidelines</a> '
 								. 'before enabling this feature.', $this->domain),
 								'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines'
 							)
@@ -1779,6 +1787,19 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						'type'    => 'focus',
 						'content' => __('Set a different name for your news sitemap. '
 							. 'By default, your <em>Site Title</em> is used.', $this->domain)
+					),
+					'input_news_age' => array(
+						'type'  => 'switch',
+						'content' => __('Articles that are older than specified day(s) will NOT be considered.', $this->domain)
+							. '<br /><br />'
+							. '<em>' . __('Set to <code>0</code> to disable (not recommended).', $this->domain) . '</em>'
+							. '<br /><br />'
+							. sprintf(
+								__('Please take a look at '
+								. '<a href="%s" target="_blank">Google News\'s guidelines</a> '
+								. 'for more info.', $this->domain),
+								'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines'
+							)
 					),
 					'select_news_post_type' => array(
 						'target'  => 'icon',
@@ -1820,6 +1841,9 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						'class'       => 'bwp-switch-on-load bwp-switch-select',
 						'data-target' => 'select_news_keyword_source'
 					)
+				),
+				'formats' => array(
+					'input_news_age' => 'int'
 				)
 			);
 
@@ -1836,6 +1860,7 @@ class BWP_Sitemaps extends BWP_Framework_V3
 				'select_news_cat_action',
 				'select_news_cats',
 				'input_news_name',
+				'input_news_age',
 				'input_news_genres'
 			);
 
@@ -3036,11 +3061,20 @@ class BWP_Sitemaps extends BWP_Framework_V3
 		{
 			if ($sub_module == 'google_news')
 			{
-				return sprintf(
-					__('Google news posts that are published within last 48 hours '
-					. '(as per <a href="%s" target="_blank">Google\'s guidelines</a>)', $this->domain),
-					'https://support.google.com/news/publisher/answer/74288?hl=en#sitemapguidelines'
-				);
+				if (!empty($this->options['input_news_age']))
+				{
+					return sprintf(
+						__('news posts that are published within the last <strong>%d day(s)</strong>. '
+						. 'To include news posts within a longer time period, '
+						. 'change the "News age" setting via '
+						. 'BWP Sitemaps >> Extensions >> Google News Sitemap >> Sitemap Contents', $this->domain),
+						(int) $this->options['input_news_age']
+					);
+				}
+				else
+				{
+					return __('Google News posts', $this->domain);
+				}
 			}
 
 			if (empty($sub_module))

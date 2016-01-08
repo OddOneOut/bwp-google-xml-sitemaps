@@ -36,11 +36,11 @@ abstract class BWP_Sitemaps_PHPUnit_WP_Functional_TestCase extends BWP_Framework
 		));
 	}
 
-	protected function create_posts($post_type = 'post', $count = 5)
+	protected function create_posts($post_type = 'post', $count = 5, $post_date_gmt = null)
 	{
-		return $this->factory->post->create_many($count, array(
+		return $this->factory->post->create_many($count, array_merge(array(
 			'post_type' => $post_type
-		));
+		), $post_date_gmt ? array('post_date_gmt' => $post_date_gmt) : array()));
 	}
 
 	protected function create_terms($taxonomy = 'category', $count = 5)
