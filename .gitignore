@@ -1,5 +1,6 @@
 cache/*.xml
 cache/*.xml.gz
+dist/
 vendor/
 *.inc
 .*
