@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright (c) 2014 Khang Minh <contact@betterwp.net>
+ * @copyright (c) 2012 Khang Minh <contact@betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE
  * @package BWP Google XML Sitemaps\Google News
  */
