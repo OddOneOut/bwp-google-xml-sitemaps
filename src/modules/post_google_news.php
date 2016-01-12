@@ -255,7 +255,7 @@ class BWP_GXS_MODULE_POST_GOOGLE_NEWS extends BWP_GXS_MODULE_POST
 			WHERE 1 = 1 '
 				. $term_query
 				. $group_by . '
-			ORDER BY p.post_date_gmt, p.ID DESC
+			ORDER BY p.post_date_gmt DESC, p.ID DESC
 			LIMIT 0, ' . $this->limit;
 
 		$latest_posts = $wpdb->get_results(

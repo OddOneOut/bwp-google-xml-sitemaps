@@ -37,7 +37,7 @@ class BWP_GXS_MODULE_POST_MOST_POPULAR extends BWP_GXS_MODULE
 			WHERE post_status = 'publish'
 				AND post_type = 'post'
 				AND comment_count > 2" . '
-			ORDER BY comment_count, post_modified DESC';
+			ORDER BY comment_count DESC, post_modified DESC';
 
 		// Use $this->get_results instead of $wpdb->get_results, remember to
 		// escape your query using $wpdb->prepare or $wpdb->escape,

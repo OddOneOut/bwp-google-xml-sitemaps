@@ -220,7 +220,7 @@ class BWP_GXS_MODULE_POST extends BWP_GXS_MODULE
 					$excluded_posts_sql
 					$sql_where
 				GROUP BY p.ID
-				ORDER BY p.post_modified, p.ID DESC";
+				ORDER BY p.post_modified DESC, p.ID DESC";
 		}
 		else
 		{
