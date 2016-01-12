@@ -53,7 +53,7 @@
 				<h1>XML Sitemap</h1>
 				<div id="header">
 					<p>
-						This sitemap was created using <a href="http://betterwp.net/wordpress-plugins/google-xml-sitemaps/" title="Better WordPress Google XML Sitemaps">Better WordPress Google XML Sitemaps</a>, a WordPress plugin that has support for Sitemapindex, Google News sitemap, and Multi-site.
+						This sitemap was created using <a href="http://betterwp.net/wordpress-plugins/google-xml-sitemaps/" title="Better WordPress Google XML Sitemaps">Better WordPress Google XML Sitemaps</a>, a WordPress plugin that has support for Sitemap Index, Google News sitemap, and Multi-site.
 					</p>
 				</div>
 				<div id="content">
@@ -91,7 +91,7 @@
 					</table>
 				</div>
 				<div id="footer">
-					This plugin is (c) 2015 <a href="https://github.com/kminh">Khang Minh</a> and is licensed under GPLv3.
+					This plugin is (c) 2011-2016 <a href="https://github.com/kminh">Khang Minh</a> and is licensed under GPLv3.
 				</div>
 			</body>
 		</html>
