@@ -4,6 +4,7 @@ dist/
 vendor/
 *.inc
 .*
+!.svnignore
 *.otl
 phpunit.xml
 assets/dist/

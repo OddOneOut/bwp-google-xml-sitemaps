@@ -1,0 +1,14 @@
+tests/
+node_modules/
+bower_components/
+bin/
+examples/
++ .htaccess
+/.*
+phpunit*.*
+phpdoc*.*
+composer.*
+bower.json
+package.json
+Gruntfile.js
+README.md
