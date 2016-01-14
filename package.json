@@ -1,33 +1,46 @@
 {
-    "name": "BWP_Sitemaps",
-    "version": "1.4.0",
-    "config": {
-        "phpunit_suite": ""
-    },
-    "scripts": {
-        "clear:wp:phpunit": "rm -rf ${WP_TMP_DIR-'/tmp'}/wordpress-*",
-        "test:php": "phpunit --stderr --testsuite \"$npm_package_config_phpunit_suite\"",
-        "test:php:legacy": "phpunit --stderr -c phpunit_php52.xml",
-        "test:php:functional": "npm run ${PHPUNIT_CMD-'test:php'} --BWP_Sitemaps:phpunit_suite='functional'",
-        "test:php:functional:3.8": "export WP_VERSION=3.8 && npm run test:php:functional",
-        "test:php:functional:stable": "export WP_VERSION=latest && npm run test:php:functional",
-        "test:php:functional:beta": "echo 'No beta version'",
-        "test:php:functional:all": "npm run test:php:functional:stable && npm run test:php:functional:3.8 && npm run test:php:functional:beta",
-        "test:php:unit": "npm run test:php --BWP_Sitemaps:phpunit_suite='unit'",
-        "test:php:stable": "npm run test:php:unit && npm run test:php:functional:stable",
-        "test:php:all": "npm run test:php:unit && npm run test:php:functional:all",
-        "test": "npm run test:php:stable",
-        "setup:framework": "cd vendor/kminh/bwp-framework && npm run setup",
-        "setup:plugin": "composer install",
-        "setup": "npm run setup:framework && npm run setup:plugin",
-        "update": "composer update",
-        "build:assets:js": "mkdir -p assets/dist/js && uglifyjs assets/js/*.js --comments -m -o assets/dist/js/script.min.js",
-        "build:assets:css": "mkdir -p assets/dist/css && cleancss assets/css/style.css -o assets/dist/css/style.min.css",
-        "build:assets": "npm run build:assets:js && npm run build:assets:css",
-        "prebuild": "npm run setup:plugin && cd vendor/kminh/bwp-framework && npm run build",
-        "build": "npm run build:assets && npm run test:php:all",
-        "build:ci": "export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:all",
-        "build:legacy": "export PHPUNIT_CMD='test:php:legacy' && export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:functional:all",
-        "build:php55": "npm run build:ci"
-    }
+  "name": "BWP_Sitemaps",
+  "version": "1.4.0",
+  "config": {
+    "phpunit_suite": "",
+    "languages": "es_ES ms_MY ro_RO zh_TW"
+  },
+  "scripts": {
+    "clear:wp:phpunit": "rm -rf ${WP_TMP_DIR-'/tmp'}/wordpress-*",
+    "test:php": "phpunit --stderr --testsuite \"$npm_package_config_phpunit_suite\"",
+    "test:php:legacy": "phpunit --stderr -c phpunit_php52.xml",
+    "test:php:legacy:all": "export WP_VERSION=3.8 && npm run test:php:legacy && export WP_VERSION=latest && npm run test:php:legacy",
+    "test:php:functional": "npm run test:php --BWP_Sitemaps:phpunit_suite='functional'",
+    "test:php:functional:3.8": "export WP_VERSION=3.8 && npm run test:php:functional",
+    "test:php:functional:stable": "export WP_VERSION=latest && npm run test:php:functional",
+    "test:php:functional:beta": "echo 'No beta version'",
+    "test:php:functional:all": "npm run test:php:functional:stable && npm run test:php:functional:3.8 && npm run test:php:functional:beta",
+    "test:php:unit": "npm run test:php --BWP_Sitemaps:phpunit_suite='unit'",
+    "test:php:stable": "npm run test:php:unit && npm run test:php:functional:stable",
+    "test:php:all": "npm run test:php:unit && npm run test:php:functional:all",
+    "test": "npm run test:php:stable",
+    "setup:framework": "cd vendor/kminh/bwp-framework && npm run setup",
+    "setup:plugin": "composer install && npm run build:assets",
+    "setup": "npm run setup:plugin && npm run setup:framework",
+    "update:composer": "composer update",
+    "update": "npm run update:composer",
+    "copy:dist:node_bower": "cp -rf vendor/kminh/bwp-framework/bower_components vendor/kminh/bwp-framework/node_modules dist/wp.org/vendor/kminh/bwp-framework/",
+    "build:docs:api": "phpdoc",
+    "build:translations": "export PACKAGE_NAME='BWP Google XML Sitemaps' && export PACKAGE_VERSION='1.4.0' && export DOMAIN='bwp-google-xml-sitemaps' && export LANGS=\"$npm_package_config_languages\" && vendor/bin/build-translations",
+    "prebuild:dist": "npm run update:composer && npm run build && rm -rf dist/wp.org && git clone . dist/wp.org",
+    "build:dist": "cd dist/wp.org && composer install -o --no-dev --no-plugins && npm run build:assets && cd ../../ && npm run copy:dist:node_bower && cd dist/wp.org/vendor/kminh/bwp-framework && npm run build:dist",
+    "build:assets:js": "mkdir -p assets/dist/js && uglifyjs assets/js/*.js --comments -m -o assets/dist/js/script.min.js",
+    "build:assets:css": "mkdir -p assets/dist/css && cleancss assets/css/style.css -o assets/dist/css/style.min.css",
+    "build:assets": "npm run build:assets:js && npm run build:assets:css",
+    "build:ci": "export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:all",
+    "build:legacy": "export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:legacy:all",
+    "build:php55": "npm run build:ci",
+    "prebuild": "npm run setup:plugin && cd vendor/kminh/bwp-framework && npm run build",
+    "postbuild": "npm run build:translations && npm run build:docs:api",
+    "build": "npm run test:php:all"
+  },
+  "devDependencies": {
+    "clean-css": "^3.4.9",
+    "uglify-js": "^2.6.1"
+  }
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpdocumentor>
+  <title>BWP Google XML Sitemaps API</title>
+  <url>http://betterwp.net/wordpress-plugins/google-xml-sitemaps/</url>
+  <parser>
+    <target>./dist/cache/phpdocs</target>
+    <default-package-name>BWP Google XML Sitemaps</default-package-name>
+    <visibility>public,protected</visibility>
+  </parser>
+  <transformer>
+    <target>./dist/api/master</target>
+    <external-class-documentation>
+      <prefix>WP</prefix>
+      <uri>https://codex.wordpress.org/Class_Reference/{CLASS}</uri>
+    </external-class-documentation>
+  </transformer>
+  <transformations>
+    <template name="bwp-clean"/>
+  </transformations>
+  <files>
+    <directory>./src</directory>
+    <directory>./vendor/kminh/bwp-framework/src</directory>
+    <ignore>src/templates/</ignore>
+    <ignore>src/upgrades/</ignore>
+    <ignore>/index.php</ignore>
+  </files>
+  <partials>
+    <partial>
+      <name>readme</name>
+      <link>./README.md</link>
+    </partial>
+  </partials>
+</phpdocumentor>
