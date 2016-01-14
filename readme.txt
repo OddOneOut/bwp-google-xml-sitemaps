@@ -1,9 +1,9 @@
 === Better WordPress Google XML Sitemaps (support Sitemap Index, Multi-site and Google News) ===
 Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#contributions
-Tags: xml sitemaps, xml sitemap, google xml sitemaps, sitemapindex, sitemap, sitemaps, sitemap.xml, seo, bing, google, msn, ask, google news, news sitemap, google news sitemap
-Requires at least: 3.0
-Tested up to: 4.3
+Tags: xml sitemaps, xml sitemap, google xml sitemaps, sitemapindex, sitemap index, sitemap, sitemaps, sitemap.xml, seo, bing, google, msn, ask, google news, news sitemap, google news sitemap, image sitemap
+Requires at least: 3.6
+Tested up to: 4.4
 Stable tag: 1.4.0
 License: GPLv3 or later
 
