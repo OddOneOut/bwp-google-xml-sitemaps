@@ -1,7 +1,7 @@
 <?php if (!defined('ABSPATH')) { exit; } ?>
 
 <!--[if lte IE 9]>
-<div class="bwp-table-fixed-headers-old-id-wrapper" style="width: 700px>
+<div class="bwp-table-fixed-headers-old-id-wrapper" style="width: 700px">
 <!--<![endif]-->
 	<table class="wp-list-table widefat striped bwp-table bwp-table-md bwp-table-inline bwp-table-fixed-headers bwp-table-valign-middle" style="width: 700px;">
 		<thead>
