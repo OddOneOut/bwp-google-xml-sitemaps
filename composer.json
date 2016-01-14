@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "kminh/bwp-framework": "3.2.x-dev"
+        "kminh/bwp-framework": "3.4.*@dev"
     },
     "autoload": {
         "classmap": [
