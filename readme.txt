@@ -141,6 +141,88 @@ page a look.
 
 == Changelog ==
 
+= 1.4.0 (2016-01-14) =
+
+For a quick overview of all the changes, take a look at this article instead:
+http://betterwp.net/bwp-google-xml-sitemaps-1-4-0-released/
+
+-   **New Features**
+    -   Add a "News age" setting to allow more control over the Google News
+        sitemap's contents. See
+        <http://betterwp.net/wordpress-plugins/google-xml-sitemaps/faq/#google-news-age>
+        for more info.
+    -   Allow excluding posts by terms. If a post belongs to several terms, it
+        will be excluded if any of those terms is excluded.
+    -   Add a new filter hook `bwp_gxs_external_sitemaps` that can be used to
+        add non-BWP sitemaps to the sitemap index. Read
+        [here](http://betterwp.net/wordpress-plugins/google-xml-sitemaps/#external-sitemaps)
+        for more info.
+    -   Add featured image to existing post-based sitemaps.
+        -   To enable this feature, go to **BWP Sitemaps > Extensions** and
+            choose to enable the "Google Image Sitemap" extension, and select
+            post type(s) to enable the extension for.
+        -   This feature is enabled automatically for the Google News sitemap
+            if the news post type has the "Google Image Sitemap" extension
+              enabled for it.
+        -   As a related change for this new feature, Google News sitemap is
+            now part of **BWP Sitemap > Extensions** as well.
+    -   Add ability to use custom post types and taxonomies for the Google News
+        sitemap.
+    -   Allow regenerating individual sitemap via admin page.
+    -   Allow adding non-WordPress pages via **BWP Sitemaps > XML Sitemaps >
+        External Pages**.
+    -   Allow excluding posts/terms via **BWP Sitemaps > XML Sitemaps > Exclude
+        items**.
+-   **Enhancements**
+    -   Disable some inputs when they are overridden via codes and display
+        overridden values instead.
+    -   Make "Frequency", "Priority" and "Last modified" optional when
+        adding/updating external pages.
+    -   Handle last modified datetime of non-post items more consistently.
+-   **Other Changes**
+    -   Update language template file. If you're a translator, please help
+        translating this plugin! For more info, see:
+        <http://betterwp.net/wordpress-tips/create-pot-file-using-poedit/>
+    -   Mark as compatible with WordPress 4.4+. Now require at least WordPress
+        3.6 and PHP 5.2.0.
+    -   Choosing which post types/taxonomies to generate sitemaps for is now an
+        opt-out setting. Instead of choosing which post types/taxonomies to
+        disable sitemap generation, you would now choose post types/taxonomies
+        whose sitemaps should be generated.
+    -   Display an error message when enabling the Google News sitemap but it
+        can not be generated.
+    -   Make it more obvious to check and generate the Sitemap Index when
+        needed.
+        -   If no sitemap has been generated yet, a button to generate the
+            Sitemap Index will be shown.
+        -   The "Clear All Logs" button have been moved to the "Sitemap Log"
+            tab, and renamed to "Clear Message Log". Clicking on that button
+            will now clear the message log only, leaving the sitemap log
+            untouched. The sitemap log is expected to be improved in version
+            2.0.0.
+    -   Disable indexing of sitemaps using the X-Robots-Tag: noindex header.
+    -   Add more Google News sitemap languages, allow customizing language list
+        via `bwp_gxs_news_languages` filter hook.
+    -   XSLT stylesheet is now disabled by default.
+-   **Bugs fixed**
+    -  Fix a bug that causes post.xml to be included in sitemap index even when
+       explicitly excluded.
+    -  Fix a bug that causes the sitemap index to be empty when post-splitting
+       is not enabled.
+    -  Filter out urls whose protocols do not match the current protocol.
+       -   When SSL is not used, all HTTPS urls will be filtered out.
+       -   When SSL is used, all HTTP urls will be filtered out.
+    -  Fix a bug that makes it not possible to flush the default cache
+       directory. The cause was we cached the cache directory in the
+       `BWP_Sitemaps::$cache_directory` object, which was not updated correctly
+       when flushing cache.
+    -  Fix a bug that could lead to custom post types being included in
+       post.xml sitemap.
+    -  Fix a bug in the Google News sitemap that leads to duplicate posts when
+       posts are assigned to multiple categories.
+    -  Fix a bug that generate duplicate terms when some terms are excluded.
+    -  Use UTC timezone when looking for google news posts.
+
 = 1.3.1 =
     * Marked as WordPress 4.0 compatible.
     * Added `bwp_gxs_excluded_posts` filter hook to page sitemap module. It should be possible to use an array of page ids to exclude certain pages from the page sitemap.
