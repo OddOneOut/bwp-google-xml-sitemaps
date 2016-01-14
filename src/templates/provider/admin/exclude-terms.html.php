@@ -1,6 +1,6 @@
 <?php if (!defined('ABSPATH')) { exit; } ?>
 
-<div id="wrapper-exclude-terms" class="bwp-inline-form-wrapper bwp-inline-form-wrapper-md bwp-no-display">
+<div id="wrapper-exclude-terms" class="bwp-inline-form-wrapper bwp-inline-form-wrapper-md bwp-no-display bwp-clear">
 	<div class="bwp-form-group bwp-form-group-first">
 		<select data-placeholder="<?php _e('Search for terms to exclude', $this->domain); ?>"
 			class="bwp-typeahead" name="select-exclude-terms[]" id="select-exclude-terms"

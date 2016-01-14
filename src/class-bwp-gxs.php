@@ -1494,10 +1494,16 @@ class BWP_Sitemaps extends BWP_Framework_V3
 						$this->_get_formatted_sitemap_logs(),
 					),
 					'select_exclude_post_type' => array(
-						$this->get_template_contents('templates/provider/admin/exclude-posts.html.php')
+						$this->get_template_contents('templates/provider/admin/exclude-posts.html.php'),
+						'_settings' => array(
+							'need_wrapper' => false
+						)
 					),
 					'select_exclude_taxonomy' => array(
-						$this->get_template_contents('templates/provider/admin/exclude-terms.html.php')
+						$this->get_template_contents('templates/provider/admin/exclude-terms.html.php'),
+						'_settings' => array(
+							'need_wrapper' => false
+						)
 					),
 					'heading_external_pages' => array(
 						$this->get_template_contents('templates/provider/admin/external-pages.html.php')
