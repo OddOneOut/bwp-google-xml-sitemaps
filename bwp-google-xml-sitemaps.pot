@@ -1,489 +1,716 @@
+# English translations for BWP Google XML Sitemaps package.
+# Copyright (C) 2016 Khang Minh
+# This file is distributed under the same license as the BWP Google XML Sitemaps package.
+# Automatically generated, 2016.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: BWP Google XML Sitemaps\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-03 15:10+0700\n"
-"PO-Revision-Date: 2014-09-03 15:10+0700\n"
-"Last-Translator: Khang Minh <contact@betterwp.net>\n"
-"Language-Team: BWP <contact@betterwp.net>\n"
+"Project-Id-Version: BWP Google XML Sitemaps 1.4.0\n"
+"Report-Msgid-Bugs-To: contact@betterwp.net\n"
+"POT-Creation-Date: 2016-01-14 21:05+0700\n"
+"PO-Revision-Date: 2016-01-14 21:05+0700\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
-"X-Poedit-Basepath: .\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.6.5\n"
-"X-Poedit-SearchPath-0: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: includes/bwp-option-page/includes/class-bwp-option-page.php:81
-msgid "Plugin Configurations"
-msgstr ""
-
-#: includes/bwp-option-page/includes/class-bwp-option-page.php:623
-msgid "Save Changes"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:211
+#: vendor/kminh/bwp-framework/src/class-bwp-version.php:32
 #, php-format
 msgid ""
 "%s requires WordPress <strong>%s</strong> or higher and PHP <strong>%s</"
-"strong> or higher. The plugin will not protected function until you update "
-"your software. Please deactivate this plugin."
+"strong> or higher. The plugin will not function until you update your "
+"software. Please deactivate this plugin."
 msgstr ""
+"%s requires WordPress <strong>%s</strong> or higher and PHP <strong>%s</"
+"strong> or higher. The plugin will not function until you update your "
+"software. Please deactivate this plugin."
 
-#: includes/class-bwp-framework-improved.php:232
-msgid "Development Log"
-msgstr ""
+#: src/templates/provider/admin/exclude-posts.html.php:18
+#: src/templates/provider/admin/external-pages.html.php:13
+#: src/templates/provider/admin/exclude-terms.html.php:18
+#: src/class-bwp-gxs.php:1740
+msgid "... loading"
+msgstr "... loading"
 
-#: includes/class-bwp-framework-improved.php:232
-msgid "Frequently Asked Questions"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:232
-msgid "FAQ"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:232
-msgid "Got a problem? Send me a feedback!"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:232
-msgid "Contact"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:239
-msgid ""
-"You can buy me some special coffees if you appreciate my work, thank you!"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:253
-#, php-format
-msgid "Donate to %s"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:255
-msgid "One cup $5.00"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:256
-msgid "Two cups $10.00"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:257
-msgid "Five cups! $25.00"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:258
-msgid "One LL-cup!!! $50.00"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:259
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:411
 msgid "... or any amount!"
-msgstr ""
+msgstr "... or any amount!"
 
-#: includes/class-bwp-framework-improved.php:274
-msgid "Latest updates from BetterWP.net!"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:275
-msgid "Follow me on Twitter!"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:285
-msgid "This Plugin is Proudly Sponsored By"
-msgstr ""
-
-#: includes/class-bwp-framework-improved.php:305
+#: src/class-bwp-gxs.php:3641
 #, php-format
-msgid "You are using version %s!"
-msgstr ""
+msgid "<em>%s.xml</em> does not have any item."
+msgstr "<em>%s.xml</em> does not have any item."
 
-#: includes/class-bwp-framework-improved.php:546
-msgid "Settings"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:361 includes/class-bwp-simple-gxs.php:785
-msgid "XML Sitemaps"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:363 includes/class-bwp-simple-gxs.php:793
-msgid "Google News Sitemap"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:365 includes/class-bwp-simple-gxs.php:801
-msgid "Sitemap Log"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:397
+#: src/class-bwp-gxs.php:3675
 #, php-format
 msgid ""
-"This sitemap was originally generated in %s second(s) (Memory usage: %s) - "
-"%s queries - %s URL(s) listed"
+"<em>%s.xml</em> was successfully generated but could not be served properly "
+"because some headers have already been sent (something was printed on line "
+"<strong>%s</strong> in file <strong>%s</strong>)."
 msgstr ""
+"<em>%s.xml</em> was successfully generated but could not be served properly "
+"because some headers have already been sent (something was printed on line "
+"<strong>%s</strong> in file <strong>%s</strong>)."
 
-#: includes/class-bwp-simple-gxs.php:751
-msgid "BWP Google XML Sitemaps Statistics"
+#: src/class-bwp-gxs.php:3349
+#, php-format
+msgid ""
+"<em>%s.xml</em> will be served using module file <em>%s</em> in the custom "
+"module directory."
 msgstr ""
+"<em>%s.xml</em> will be served using module file <em>%s</em> in the custom "
+"module directory."
 
-#: includes/class-bwp-simple-gxs.php:752
-msgid "BWP XML Sitemaps"
+#: src/class-bwp-gxs.php:3366
+#, php-format
+msgid "<em>%s.xml</em> will be served using module file <em>%s</em>."
+msgstr "<em>%s.xml</em> will be served using module file <em>%s</em>."
+
+#: src/class-bwp-gxs.php:2412
+#, php-format
+msgid "<strong>%d</strong> cached sitemaps have been flushed successfully!"
+msgstr "<strong>%d</strong> cached sitemaps have been flushed successfully!"
+
+#: src/class-bwp-gxs.php:3373
+#, php-format
+msgid ""
+"<strong>%s</strong> can not be served because of a missing module file: "
+"<strong>%s</strong>."
 msgstr ""
+"<strong>%s</strong> can not be served because of a missing module file: "
+"<strong>%s</strong>."
 
-#: includes/class-bwp-simple-gxs.php:758
-msgid "BWP Google News XML Sitemap"
+#: src/class-bwp-gxs.php:2528
+msgid "<strong>BWP Google XML Sitemaps Error:</strong> "
+msgstr "<strong>BWP Google XML Sitemaps Error:</strong> "
+
+#: src/class-bwp-gxs.php:3974
+#, php-format
+msgid "<strong>Error %s</strong> from <em>%s</em>."
+msgstr "<strong>Error %s</strong> from <em>%s</em>."
+
+#: src/class-bwp-gxs.php:1679
+msgid ""
+"A Google News Sitemap is a file that allows you to control which content you "
+"submit to Google News. By creating and submitting a Google News Sitemap, "
+"you're able to help Google News discover and crawl your site's news articles "
+"&mdash; http://support.google.com/"
 msgstr ""
+"A Google News Sitemap is a file that allows you to control which content you "
+"submit to Google News. By creating and submitting a Google News Sitemap, "
+"you're able to help Google News discover and crawl your site's news articles "
+"&mdash; http://support.google.com/"
 
-#: includes/class-bwp-simple-gxs.php:759
-msgid "BWP Google News Sitemap"
+#: src/templates/provider/admin/external-page-form.html.php:17
+msgid "Absolute URL to page"
+msgstr "Absolute URL to page"
+
+#: src/templates/provider/admin/external-pages.html.php:26
+msgid "Actions"
+msgstr "Actions"
+
+#: src/class-bwp-gxs.php:1720
+#, php-format
+msgid ""
+"Add <code>post_google_news.xml</code> to the main <a href=\"%s\" target="
+"\"_blank\">sitemapindex.xml</a>."
 msgstr ""
+"Add <code>post_google_news.xml</code> to the main <a href=\"%s\" target="
+"\"_blank\">sitemapindex.xml</a>."
 
-#: includes/class-bwp-simple-gxs.php:765
-msgid "BWP Google XML Sitemaps Generator"
+#: src/class-bwp-gxs.php:1982
+msgid "Add a sitemap index entry to blog's robots.txt"
+msgstr "Add a sitemap index entry to blog's robots.txt"
+
+#: src/class-bwp-gxs.php:1719
+msgid ""
+"Add an <code>&lt;image:image&gt;</code> entry to each sitemap item when "
+"possible."
 msgstr ""
+"Add an <code>&lt;image:image&gt;</code> entry to each sitemap item when "
+"possible."
 
-#: includes/class-bwp-simple-gxs.php:766
-msgid "BWP Sitemap Log"
+#: src/class-bwp-gxs.php:1676
+msgid "Add featured images to existing post-based sitemaps."
+msgstr "Add featured images to existing post-based sitemaps."
+
+#: src/templates/provider/admin/external-pages.html.php:7
+msgid "Add new page"
+msgstr "Add new page"
+
+#: src/class-bwp-gxs.php:1394
+#, php-format
+msgid ""
+"Add non-WordPress pages to the %s sitemap. You can also use %s to add "
+"external pages programmatically."
 msgstr ""
+"Add non-WordPress pages to the %s sitemap. You can also use %s to add "
+"external pages programmatically."
 
-#: includes/class-bwp-simple-gxs.php:775
-msgid "Better WordPress Google XML Sitemaps"
-msgstr ""
+#: src/class-bwp-gxs.php:1983
+msgid "Add sitemap index entries from all blogs to primary blog's robots.txt"
+msgstr "Add sitemap index entries from all blogs to primary blog's robots.txt"
 
-#: includes/class-bwp-simple-gxs.php:784
-msgid "Better WordPress Google XML Sitemaps Statistics"
-msgstr ""
+#: src/templates/provider/admin/external-page-modal.html.php:10
+msgid "Add/Update an external page"
+msgstr "Add/Update an external page"
 
-#: includes/class-bwp-simple-gxs.php:792
-msgid "Better WordPress Google News XML Sitemap"
-msgstr ""
+#: src/class-bwp-gxs.php:347 src/class-bwp-gxs.php:998
+msgid "Advanced Options"
+msgstr "Advanced Options"
 
-#: includes/class-bwp-simple-gxs.php:800
-msgid "Better WordPress Google XML Sitemaps Generator"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:878
-msgid "You do not have sufficient permissions to access this page."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:925
-#: includes/class-bwp-simple-gxs.php:1776
-#: includes/class-bwp-simple-gxs.php:1788
-msgid "Notice"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:926
+#: src/class-bwp-gxs.php:2459
 msgid "All logs have been cleared successfully!"
-msgstr ""
+msgstr "All logs have been cleared successfully!"
 
-#: includes/class-bwp-simple-gxs.php:974
-msgid "Your sitemaps"
-msgstr ""
+#: src/class-bwp-gxs.php:2442
+#: vendor/kminh/bwp-framework/src/class-bwp-option-page-v3.php:439
+msgid "All options have been saved."
+msgstr "All options have been saved."
 
-#: includes/class-bwp-simple-gxs.php:975
-msgid "Sitemaps to generate"
-msgstr ""
+#: src/class-bwp-gxs.php:1458
+msgid "Also exclude posts that belong to excluded terms."
+msgstr "Also exclude posts that belong to excluded terms."
 
-#: includes/class-bwp-simple-gxs.php:976
-msgid "<strong>Enable</strong> following sitemaps"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:977
-msgid "For post-based sitemaps, <strong>disable</strong> following post types:"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:978
+#: src/class-bwp-gxs.php:1787
+#, php-format
 msgid ""
-"For taxonomy-based sitemaps, <strong>disable</strong> following taxonomies:"
+"Also, if you notice that some non-news contents are indexed too, read <a "
+"href=\"%sfaq#google-news\" target=\"_blank\">this</a>."
 msgstr ""
+"Also, if you notice that some non-news contents are indexed too, read <a "
+"href=\"%sfaq#google-news\" target=\"_blank\">this</a>."
 
-#: includes/class-bwp-simple-gxs.php:979
-msgid "Item limits"
+#: src/class-bwp-gxs.php:1799
+msgid "Articles that are older than specified day(s) will NOT be considered."
+msgstr "Articles that are older than specified day(s) will NOT be considered."
+
+#: src/class-bwp-gxs.php:3108
+msgid "Author archive"
+msgstr "Author archive"
+
+#: src/class-bwp-gxs.php:1456
+msgid "Author archives"
+msgstr "Author archives"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:521
+msgid "BWP Gems"
+msgstr "BWP Gems"
+
+#: src/class-bwp-gxs.php:948
+msgid "BWP Google News XML Sitemap"
+msgstr "BWP Google News XML Sitemap"
+
+#: src/class-bwp-gxs.php:941
+msgid "BWP Google XML Sitemaps"
+msgstr "BWP Google XML Sitemaps"
+
+#: src/class-bwp-gxs.php:955
+msgid "BWP Google XML Sitemaps - Advanced Options"
+msgstr "BWP Google XML Sitemaps - Advanced Options"
+
+#: src/class-bwp-gxs.php:2529
+msgid "BWP Google XML Sitemaps Error"
+msgstr "BWP Google XML Sitemaps Error"
+
+#: src/class-bwp-gxs.php:962
+msgid "BWP Google XML Sitemaps Log"
+msgstr "BWP Google XML Sitemaps Log"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:531
+msgid "BWP News"
+msgstr "BWP News"
+
+#: src/class-bwp-gxs.php:2126
+msgid ""
+"Below are messages logged when your sitemaps were generated, including <span "
+"style=\"color: #999999;\">notices</span>, <span style=\"color: #FF0000;"
+"\">errors</span> and <span style=\"color: #009900;\">success messages</span>."
 msgstr ""
+"Below are messages logged when your sitemaps were generated, including <span "
+"style=\"color: #999999;\">notices</span>, <span style=\"color: #FF0000;"
+"\">errors</span> and <span style=\"color: #009900;\">success messages</span>."
 
-#: includes/class-bwp-simple-gxs.php:980
-msgid "Global limit"
-msgstr ""
+#: src/class-bwp-gxs.php:989
+msgid "Better WordPress Google News XML Sitemap"
+msgstr "Better WordPress Google News XML Sitemap"
 
-#: includes/class-bwp-simple-gxs.php:981
-msgid "Split <strong>post-based</strong> sitemaps"
-msgstr ""
+#: src/class-bwp-gxs.php:972 src/class-bwp-gxs.php:981
+msgid "Better WordPress Google XML Sitemaps"
+msgstr "Better WordPress Google XML Sitemaps"
 
-#: includes/class-bwp-simple-gxs.php:982
-msgid "Split limit"
-msgstr ""
+#: src/class-bwp-gxs.php:997
+msgid "Better WordPress Google XML Sitemaps Advanced Options"
+msgstr "Better WordPress Google XML Sitemaps Advanced Options"
 
-#: includes/class-bwp-simple-gxs.php:983
-msgid "Default values & Formatting"
-msgstr ""
+#: src/class-bwp-gxs.php:1005
+msgid "Better WordPress Google XML Sitemaps Log"
+msgstr "Better WordPress Google XML Sitemaps Log"
 
-#: includes/class-bwp-simple-gxs.php:984
-msgid "Default change frequency"
-msgstr ""
+#: src/class-bwp-gxs.php:1465
+msgid "Bing"
+msgstr "Bing"
 
-#: includes/class-bwp-simple-gxs.php:985
-msgid "Default priority"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:986
-msgid "Minimum priority"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:987
-msgid "Use GMT for Last Modified date"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:988
-msgid "Compress sitemaps"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:989
-msgid "Look and Feel"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:990
-msgid "Make sitemaps look pretty"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:991
-msgid "Custom XSLT stylesheet URL"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:992
-msgid "Enable build stats"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:993
-msgid "Enable credit"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:994
-msgid "Virtual robots.txt"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:995
-msgid "Add a sitemapindex entry to blog's robots.txt"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:996
-msgid "Add sitemapindex entries from all blogs to primary blog's robots.txt"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:997
-msgid "Ping search engines"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:998
-msgid "Enable pinging"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:999
-msgid "Search engines to ping"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1000
-msgid "<strong>Disable pinging</strong> for following post types:"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1001
-msgid "Ping limit for each search engine"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1002
-msgid "Caching"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1003
-msgid "Enable caching"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1004
-msgid "Enable auto cache re-generation"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1005
-msgid "Cache expiry time"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1006
+#: src/class-bwp-gxs.php:1919
 msgid "Cache directory"
-msgstr ""
+msgstr "Cache directory"
 
-#: includes/class-bwp-simple-gxs.php:1007
-msgid "Sitemap modules"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1008
-msgid "Database query limit"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1009
-msgid "Custom module directory"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1010
-msgid "Sitemap log & debug"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1011
-msgid "Enable sitemap log"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1012
-msgid "Enable debug mode"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1013
-msgid "Enable debug extra mode"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1061
+#: src/class-bwp-gxs.php:2186
 #, php-format
 msgid ""
-"Choose appropriate sitemaps to generate. For each sitemap, you can use "
-"filters to further <a href=\"%s#exclude_items\" target=\"_blank\">exclude "
-"items</a> you do not need."
+"Cache directory (<code>%s</code>) does not exist or is not writable. Please "
+"try CHMODing it to either 755 or 777, or disable caching to hide this "
+"warning (not recommended)."
 msgstr ""
+"Cache directory (<code>%s</code>) does not exist or is not writable. Please "
+"try CHMODing it to either 755 or 777, or disable caching to hide this "
+"warning (not recommended)."
 
-#: includes/class-bwp-simple-gxs.php:1068
-msgid "Limit the number of items to output in one sitemap. "
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1069
+#: src/class-bwp-gxs.php:3305
 #, php-format
 msgid ""
-"Avoid setting too high limits, i.e. ones that your server can not handle. In "
-"such case, you might encounter white page error due to timeout or memory "
-"issue. Refer to this plugin's <a target=\"_blank\" href=\"%s\">FAQ section</"
-"a> for more info."
+"Cache directory <strong>%s</strong> is not writable, no cache file was "
+"created."
 msgstr ""
+"Cache directory <strong>%s</strong> is not writable, no cache file was "
+"created."
 
-#: includes/class-bwp-simple-gxs.php:1076
-msgid ""
-"Customize default values and some formating for your sitemaps. Default "
-"values are only used when valid ones can not be calculated."
-msgstr ""
+#: src/class-bwp-gxs.php:1918
+msgid "Cache expiry time"
+msgstr "Cache expiry time"
 
-#: includes/class-bwp-simple-gxs.php:1081
-msgid ""
-"Customize the look and feel of your sitemaps. Note that an XSLT stylesheet "
-"will NOT be used for the Google News Sitemap module regardless of any "
-"setting in this section."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1087
-#, php-format
-msgid ""
-"WordPress generates a %svirtual robots.txt%s file for your blog by default. "
-"You can add links to sitemapindex files generated by this plugin to that "
-"robots.txt file using settings below."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1099
-msgid ""
-"Whenever you post something new to your blog, you can <em>ping</em> search "
-"engines with your sitemapindex to tell them your blog just got updated."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1104
+#: src/class-bwp-gxs.php:1953
 msgid ""
 "Cache your sitemaps for better performance. If you are still configuring the "
 "plugin it's best to disable caching or you might have to manually flush the "
 "cache for any changes to show up."
 msgstr ""
+"Cache your sitemaps for better performance. If you are still configuring the "
+"plugin it's best to disable caching or you might have to manually flush the "
+"cache for any changes to show up."
 
-#: includes/class-bwp-simple-gxs.php:1110
+#: src/templates/provider/admin/external-page-form.html.php:29
+msgid "Calculate using \"Last modified\""
+msgstr "Calculate using \"Last modified\""
+
+#: src/templates/provider/admin/external-pages.html.php:23
+#: src/templates/provider/admin/external-page-form.html.php:27
+msgid "Change frequency"
+msgstr "Change frequency"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:439
+msgid "Check out this cool plugin"
+msgstr "Check out this cool plugin"
+
+#: src/class-bwp-gxs.php:1381
+msgid "Choose appropriate sitemaps to generate."
+msgstr "Choose appropriate sitemaps to generate."
+
+#: src/class-bwp-gxs.php:2359
+msgid "Clear Message Log"
+msgstr "Clear Message Log"
+
+#: src/templates/provider/admin/external-page-form.html.php:51
+msgid "Click to open a calendar"
+msgstr "Click to open a calendar"
+
+#: src/templates/logger/admin/sitemap-log.html.php:39
+msgid "Click to regenerate"
+msgstr "Click to regenerate"
+
+#: src/templates/logger/admin/sitemap-log.html.php:34
+msgid "Click to view"
+msgstr "Click to view"
+
+#: src/templates/provider/admin/external-page-modal.html.php:24
+msgid "Close"
+msgstr "Close"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:387
+msgid "Coffees"
+msgstr "Coffees"
+
+#: src/class-bwp-gxs.php:1911
+msgid "Compress sitemaps"
+msgstr "Compress sitemaps"
+
+#: src/handler/ajax/external-page.php:136
+msgid "Could not add/update page, please try again."
+msgstr "Could not add/update page, please try again."
+
+#: src/class-bwp-gxs.php:2425
 #, php-format
 msgid ""
-"Extend this plugin using customizable modules. More info <a href="
-"\"%s#module_api\">here</a>."
+"Could not flush the cache, cache directory is either not found or is not "
+"writable. See <a href=\"%s\" target=\"_blank\">this FAQ entry</a> for a "
+"possible solution."
 msgstr ""
+"Could not flush the cache, cache directory is either not found or is not "
+"writable. See <a href=\"%s\" target=\"_blank\">this FAQ entry</a> for a "
+"possible solution."
 
-#: includes/class-bwp-simple-gxs.php:1132
-#: includes/class-bwp-simple-gxs.php:1138
-msgid "second(s)"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1133
-#: includes/class-bwp-simple-gxs.php:1139
-msgid "minute(s)"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1134
-#: includes/class-bwp-simple-gxs.php:1140
-msgid "hour(s)"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1135
-#: includes/class-bwp-simple-gxs.php:1141
-msgid "day(s)"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1149
-#: includes/class-bwp-simple-gxs.php:1152
-#: includes/class-bwp-simple-gxs.php:1155
-msgid "read more"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1159
-msgid "Your sitemaps are generated and then cached to reduce unnecessary work."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1160
-msgid ""
-"Re-generate sitemap cache when expired. If you disable this, remember to "
-"manually flush the cache once in a while."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1161
-msgid ""
-"print useful information such as build time, memory usage, SQL queries, etc."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1162
+#: src/class-bwp-gxs.php:3318
 #, php-format
+msgid "Could not write sitemap file to cache directory <strong>%s</strong>"
+msgstr "Could not write sitemap file to cache directory <strong>%s</strong>"
+
+#: src/class-bwp-gxs.php:1346
+msgid "Custom XSLT stylesheet URL"
+msgstr "Custom XSLT stylesheet URL"
+
+#: src/class-bwp-gxs.php:1922
+msgid "Custom module directory"
+msgstr "Custom module directory"
+
+#: src/class-bwp-gxs.php:1416
 msgid ""
-"Use gzip to make sitemaps ~70% smaller. If you see an error after enabling "
-"this, it's very likely that you have gzip active on your server already."
+"Customize the look and feel of your sitemaps. Note that no stylesheet will "
+"be used for the Google News sitemap."
 msgstr ""
+"Customize the look and feel of your sitemaps. Note that no stylesheet will "
+"be used for the Google News sitemap."
 
-#: includes/class-bwp-simple-gxs.php:1163
-#, php-format
-msgid ""
-"If you have for example 50 blogs, 50 sitemapindex entries will be added to "
-"your primary blog's <a href=\"%s\" target=\"_blank\">robots.txt</a>."
-msgstr ""
+#: src/class-bwp-gxs.php:1921
+msgid "Database query limit"
+msgstr "Database query limit"
 
-#: includes/class-bwp-simple-gxs.php:1164
-msgid "Taxonomy (including custom taxonomies)."
-msgstr ""
+#: src/class-bwp-gxs.php:3104
+msgid "Date archive"
+msgstr "Date archive"
 
-#: includes/class-bwp-simple-gxs.php:1165
-msgid "Date archives."
-msgstr ""
+#: src/class-bwp-gxs.php:1455
+msgid "Date archives"
+msgstr "Date archives"
 
-#: includes/class-bwp-simple-gxs.php:1166
-msgid "Author archives."
-msgstr ""
+#: src/class-bwp-gxs.php:1923
+msgid "Debugging"
+msgstr "Debugging"
 
-#: includes/class-bwp-simple-gxs.php:1167
-#, php-format
-msgid ""
-"External pages. More info <a href=\"%s#external_sitemap\" target=\"_blank"
-"\">here</a>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1168
-msgid "some copyrighted info is also added to your sitemaps. Thanks!"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1169
+#: src/class-bwp-gxs.php:1460
 msgid ""
 "Default XSLT stylesheets will be used. Set your custom stylesheets below or "
 "filter the <code>bwp_gxs_xslt</code> hook."
 msgstr ""
+"Default XSLT stylesheets will be used. Set your custom stylesheets below or "
+"filter the <code>bwp_gxs_xslt</code> hook."
 
-#: includes/class-bwp-simple-gxs.php:1170
+#: src/class-bwp-gxs.php:1336
+msgid "Default change frequency"
+msgstr "Default change frequency"
+
+#: src/class-bwp-gxs.php:1337
+msgid "Default priority"
+msgstr "Default priority"
+
+#: src/class-bwp-gxs.php:1335
+msgid "Default values"
+msgstr "Default values"
+
+#: src/class-bwp-gxs.php:1412
+msgid "Default values are only used when valid ones can not be calculated."
+msgstr "Default values are only used when valid ones can not be calculated."
+
+#: src/class-bwp-gxs.php:1978
+msgid ""
+"Disable this to use the local timezone setting in <em>Settings >> General</"
+"em>."
+msgstr ""
+"Disable this to use the local timezone setting in <em>Settings >> General</"
+"em>."
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:1530
+msgid "Dismiss this notice."
+msgstr "Dismiss this notice."
+
+#: src/class-bwp-gxs.php:1818
+msgid ""
+"Due to performance reason, it is advised to NOT use a tag-like taxonomy "
+"(such as <em>Post Tag</em>) as the news taxonomy."
+msgstr ""
+"Due to performance reason, it is advised to NOT use a tag-like taxonomy "
+"(such as <em>Post Tag</em>) as the news taxonomy."
+
+#: src/templates/provider/admin/external-page-form.html.php:19
+msgid ""
+"Each page must have a unique URL, so if you provide an existing URL, the "
+"page with that URL will be updated with new data provided here."
+msgstr ""
+"Each page must have a unique URL, so if you provide an existing URL, the "
+"page with that URL will be updated with new data provided here."
+
+#: src/class-bwp-gxs.php:561
+msgid "Edit this page"
+msgstr "Edit this page"
+
+#: src/class-bwp-gxs.php:1917
+msgid "Enable auto cache re-generation"
+msgstr "Enable auto cache re-generation"
+
+#: src/class-bwp-gxs.php:1924
+msgid "Enable build stats"
+msgstr "Enable build stats"
+
+#: src/class-bwp-gxs.php:1916
+msgid "Enable caching"
+msgstr "Enable caching"
+
+#: src/class-bwp-gxs.php:1347
+msgid "Enable credit"
+msgstr "Enable credit"
+
+#: src/class-bwp-gxs.php:1926
+msgid "Enable debugging mode"
+msgstr "Enable debugging mode"
+
+#: src/class-bwp-gxs.php:1640 src/class-bwp-gxs.php:1643
+msgid "Enable extension"
+msgstr "Enable extension"
+
+#: src/class-bwp-gxs.php:1927
+msgid "Enable extra debugging mode"
+msgstr "Enable extra debugging mode"
+
+#: src/class-bwp-gxs.php:1324 src/class-bwp-gxs.php:1342
+msgid "Enable following post types"
+msgstr "Enable following post types"
+
+#: src/class-bwp-gxs.php:1323
+msgid "Enable following sitemaps"
+msgstr "Enable following sitemaps"
+
+#: src/class-bwp-gxs.php:1325
+msgid "Enable following taxonomies"
+msgstr "Enable following taxonomies"
+
+#: src/class-bwp-gxs.php:1641
+msgid "Enable for following post types"
+msgstr "Enable for following post types"
+
+#: src/class-bwp-gxs.php:1653
+msgid "Enable keywords support"
+msgstr "Enable keywords support"
+
+#: src/class-bwp-gxs.php:1925
+msgid "Enable message log"
+msgstr "Enable message log"
+
+#: src/class-bwp-gxs.php:1652
+msgid "Enable multi-term support"
+msgstr "Enable multi-term support"
+
+#: src/class-bwp-gxs.php:1914
+msgid "Enable multisite robots.txt support"
+msgstr "Enable multisite robots.txt support"
+
+#: src/class-bwp-gxs.php:1340 src/class-bwp-gxs.php:1644
+msgid "Enable pinging"
+msgstr "Enable pinging"
+
+#: src/class-bwp-gxs.php:1913
+msgid "Enable robots.txt support"
+msgstr "Enable robots.txt support"
+
+#: src/class-bwp-gxs.php:1723
+msgid "Enable this if you have posts assigned to more than one terms."
+msgstr "Enable this if you have posts assigned to more than one terms."
+
+#: src/class-bwp-gxs.php:3647
+msgid "Enable/disable sitemaps via <em>BWP Sitemaps >> XML Sitemaps</em>."
+msgstr "Enable/disable sitemaps via <em>BWP Sitemaps >> XML Sitemaps</em>."
+
+#: src/class-bwp-gxs.php:1700
+msgid "Exclude"
+msgstr "Exclude"
+
+#: src/class-bwp-gxs.php:1385
+#, php-format
+msgid ""
+"Exclude individual items for each sitemap. You can also use <a href="
+"\"%s#exclude-items\" target=\"_blank\">filters</a> to exclude items "
+"programmatically."
+msgstr ""
+"Exclude individual items for each sitemap. You can also use <a href="
+"\"%s#exclude-items\" target=\"_blank\">filters</a> to exclude items "
+"programmatically."
+
+#: src/class-bwp-gxs.php:1326
+msgid "Exclude items"
+msgstr "Exclude items"
+
+#: src/class-bwp-gxs.php:1327
+msgid "Exclude posts"
+msgstr "Exclude posts"
+
+#: src/class-bwp-gxs.php:1329
+msgid "Exclude posts by terms"
+msgstr "Exclude posts by terms"
+
+#: src/templates/provider/admin/exclude-posts.html.php:12
+#: src/templates/provider/admin/exclude-terms.html.php:12
+msgid "Exclude selected items"
+msgstr "Exclude selected items"
+
+#: src/class-bwp-gxs.php:1328
+msgid "Exclude terms"
+msgstr "Exclude terms"
+
+#: src/class-bwp-gxs.php:1543
+msgid ""
+"Expect an absolute URL, e.g. <code>http://example.com/my-stylesheet.xsl</"
+"code>. You must also have a stylesheet for the sitemap index that can be "
+"accessed through the above URL, e.g. <code>my-stylesheet.xsl</code> and "
+"<code>my-stylesheetindex.xsl</code>. Leave blank to use provided stylesheets."
+msgstr ""
+"Expect an absolute URL, e.g. <code>http://example.com/my-stylesheet.xsl</"
+"code>. You must also have a stylesheet for the sitemap index that can be "
+"accessed through the above URL, e.g. <code>my-stylesheet.xsl</code> and "
+"<code>my-stylesheetindex.xsl</code>. Leave blank to use provided stylesheets."
+
+#: src/class-bwp-gxs.php:2045
+msgid ""
+"Expect an absolute path to a writable directory (i.e. CHMOD to 755 or 777). "
+msgstr ""
+"Expect an absolute path to a writable directory (i.e. CHMOD to 755 or 777). "
+
+#: src/class-bwp-gxs.php:2056
+msgid ""
+"Expect an absolute path to the directory where you put your custom modules "
+"(e.g. <code>/home/mysite/public_html/gxs-modules/</code>). "
+msgstr ""
+"Expect an absolute path to the directory where you put your custom modules "
+"(e.g. <code>/home/mysite/public_html/gxs-modules/</code>). "
+
+#: src/class-bwp-gxs.php:1971
+#, php-format
+msgid ""
+"Extend this plugin using customizable modules. More info <a href=\"%s#module-"
+"api\">here</a>."
+msgstr ""
+"Extend this plugin using customizable modules. More info <a href=\"%s#module-"
+"api\">here</a>."
+
+#: src/class-bwp-gxs.php:338 src/class-bwp-gxs.php:990
+msgid "Extensions"
+msgstr "Extensions"
+
+#: src/class-bwp-gxs.php:1457
+msgid "External (non-WordPress) pages."
+msgstr "External (non-WordPress) pages."
+
+#: src/class-bwp-gxs.php:3094
+msgid "External page"
+msgstr "External page"
+
+#: src/handler/ajax/external-page.php:131
+msgid "External page has been successfully added/updated."
+msgstr "External page has been successfully added/updated."
+
+#: src/class-bwp-gxs.php:1330 src/class-bwp-gxs.php:1397
+msgid "External pages"
+msgstr "External pages"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:371
+msgid "FAQ"
+msgstr "FAQ"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:409
+msgid "Five cups! $25.00"
+msgstr "Five cups! $25.00"
+
+#: src/class-bwp-gxs.php:2348
+msgid "Flush Cache"
+msgstr "Flush Cache"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:548
+msgid "Follow"
+msgstr "Follow"
+
+#: src/class-bwp-gxs.php:1519
+msgid ""
+"For a multi-site installation of WordPress, this sitemap will list all "
+"appropriate blogs' addresses within your network, not just the main blog's."
+msgstr ""
+"For a multi-site installation of WordPress, this sitemap will list all "
+"appropriate blogs' addresses within your network, not just the main blog's."
+
+#: src/class-bwp-gxs.php:1238
+#, php-format
+msgid ""
+"For more details, see <a target=\"_blank\" href=\"%1$s\">this article</a>."
+msgstr ""
+"For more details, see <a target=\"_blank\" href=\"%1$s\">this article</a>."
+
+#: src/class-bwp-gxs.php:1909
+msgid "Formatting"
+msgstr "Formatting"
+
+#: src/class-bwp-gxs.php:1321
+msgid "Generated Sitemaps"
+msgstr "Generated Sitemaps"
+
+#: src/templates/provider/admin/news-contents.html.php:11
+msgid "Genres"
+msgstr "Genres"
+
+#: src/class-bwp-gxs.php:1332
+msgid "Global limit"
+msgstr "Global limit"
+
+#: src/class-bwp-gxs.php:1464
+msgid "Google"
+msgstr "Google"
+
+#: src/class-bwp-gxs.php:1639
+msgid "Google Image Sitemap"
+msgstr "Google Image Sitemap"
+
+#: src/class-bwp-gxs.php:1642
+msgid "Google News Sitemap"
+msgstr "Google News Sitemap"
+
+#: src/class-bwp-gxs.php:3082
+msgid "Google News posts"
+msgstr "Google News posts"
+
+#: src/class-bwp-gxs.php:2332
+#, php-format
+msgid ""
+"Google News sitemap could not be generated, please check <a href=\"%s"
+"\">Sitemap Log</a> for possible errors."
+msgstr ""
+"Google News sitemap could not be generated, please check <a href=\"%s"
+"\">Sitemap Log</a> for possible errors."
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:374
+msgid "Got a problem with this plugin? Please say it out loud!"
+msgstr "Got a problem with this plugin? Please say it out loud!"
+
+#: src/templates/provider/admin/exclude-posts.html.php:27
+#: src/templates/provider/admin/exclude-terms.html.php:27
+msgid "ID"
+msgstr "ID"
+
+#: src/class-bwp-gxs.php:1812
+msgid ""
+"If you enable the \"Google Image Extension\" for selected post type, "
+"featured image will also be added automatically to the news sitemap."
+msgstr ""
+"If you enable the \"Google Image Extension\" for selected post type, "
+"featured image will also be added automatically to the news sitemap."
+
+#: src/class-bwp-gxs.php:2038
+#, php-format
+msgid ""
+"If you have for example 50 blogs, 50 sitemap index entries will be added to "
+"your primary blog's <a href=\"%s\" target=\"_blank\">robots.txt</a>."
+msgstr ""
+"If you have for example 50 blogs, 50 sitemap index entries will be added to "
+"your primary blog's <a href=\"%s\" target=\"_blank\">robots.txt</a>."
+
+#: src/class-bwp-gxs.php:2027
 #, php-format
 msgid ""
 "If you're on a Multi-site installation with <strong>Sub-domain</strong> "
@@ -491,556 +718,763 @@ msgid ""
 "directory</strong> will not, however. Please read the <a href=\"%s#robots.txt"
 "\" target=\"_blank\">documentation</a> for more info."
 msgstr ""
+"If you're on a Multi-site installation with <strong>Sub-domain</strong> "
+"enabled, each blog will have its own robots.txt. Blogs in <strong>sub-"
+"directory</strong> will not, however. Please read the <a href=\"%s#robots.txt"
+"\" target=\"_blank\">documentation</a> for more info."
 
-#: includes/class-bwp-simple-gxs.php:1171
-msgid ""
-"Sitemaps like <code>post.xml</code> are split into <code>post_part1.xml</"
-"code>, <code>post_part2.xml</code>, etc. when limit reached."
-msgstr ""
+#: src/templates/provider/admin/external-page-form.html.php:55
+#: src/class-bwp-gxs.php:1770
+msgid "Important"
+msgstr "Important"
 
-#: includes/class-bwp-simple-gxs.php:1172
-msgid ""
-"Disable this to use the local timezone setting in <em>Settings >> General</"
-"em>."
-msgstr ""
+#: src/class-bwp-gxs.php:1699
+msgid "Include"
+msgstr "Include"
 
-#: includes/class-bwp-simple-gxs.php:1173
-msgid ""
-"Site Address. For a multi-site installation of WordPress, this sitemap will "
-"list all appropriate blogs' addresses within your network, not just the main "
-"blog's."
-msgstr ""
+#: src/handler/ajax/external-page.php:91
+msgid "Invalid frequency or priority."
+msgstr "Invalid frequency or priority."
 
-#: includes/class-bwp-simple-gxs.php:1174
-msgid ""
-"Ping search engines when you publish new posts. By default all public posts "
-"are considered, unless explicitly disabled below."
-msgstr ""
+#: src/class-bwp-gxs.php:1187
+msgid "It appears that no sitemap has been generated yet"
+msgstr "It appears that no sitemap has been generated yet"
 
-#: includes/class-bwp-simple-gxs.php:1175
-msgid "Google"
-msgstr ""
+#: src/class-bwp-gxs.php:1331
+msgid "Item limits"
+msgstr "Item limits"
 
-#: includes/class-bwp-simple-gxs.php:1176
-msgid "Bing"
-msgstr ""
+#: src/class-bwp-gxs.php:1654
+msgid "Keyword source"
+msgstr "Keyword source"
 
-#: includes/class-bwp-simple-gxs.php:1177
+#: src/templates/logger/admin/sitemap-log.html.php:11
+msgid "Last generated on"
+msgstr "Last generated on"
+
+#: src/templates/provider/admin/external-pages.html.php:25
+msgid "Last modified"
+msgstr "Last modified"
+
+#: src/templates/provider/admin/external-page-form.html.php:46
+msgid "Last modified (time is optional)"
+msgstr "Last modified (time is optional)"
+
+#: src/class-bwp-gxs.php:1766
+#, php-format
+msgid "Learn more about <a href=\"%s\" target=\"_blank\">Image sitemaps</a>."
+msgstr "Learn more about <a href=\"%s\" target=\"_blank\">Image sitemaps</a>."
+
+#: src/class-bwp-gxs.php:2049
+#, php-format
+msgid "Leave empty to use <code>%s</code>."
+msgstr "Leave empty to use <code>%s</code>."
+
+#: src/class-bwp-gxs.php:1405
+msgid "Limit the number of items to output in one sitemap. "
+msgstr "Limit the number of items to output in one sitemap. "
+
+#: src/class-bwp-gxs.php:1985
 #, php-format
 msgid ""
-"No additional load is needed so enabling this is highly recommended. You can "
-"check the log <a href=\"%s\">here</a>."
+"Log useful messages when sitemaps are generated. The log can be viewed <a "
+"href=\"%s\">here</a>."
 msgstr ""
+"Log useful messages when sitemaps are generated. The log can be viewed <a "
+"href=\"%s\">here</a>."
 
-#: includes/class-bwp-simple-gxs.php:1178
+#: src/class-bwp-gxs.php:2132
 msgid ""
-"When this is on, NO caching is used and <code>WP_DEBUG</code> is respected, "
-"useful when developing new modules."
+"Logging is not currently enabled. You can enable this feature by checking "
+"\"Enable logging\" in <strong>XML Sitemaps >> Sitemap log & debug</strong>."
 msgstr ""
+"Logging is not currently enabled. You can enable this feature by checking "
+"\"Enable logging\" in <strong>XML Sitemaps >> Sitemap log & debug</strong>."
 
-#: includes/class-bwp-simple-gxs.php:1179
-#, php-format
-msgid ""
-"When this is on, NO headers are sent and sitemaps are NOT compressed, useful "
-"when debugging <em>Content Encoding Error</em>. More info <a href="
-"\"%s#sitemap_log_debug\" target=\"_blank\">here</a>."
-msgstr ""
+#: src/class-bwp-gxs.php:1344
+msgid "Look and Feel"
+msgstr "Look and Feel"
 
-#: includes/class-bwp-simple-gxs.php:1184
+#: src/templates/logger/admin/sitemap-log.html.php:23
+#: src/templates/logger/admin/message-log.html.php:11
+msgid "M d, Y h:i:s A"
+msgstr "M d, Y h:i:s A"
+
+#: src/class-bwp-gxs.php:1345
+msgid "Make sitemaps look pretty"
+msgstr "Make sitemaps look pretty"
+
+#: src/class-bwp-gxs.php:1475
+msgid "Maximum is <strong>50,000</strong>. Set to 0 to use the Global limit."
+msgstr "Maximum is <strong>50,000</strong>. Set to 0 to use the Global limit."
+
+#: src/class-bwp-gxs.php:1470
 msgid ""
 "Maximum is <strong>50,000</strong>. This setting is applied to all sitemaps."
 msgstr ""
+"Maximum is <strong>50,000</strong>. This setting is applied to all sitemaps."
 
-#: includes/class-bwp-simple-gxs.php:1189
-msgid "Maximum is <strong>50,000</strong>. Set to 0 to use the Global limit."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1195
+#: src/class-bwp-gxs.php:2002
 msgid ""
-"Expect an absolute URL, e.g. <code>http://example.com/my-stylesheet.xsl</"
-"code>. You must also have a stylesheet for the sitemapindex that can be "
-"accessed through the above URL, e.g. <code>my-stylesheet.xsl</code> and "
-"<code>my-stylesheetindex.xsl</code>. Leave blank to use provided stylesheets."
+"Maximum number of items to fetch in each query to database. This helps when "
+"a sitemap has thousands of items and host is low on memory."
 msgstr ""
+"Maximum number of items to fetch in each query to database. This helps when "
+"a sitemap has thousands of items and host is low on memory."
 
-#: includes/class-bwp-simple-gxs.php:1206
-msgid ""
-"Expect an absolute path to the directory where you put your custom modules "
-"(e.g. <code>/home/mysite/public_html/gxs-modules/</code>). "
-msgstr ""
+#: src/class-bwp-gxs.php:2118
+msgid "Message Log"
+msgstr "Message Log"
 
-#: includes/class-bwp-simple-gxs.php:1210
+#: src/class-bwp-gxs.php:1338
+msgid "Minimum priority"
+msgstr "Minimum priority"
+
+#: src/templates/provider/admin/news-contents.html.php:9
+#: src/templates/provider/admin/exclude-terms.html.php:28
+#: src/templates/logger/admin/sitemap-log.html.php:10
+msgid "Name"
+msgstr "Name"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:503
+msgid "Need a highly customizable theme?"
+msgstr "Need a highly customizable theme?"
+
+#: src/class-bwp-gxs.php:1648
+msgid "News age"
+msgstr "News age"
+
+#: src/class-bwp-gxs.php:1647
+msgid "News language"
+msgstr "News language"
+
+#: src/class-bwp-gxs.php:1646
+msgid "News name"
+msgstr "News name"
+
+#: src/class-bwp-gxs.php:1649
+msgid "News post type"
+msgstr "News post type"
+
+#: src/class-bwp-gxs.php:1650
+msgid "News taxonomy"
+msgstr "News taxonomy"
+
+#: src/class-bwp-gxs.php:1651
+msgid "News terms and genres"
+msgstr "News terms and genres"
+
+#: src/templates/logger/admin/message-log.html.php:23
+msgid "No log yet!"
+msgstr "No log yet!"
+
+#: src/class-bwp-gxs.php:1745
+msgid "Note:"
+msgstr "Note:"
+
+#: src/class-bwp-gxs.php:2458
+msgid "Notice"
+msgstr "Notice"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:410
+msgid "One LL-cup!!! $50.00"
+msgstr "One LL-cup!!! $50.00"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:407
+msgid "One cup $5.00"
+msgstr "One cup $5.00"
+
+#: src/class-bwp-gxs.php:2060
 msgid ""
 "Override a built-in module by having a module with the same filename in "
 "specified directory."
 msgstr ""
+"Override a built-in module by having a module with the same filename in "
+"specified directory."
 
-#: includes/class-bwp-simple-gxs.php:1216
-msgid "set via constant (BWP_GXS_CACHE_DIR)"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1218
-msgid ""
-"Expect an absolute path to a writable directory (i.e. CHMOD to 755 or 777). "
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1221
-#, php-format
-msgid "Leave empty to use <code>%s</code>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1226
-msgid ""
-"Only get this many items when querying from Database. This is to make sure "
-"we are not running too heavy queries."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1239
-msgid ""
-"time(s) per day. Increase this limit if you publish a lot of posts in a "
-"single day."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1252
-#, php-format
-msgid ""
-"Submit your <a href=\"%s\" target=\"_blank\">sitemapindex</a> to major "
-"search engines like <a href=\"%s\" target=\"_blank\">Google</a>, <a href=\"%s"
-"\" target=\"_blank\">Bing</a>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1259
-#, php-format
-msgid ""
-"Only the sitemapindex needs to be submitted as search engines will "
-"automatically recognize other included sitemaps. More info can be found <a "
-"href=\"%s\">here</a>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1370
-msgid "Add Google News Sitemap to your sitemapindex"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1371
-msgid "Enable news sitemap"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1372
-msgid "Enable keywords support"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1373
-msgid "Get keywords from"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1374
-msgid "Enable multi-category support"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1375
-msgid "Ping search engines when a news article is published"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1376
-msgid "News sitemap's language"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1377
-#: includes/class-bwp-simple-gxs.php:1436
-msgid "News categories"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1378
-msgid "The Google News sitemap will"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1393
-msgid ""
-"A Google News Sitemap is a file that allows you to control which content you "
-"submit to Google News. By creating and submitting a Google News Sitemap, "
-"you're able to help Google News discover and crawl your site's news articles "
-"&mdash; http://support.google.com/"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1401
-msgid ""
-"Below you will be able to choose what categories to use (or not use) in the "
-"news sitemap. You can also assign genres to a specific category."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1407
-msgid "below selected categories in the news sitemap."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1412
-msgid "English"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1413
-msgid "Arabic"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1414
-msgid "Chinese (simplified)"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1415
-msgid "Chinese (traditional)"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1416
-msgid "Dutch"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1417
-msgid "French"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1418
-msgid "German"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1419
-msgid "Hebrew"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1420
-msgid "Hindi"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1421
-msgid "Italian"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1422
-msgid "Japanese"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1423
-msgid "Norwegian"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1424
-msgid "Portuguese"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1425
-msgid "Polish"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1426
-msgid "Russian"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1427
-msgid "Spanish"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1428
-msgid "Turkish"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1429
-msgid "Vietnamese"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1432
-msgid "include"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1433
-msgid "exclude"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1437
-msgid "News tags"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1443
-#, php-format
-msgid ""
-"A <code>post_google_news.xml</code> sitemap will be added to the main <a "
-"href=\"%s\" target=\"_blank\">sitemapindex.xml</a>. It is strongly "
-"recommended that you take a look at <a href=\"%s\" target=\"_blank"
-"\">Google's guidelines</a> before enabling this feature."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1444
-#, php-format
-msgid "More info <a href=\"%s\" target=\"_blank\">here</a>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1445
-msgid ""
-"This ping works separately from the sitemapindex ping, and only occurs when "
-"you publish an article in one of the news categories set below."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1446
-msgid "Enable this if you have posts assigned to more than one categories."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1454
-msgid "Note"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1455
-msgid ""
-"The Google News sitemap is an extension (or sub-module) of the <code>post."
-"xml</code> sitemap, which means it also uses posts from the <strong>Post</"
-"strong> post type, but only from categories that are selected."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1506
-msgid "Sitemap Generator's Log"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1514
-msgid ""
-"Below are details on how your sitemaps are generated including <span style="
-"\"color: #999999;\">notices</span>, <span style=\"color: #FF0000;\">errors</"
-"span> and <span style=\"color: #009900;\">success messages</span>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1520
-msgid ""
-"Logging is not currently enabled. You can enable this feature by checking "
-"\"Enable sitemap log\" in <strong>XML Sitemaps >> Sitemap log & debug</"
-"strong>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1654
-msgid "All options have been saved."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1679
-msgid "Warning"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1680
-#, php-format
-msgid ""
-"Cache directory (<code>%s</code>) does not exist or is not writable. Please "
-"try CHMODing it to either 755 or 777, or disable caching to hide this "
-"warning (not recommended)."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1704
-msgid "Save Changes and Flush Cache"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1706
-msgid "Flush Cache"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1718
-msgid "Clear All Logs"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1778
-#, php-format
-msgid "<strong>%d</strong> cached sitemaps have been flushed successfully!"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1789
-msgid ""
-"Could not delete any cached sitemaps. Please manually check the cache "
-"directory."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1815
-msgid "<strong>BWP Google XML Sitemaps Error:</strong> "
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1816
-msgid "BWP Google XML Sitemaps Error"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1837
-msgid "Debug extra was on"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1838
-msgid "Debug was on"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1928
-msgid ""
-"It appears that no sitemap has been generated yet, or you have recently "
-"cleared the sitemap log."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1931
-msgid "No log yet!"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1940
-#, php-format
-msgid ""
-"<a href=\"%s\" target=\"_blank\">%s</a> was generated on <strong>%s</strong>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1945
-msgid "Below you can find a list of generated sitemaps:"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:1977
-#: includes/class-bwp-simple-gxs.php:2012
-msgid "M j, Y : H:i:s"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2113
-msgid "Category's name"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2114
-#, php-format
-msgid ""
-"<span>Genres used for this category</span> (more info <a href=\"%s\" target="
-"\"_blank\">here</a>)"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2409
-#, php-format
-msgid ""
-"Google news posts that are published within last 48 hours (as per <a href="
-"\"%s\" target=\"_blank\">Google's guidelines</a>)"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2416
-msgid "Post"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2423
-msgid "External page"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2425
+#: src/class-bwp-gxs.php:3096
 msgid "Page"
-msgstr ""
+msgstr "Page"
 
-#: includes/class-bwp-simple-gxs.php:2433
-msgid "Date archive"
-msgstr ""
+#: src/class-bwp-gxs.php:1343
+msgid "Ping limit"
+msgstr "Ping limit"
 
-#: includes/class-bwp-simple-gxs.php:2437
-msgid "Author archive"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2589
-#, php-format
-msgid "Successfully served a cached version of <em>%s.xml</em>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2617
-#, php-format
-msgid ""
-"Cache directory <strong>%s</strong> is not writable, no cache file was "
-"created."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2630
-#, php-format
-msgid "Could not write sitemap file to cache directory <strong>%s</strong>"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2661
-#, php-format
-msgid ""
-"<em>%s.xml</em> will be served using module file <em>%s</em> in the custom "
-"module directory."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2678
-#, php-format
-msgid "<em>%s.xml</em> will be served using module file <em>%s</em>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2685
-#, php-format
-msgid ""
-"<strong>%s</strong> can not be served because of a missing module file: "
-"<strong>%s</strong>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2770
-#, php-format
-msgid "Requested sitemap (<em>%s.xml</em>) was not found or not enabled."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2898
-#, php-format
-msgid ""
-"There is no class named <strong>%s</strong> in the module file <strong>%s</"
-"strong>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2926
-#, php-format
-msgid ""
-"Successfully generated <em>%s.xml</em> using custom module file <em>%s</em>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2927
-#, php-format
-msgid "Successfully generated <em>%s.xml</em> using module file <em>%s</em>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2944
-#, php-format
-msgid ""
-"An unknown error occurred when generating <em>%s</em> using module file <em>"
-"%s</em>. Try again later."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:2959
-#, php-format
-msgid ""
-"<em>%s.xml</em> was successfully generated but could not be served properly "
-"because some headers have already been sent (something was printed on line "
-"<strong>%s</strong> in file <strong>%s</strong>)."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:3157
-#, php-format
-msgid "<em>%s.xml</em> does not have any item."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:3163
-msgid ""
-"Enable/disable sitemaps via <em>BWP Sitemaps >> XML Sitemaps >> Sitemaps to "
-"generate</em>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:3168
-#, php-format
-msgid "There are no public <em>%s</em>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:3174
-msgid ""
-"Please make sure that you have at least one sitemap enabled in <em>BWP "
-"Sitemaps >> XML Sitemaps >> Sitemaps to generate</em>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:3508
-msgid "Unknown response code from search engines. Ping failed."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:3513
-#, php-format
-msgid "Pinged <em>%s</em> with <em>%s</em> successfully!"
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:3523
-#, php-format
-msgid "<strong>Error %s</strong> from <em>%s</em>."
-msgstr ""
-
-#: includes/class-bwp-simple-gxs.php:3534
+#: src/class-bwp-gxs.php:3985
 #, php-format
 msgid ""
 "Ping limit for today to <em>%s</em> has been reached, consider increasing "
 "the ping limit via <em>XML Sitemaps >> Ping search engines >> \"Ping limit "
 "for each search engine\"</em>"
 msgstr ""
+"Ping limit for today to <em>%s</em> has been reached, consider increasing "
+"the ping limit via <em>XML Sitemaps >> Ping search engines >> \"Ping limit "
+"for each search engine\"</em>"
+
+#: src/class-bwp-gxs.php:1339
+msgid "Ping search engines"
+msgstr "Ping search engines"
+
+#: src/class-bwp-gxs.php:1722
+msgid "Ping search engines when a news article is published."
+msgstr "Ping search engines when a news article is published."
+
+#: src/class-bwp-gxs.php:1463
+msgid "Ping search engines when you publish new posts."
+msgstr "Ping search engines when you publish new posts."
+
+#: src/class-bwp-gxs.php:3964
+#, php-format
+msgid "Pinged <em>%s</em> with <em>%s</em> successfully!"
+msgstr "Pinged <em>%s</em> with <em>%s</em> successfully!"
+
+#: src/class-bwp-gxs.php:3658
+msgid ""
+"Please make sure that you have at least one sitemap enabled in <em>BWP "
+"Sitemaps >> XML Sitemaps >> Sitemaps to generate</em>."
+msgstr ""
+"Please make sure that you have at least one sitemap enabled in <em>BWP "
+"Sitemaps >> XML Sitemaps >> Sitemaps to generate</em>."
+
+#: src/class-bwp-gxs.php:1759
+#, php-format
+msgid ""
+"Please make sure you have enabled the <a href=\"%s\" target=\"_blank\">Post "
+"Thumbnails feature</a> in your theme before enabling this extension."
+msgstr ""
+"Please make sure you have enabled the <a href=\"%s\" target=\"_blank\">Post "
+"Thumbnails feature</a> in your theme before enabling this extension."
+
+#: src/handler/ajax/external-page.php:107
+msgid "Please provide a valid last modified date time."
+msgstr "Please provide a valid last modified date time."
+
+#: src/handler/ajax/external-page.php:63
+msgid "Please provide all required fields."
+msgstr "Please provide all required fields."
+
+#: src/handler/ajax/external-page.php:78
+#, php-format
+msgid "Please provide an absolute URL under your domain, for example: %s."
+msgstr "Please provide an absolute URL under your domain, for example: %s."
+
+#: src/class-bwp-gxs.php:2484 src/class-bwp-gxs.php:2498
+msgid "Please select at least one item to exclude."
+msgstr "Please select at least one item to exclude."
+
+#: src/templates/provider/admin/external-page-form.html.php:56
+#, php-format
+msgid ""
+"Please specify \"Last modified\" in your <a href=\"%s\" target=\"_blank"
+"\">local timezone</a>."
+msgstr ""
+"Please specify \"Last modified\" in your <a href=\"%s\" target=\"_blank"
+"\">local timezone</a>."
+
+#: src/class-bwp-gxs.php:1780
+#, php-format
+msgid ""
+"Please take a look at <a href=\"%s\" target=\"_blank\">Google News's "
+"guidelines</a> before enabling this feature."
+msgstr ""
+"Please take a look at <a href=\"%s\" target=\"_blank\">Google News's "
+"guidelines</a> before enabling this feature."
+
+#: src/class-bwp-gxs.php:1804
+#, php-format
+msgid ""
+"Please take a look at <a href=\"%s\" target=\"_blank\">Google News's "
+"guidelines</a> for more info."
+msgstr ""
+"Please take a look at <a href=\"%s\" target=\"_blank\">Google News's "
+"guidelines</a> for more info."
+
+#: vendor/kminh/bwp-framework/src/class-bwp-option-page-v3.php:93
+msgid "Plugin Configurations"
+msgstr "Plugin Configurations"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:375
+msgid "Plugin Support"
+msgstr "Plugin Support"
+
+#: src/class-bwp-gxs.php:3087
+msgid "Post"
+msgstr "Post"
+
+#: src/class-bwp-gxs.php:1984
+msgid ""
+"Print useful information such as build time, memory usage, SQL queries, etc."
+msgstr ""
+"Print useful information such as build time, memory usage, SQL queries, etc."
+
+#: src/templates/provider/admin/external-pages.html.php:24
+#: src/templates/provider/admin/external-page-form.html.php:37
+msgid "Priority"
+msgstr "Priority"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:378
+msgid "Rate this plugin 5 stars if you like it, thank you!"
+msgstr "Rate this plugin 5 stars if you like it, thank you!"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:379
+msgid "Rate this plugin 5 stars!"
+msgstr "Rate this plugin 5 stars!"
+
+#: src/class-bwp-gxs.php:1981
+msgid ""
+"Re-generate sitemap cache when expired. If you disable this, remember to "
+"manually flush the cache once in a while."
+msgstr ""
+"Re-generate sitemap cache when expired. If you disable this, remember to "
+"manually flush the cache once in a while."
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:370
+msgid "Read this first before asking any question!"
+msgstr "Read this first before asking any question!"
+
+#: src/templates/provider/admin/exclude-posts.html.php:29
+#: src/templates/provider/admin/exclude-terms.html.php:29
+msgid "Remove"
+msgstr "Remove"
+
+#: src/class-bwp-gxs.php:557
+msgid "Remove from exclusion"
+msgstr "Remove from exclusion"
+
+#: src/class-bwp-gxs.php:562
+msgid "Remove this page"
+msgstr "Remove this page"
+
+#: src/class-bwp-gxs.php:3489
+#, php-format
+msgid "Requested sitemap (<em>%s.xml</em>) was not found or not enabled."
+msgstr "Requested sitemap (<em>%s.xml</em>) was not found or not enabled."
+
+#: src/templates/provider/admin/external-page-modal.html.php:27
+msgid "Reset"
+msgstr "Reset"
+
+#: src/class-bwp-gxs.php:1912
+msgid "Robots.txt"
+msgstr "Robots.txt"
+
+#: src/templates/provider/admin/external-page-modal.html.php:33
+#: vendor/kminh/bwp-framework/src/class-bwp-option-page-v3.php:306
+msgid "Save Changes"
+msgstr "Save Changes"
+
+#: src/class-bwp-gxs.php:2346
+msgid "Save Changes and Flush Cache"
+msgstr "Save Changes and Flush Cache"
+
+#: src/class-bwp-gxs.php:1341
+msgid "Search engines to ping"
+msgstr "Search engines to ping"
+
+#: src/templates/provider/admin/exclude-posts.html.php:5
+msgid "Search for posts to exclude"
+msgstr "Search for posts to exclude"
+
+#: src/templates/provider/admin/exclude-terms.html.php:5
+msgid "Search for terms to exclude"
+msgstr "Search for terms to exclude"
+
+#: src/templates/provider/admin/news-contents.html.php:8
+msgid "Select"
+msgstr "Select"
+
+#: src/class-bwp-gxs.php:1248
+msgid "Select a post type"
+msgstr "Select a post type"
+
+#: src/class-bwp-gxs.php:1262
+msgid "Select a taxonomy"
+msgstr "Select a taxonomy"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:386
+msgid "Send"
+msgstr "Send"
+
+#: src/class-bwp-gxs.php:1794
+msgid ""
+"Set a different name for your news sitemap. By default, your <em>Site Title</"
+"em> is used."
+msgstr ""
+"Set a different name for your news sitemap. By default, your <em>Site Title</"
+"em> is used."
+
+#: src/class-bwp-gxs.php:1801
+msgid "Set to <code>0</code> to disable (not recommended)."
+msgstr "Set to <code>0</code> to disable (not recommended)."
+
+#: src/class-bwp-gxs.php:1406
+#, php-format
+msgid ""
+"Setting too high limits might lead to white page error due to timeout or "
+"memory issue. Refer to this plugin's <a target=\"_blank\" href=\"%s\">FAQ "
+"section</a> for more info."
+msgstr ""
+"Setting too high limits might lead to white page error due to timeout or "
+"memory issue. Refer to this plugin's <a target=\"_blank\" href=\"%s\">FAQ "
+"section</a> for more info."
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:1315
+msgid "Settings"
+msgstr "Settings"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:431
+msgid "Share the love for this plugin!"
+msgstr "Share the love for this plugin!"
+
+#: src/templates/provider/admin/exclude-posts.html.php:17
+#: src/templates/provider/admin/exclude-terms.html.php:17
+msgid "Show/Hide excluded items"
+msgstr "Show/Hide excluded items"
+
+#: src/templates/provider/admin/external-pages.html.php:12
+msgid "Show/Hide external pages"
+msgstr "Show/Hide external pages"
+
+#: src/class-bwp-gxs.php:1737
+msgid "Show/Hide selected terms"
+msgstr "Show/Hide selected terms"
+
+#: src/class-bwp-gxs.php:1462
+msgid "Site Address"
+msgstr "Site Address"
+
+#: src/class-bwp-gxs.php:1915
+msgid "Sitemap Cache"
+msgstr "Sitemap Cache"
+
+#: src/class-bwp-gxs.php:1645
+msgid "Sitemap Contents"
+msgstr "Sitemap Contents"
+
+#: src/class-bwp-gxs.php:350 src/class-bwp-gxs.php:1006
+msgid "Sitemap Log"
+msgstr "Sitemap Log"
+
+#: src/class-bwp-gxs.php:1920
+msgid "Sitemap modules"
+msgstr "Sitemap modules"
+
+#: src/class-bwp-gxs.php:1461
+msgid ""
+"Sitemaps like <code>post.xml</code> are split into <code>post_part1.xml</"
+"code>, <code>post_part2.xml</code>, etc. when limit reached."
+msgstr ""
+"Sitemaps like <code>post.xml</code> are split into <code>post_part1.xml</"
+"code>, <code>post_part2.xml</code>, etc. when limit reached."
+
+#: src/class-bwp-gxs.php:1322
+msgid "Sitemaps to generate"
+msgstr "Sitemaps to generate"
+
+#: src/class-bwp-gxs.php:1459
+msgid "Some copyrighted info is added to your sitemaps."
+msgstr "Some copyrighted info is added to your sitemaps."
+
+#: src/class-bwp-gxs.php:1333
+msgid "Split <strong>post-based</strong> sitemaps"
+msgstr "Split <strong>post-based</strong> sitemaps"
+
+#: src/class-bwp-gxs.php:1334
+msgid "Split limit"
+msgstr "Split limit"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:541
+msgid "Subscribe"
+msgstr "Subscribe"
+
+#: src/class-bwp-gxs.php:2472
+#, php-format
+msgid "Successfully excluded <strong>%d</strong> items."
+msgstr "Successfully excluded <strong>%d</strong> items."
+
+#: src/class-bwp-gxs.php:3627
+#, php-format
+msgid ""
+"Successfully generated <em>%s.xml</em> using custom module file <em>%s</em>."
+msgstr ""
+"Successfully generated <em>%s.xml</em> using custom module file <em>%s</em>."
+
+#: src/class-bwp-gxs.php:3628
+#, php-format
+msgid "Successfully generated <em>%s.xml</em> using module file <em>%s</em>."
+msgstr "Successfully generated <em>%s.xml</em> using module file <em>%s</em>."
+
+#: src/class-bwp-gxs.php:3271
+#, php-format
+msgid "Successfully served a cached version of <em>%s.xml</em>."
+msgstr "Successfully served a cached version of <em>%s.xml</em>."
+
+#: src/class-bwp-gxs.php:1454
+msgid "Taxonomy (including custom taxonomies)"
+msgstr "Taxonomy (including custom taxonomies)"
+
+#: src/class-bwp-gxs.php:2416
+msgid "There are no cached sitemaps to flush."
+msgstr "There are no cached sitemaps to flush."
+
+#: src/class-bwp-gxs.php:3652
+#, php-format
+msgid "There are no public <em>%s</em>."
+msgstr "There are no public <em>%s</em>."
+
+#: src/class-bwp-gxs.php:3597
+#, php-format
+msgid ""
+"There is no class named <strong>%s</strong> in the module file <strong>%s</"
+"strong>."
+msgstr ""
+"There is no class named <strong>%s</strong> in the module file <strong>%s</"
+"strong>."
+
+#: src/class-bwp-gxs.php:558 src/class-bwp-gxs.php:563
+msgid "This action can not be undone, are you sure?"
+msgstr "This action can not be undone, are you sure?"
+
+#: src/class-bwp-gxs.php:1771
+msgid ""
+"This extension has an effect on performance, if you notice any slowdown "
+"please try disabling it first."
+msgstr ""
+"This extension has an effect on performance, if you notice any slowdown "
+"please try disabling it first."
+
+#: src/class-bwp-gxs.php:1827
+msgid ""
+"This ping works separately from the sitemap index ping, and only occurs when "
+"you publish an article in one of the news categories set below."
+msgstr ""
+"This ping works separately from the sitemap index ping, and only occurs when "
+"you publish an article in one of the news categories set below."
+
+#: src/class-bwp-gxs.php:379
+#, php-format
+msgid ""
+"This sitemap was originally generated in %s second(s) (Memory usage: %s) - "
+"%s queries - %s URL(s) listed"
+msgstr ""
+"This sitemap was originally generated in %s second(s) (Memory usage: %s) - "
+"%s queries - %s URL(s) listed"
+
+#: src/templates/provider/admin/exclude-posts.html.php:28
+msgid "Title"
+msgstr "Title"
+
+#: src/class-bwp-gxs.php:1231
+#, php-format
+msgid ""
+"To proceed, submit your <a href=\"%s\" target=\"_blank\">sitemapindex</a> to "
+"major search engines like <a href=\"%s\" target=\"_blank\">Google</a> or <a "
+"href=\"%s\" target=\"_blank\">Bing</a>."
+msgstr ""
+"To proceed, submit your <a href=\"%s\" target=\"_blank\">sitemapindex</a> to "
+"major search engines like <a href=\"%s\" target=\"_blank\">Google</a> or <a "
+"href=\"%s\" target=\"_blank\">Bing</a>."
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:408
+msgid "Two cups $10.00"
+msgstr "Two cups $10.00"
+
+#: src/class-bwp-gxs.php:3959
+msgid "Unknown response code from search engines. Ping failed."
+msgstr "Unknown response code from search engines. Ping failed."
+
+#: src/templates/provider/admin/external-pages.html.php:22
+msgid "Url"
+msgstr "Url"
+
+#: src/class-bwp-gxs.php:1910
+msgid "Use GMT for Last Modified date"
+msgstr "Use GMT for Last Modified date"
+
+#: src/class-bwp-gxs.php:1979
+#, php-format
+msgid ""
+"Use gzip to make sitemaps ~70% smaller. If you see an error after enabling "
+"this, it's very likely that you have gzip active on your server already."
+msgstr ""
+"Use gzip to make sitemaps ~70% smaller. If you see an error after enabling "
+"this, it's very likely that you have gzip active on your server already."
+
+#: src/class-bwp-gxs.php:1706
+msgid "Use the selected \"News taxonomy\""
+msgstr "Use the selected \"News taxonomy\""
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:416
+msgid "Via"
+msgstr "Via"
+
+#: src/templates/provider/admin/news-contents.html.php:13
+#: vendor/kminh/bwp-framework/src/class-bwp-option-page-v3.php:828
+msgid "View more info in a separate tab"
+msgstr "View more info in a separate tab"
+
+#: src/class-bwp-gxs.php:2185
+msgid "Warning"
+msgstr "Warning"
+
+#: src/class-bwp-gxs.php:1525
+msgid ""
+"When a post belongs to multiple terms, it will be excluded if <strong>ANY</"
+"strong> of those terms is currently excluded."
+msgstr ""
+"When a post belongs to multiple terms, it will be excluded if <strong>ANY</"
+"strong> of those terms is currently excluded."
+
+#: src/class-bwp-gxs.php:1986
+msgid ""
+"When this is on, NO caching is used and <code>WP_DEBUG</code> is respected, "
+"useful when developing new modules."
+msgstr ""
+"When this is on, NO caching is used and <code>WP_DEBUG</code> is respected, "
+"useful when developing new modules."
+
+#: src/class-bwp-gxs.php:1987
+#, php-format
+msgid ""
+"When this is on, NO headers are sent and sitemaps are NOT compressed, useful "
+"when debugging <em>Content Encoding Error</em>. More info <a href="
+"\"%s#sitemap-log-debug\" target=\"_blank\">here</a>."
+msgstr ""
+"When this is on, NO headers are sent and sitemaps are NOT compressed, useful "
+"when debugging <em>Content Encoding Error</em>. More info <a href="
+"\"%s#sitemap-log-debug\" target=\"_blank\">here</a>."
+
+#: src/class-bwp-gxs.php:1421
+msgid ""
+"Whenever you post something new to your blog, you can <em>ping</em> search "
+"engines with your sitemap index to tell them your blog just got updated."
+msgstr ""
+"Whenever you post something new to your blog, you can <em>ping</em> search "
+"engines with your sitemap index to tell them your blog just got updated."
+
+#: src/class-bwp-gxs.php:1959
+#, php-format
+msgid ""
+"WordPress generates a %svirtual robots.txt%s file for your blog by default. "
+"You can add the sitemap index file to that robots.txt file using settings "
+"below."
+msgstr ""
+"WordPress generates a %svirtual robots.txt%s file for your blog by default. "
+"You can add the sitemap index file to that robots.txt file using settings "
+"below."
+
+#: src/class-bwp-gxs.php:963
+msgid "XML Sitemap Log"
+msgstr "XML Sitemap Log"
+
+#: src/class-bwp-gxs.php:335 src/class-bwp-gxs.php:942
+#: src/class-bwp-gxs.php:982
+msgid "XML Sitemaps"
+msgstr "XML Sitemaps"
+
+#: src/class-bwp-gxs.php:956
+msgid "XML Sitemaps - Advanced Options"
+msgstr "XML Sitemaps - Advanced Options"
+
+#: src/class-bwp-gxs.php:949
+msgid "XML Sitemaps - Extensions"
+msgstr "XML Sitemaps - Extensions"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:565
+#, php-format
+msgid "You are using version %s!"
+msgstr "You are using version %s!"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:391
+msgid ""
+"You can buy me some special coffees if you appreciate my work, thank you!"
+msgstr ""
+"You can buy me some special coffees if you appreciate my work, thank you!"
+
+#: src/class-bwp-gxs.php:1748
+#, php-format
+msgid ""
+"You can only select post types that <a href=\"%s\" target=\"_blank\">support "
+"the thumbnail feature</a>."
+msgstr ""
+"You can only select post types that <a href=\"%s\" target=\"_blank\">support "
+"the thumbnail feature</a>."
+
+#: src/class-bwp-gxs.php:1980
+msgid "Your sitemaps are generated and then cached to reduce unnecessary work."
+msgstr ""
+"Your sitemaps are generated and then cached to reduce unnecessary work."
+
+#: src/class-bwp-gxs.php:1191
+msgid "click to generate your Sitemap Index"
+msgstr "click to generate your Sitemap Index"
+
+#: src/class-bwp-gxs.php:1445 src/class-bwp-gxs.php:2013
+msgid "day(s)"
+msgstr "day(s)"
+
+#: src/class-bwp-gxs.php:1715
+msgid "day(s)."
+msgstr "day(s)."
+
+#: src/class-bwp-gxs.php:2573
+msgid "debugging was on"
+msgstr "debugging was on"
+
+#: src/class-bwp-gxs.php:2572
+msgid "extra debugging was on"
+msgstr "extra debugging was on"
+
+#: src/class-bwp-gxs.php:1400
+msgid "filter"
+msgstr "filter"
+
+#: src/class-bwp-gxs.php:1444 src/class-bwp-gxs.php:2012
+msgid "hour(s)"
+msgstr "hour(s)"
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:524
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:534
+msgid "loading..."
+msgstr "loading..."
+
+#: src/class-bwp-gxs.php:1443 src/class-bwp-gxs.php:2011
+msgid "minute(s)"
+msgstr "minute(s)"
+
+#: src/class-bwp-gxs.php:3073
+#, php-format
+msgid ""
+"news posts that are published within the last <strong>%d day(s)</strong>. To "
+"include news posts within a longer time period, change the \"News age\" "
+"setting via BWP Sitemaps >> Extensions >> Google News Sitemap >> Sitemap "
+"Contents"
+msgstr ""
+"news posts that are published within the last <strong>%d day(s)</strong>. To "
+"include news posts within a longer time period, change the \"News age\" "
+"setting via BWP Sitemaps >> Extensions >> Google News Sitemap >> Sitemap "
+"Contents"
+
+#: src/class-bwp-gxs.php:1108
+msgid "overridden"
+msgstr "overridden"
+
+#: src/class-bwp-gxs.php:1442 src/class-bwp-gxs.php:2010
+msgid "second(s)"
+msgstr "second(s)"
+
+#: src/class-bwp-gxs.php:1729
+msgid "selected terms."
+msgstr "selected terms."
+
+#: src/class-bwp-gxs.php:1487
+msgid ""
+"time(s) per search engine per day. Increase this limit if you publish a lot "
+"of posts in a single day."
+msgstr ""
+"time(s) per search engine per day. Increase this limit if you publish a lot "
+"of posts in a single day."
+
+#: src/templates/provider/admin/external-page-modal.html.php:21
+msgid "working ..."
+msgstr "working ..."
